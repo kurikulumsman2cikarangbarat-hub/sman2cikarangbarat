@@ -5,310 +5,48 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Hasil TKA SMAN 2 Cikarang Barat</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        body {
-            background-color: #f5f7fa;
-            color: #333;
-            line-height: 1.6;
-            padding: 20px;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .login-container {
-            max-width: 500px;
-            width: 100%;
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-            padding: 40px;
-        }
-        
-        .letterhead {
-            text-align: center;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 3px double #3498db;
-        }
-        
-        .letterhead h2 {
-            color: #2c3e50;
-            font-size: 20px;
-            margin-bottom: 5px;
-            text-transform: uppercase;
-        }
-        
-        .letterhead h3 {
-            color: #2c3e50;
-            font-size: 16px;
-            margin-bottom: 5px;
-        }
-        
-        .letterhead h4 {
-            color: #2c3e50;
-            font-size: 14px;
-            font-weight: normal;
-            margin-bottom: 3px;
-        }
-        
-        .login-form {
-            margin-top: 30px;
-        }
-        
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        .form-group label {
-            display: block;
-            font-weight: bold;
-            color: #2c3e50;
-            margin-bottom: 8px;
-        }
-        
-        .form-group input {
-            width: 100%;
-            padding: 12px 15px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 16px;
-            transition: border-color 0.3s;
-        }
-        
-        .form-group input:focus {
-            outline: none;
-            border-color: #3498db;
-            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
-        }
-        
-        .info-text {
-            font-size: 14px;
-            color: #7f8c8d;
-            margin-top: 5px;
-            text-align: center;
-        }
-        
-        .btn {
-            width: 100%;
-            padding: 14px;
-            background-color: #3498db;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            margin-top: 10px;
-        }
-        
-        .btn:hover {
-            background-color: #2980b9;
-        }
-        
-        .btn-demo {
-            background-color: #2ecc71;
-            margin-top: 15px;
-        }
-        
-        .btn-demo:hover {
-            background-color: #27ae60;
-        }
-        
-        .error-message {
-            color: #e74c3c;
-            font-size: 14px;
-            margin-top: 5px;
-            text-align: center;
-            display: none;
-        }
-        
-        /* Tampilan hasil tes (hidden by default) */
-        .result-container {
-            max-width: 1000px;
-            width: 100%;
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-            padding: 30px;
-            display: none;
-        }
-        
-        .info-section {
-            margin-bottom: 25px;
-        }
-        
-        .info-row {
-            display: flex;
-            margin-bottom: 8px;
-            align-items: flex-start;
-        }
-        
-        .info-label {
-            font-weight: bold;
-            color: #2c3e50;
-            min-width: 320px;
-            flex-shrink: 0;
-        }
-        
-        .colon {
-            margin-right: 10px;
-        }
-        
-        .info-value {
-            color: #34495e;
-            flex-grow: 1;
-        }
-        
-        .text-content {
-            margin: 25px 0;
-            padding: 15px;
-            background-color: #f8f9fa;
-            border-radius: 6px;
-            border-left: 4px solid #3498db;
-            line-height: 1.7;
-        }
-        
-        .result-title {
-            text-align: center;
-            font-weight: bold;
-            font-size: 18px;
-            margin: 25px 0 15px 0;
-            color: #2c3e50;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #ddd;
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-        }
-        
-        caption {
-            font-weight: bold;
-            text-align: left;
-            margin-bottom: 10px;
-            color: #2c3e50;
-            font-size: 16px;
-        }
-        
-        th {
-            background-color: #3498db;
-            color: white;
-            font-weight: 600;
-            text-align: center;
-            padding: 12px 8px;
-            border: 1px solid #ddd;
-        }
-        
-        td {
-            padding: 10px 8px;
-            border: 1px solid #e1e1e1;
-        }
-        
-        /* PERUBAHAN: Rata kiri untuk Mata Pelajaran */
-        td:nth-child(2) {
-            text-align: left;
-            padding-left: 15px;
-        }
-        
-        /* PERUBAHAN: Rata tengah untuk Nilai dan Kategori */
-        td:nth-child(3),
-        td:nth-child(4) {
-            text-align: center;
-        }
-        
-        tr:nth-child(even) {
-            background-color: #f8f9fa;
-        }
-        
-        .subject-choice {
-            margin-top: 30px;
-        }
-        
-        .footer-note {
-            margin-top: 30px;
-            font-style: italic;
-            color: #7f8c8d;
-            text-align: center;
-            padding-top: 15px;
-            border-top: 1px dashed #ddd;
-        }
-        
-        .logout-btn {
-            background-color: #e74c3c;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-            margin-top: 20px;
-            display: block;
-            margin-left: auto;
-        }
-        
-        .logout-btn:hover {
-            background-color: #c0392b;
-        }
-        
-        @media print {
-            body {
-                background-color: white;
-                padding: 10px;
-            }
-            
-            .login-container {
-                display: none;
-            }
-            
-            .result-container {
-                box-shadow: none;
-                padding: 15px;
-            }
-            
-            .logout-btn {
-                display: none;
-            }
-        }
-        
-        @media (max-width: 768px) {
-            .login-container, .result-container {
-                padding: 20px;
-            }
-            
-            .info-row {
-                flex-direction: column;
-            }
-            
-            .info-label {
-                min-width: 100%;
-                margin-bottom: 5px;
-            }
-            
-            .colon {
-                display: none;
-            }
-            
-            table {
-                font-size: 14px;
-            }
-            
-            th, td {
-                padding: 8px 5px;
-            }
-        }
+        /* (STYLE CSS SAMA SEPERTI SEBELUMNYA - TIDAK DIUBAH) */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #f5f7fa; color: #333; line-height: 1.6; padding: 20px; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .login-container, .result-container { max-width: 500px; width: 100%; background-color: white; border-radius: 10px; box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1); padding: 40px; }
+        .result-container { max-width: 1000px; display: none; }
+        .letterhead { text-align: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 3px double #3498db; }
+        .letterhead h2 { color: #2c3e50; font-size: 20px; margin-bottom: 5px; text-transform: uppercase; }
+        .letterhead h3 { color: #2c3e50; font-size: 16px; margin-bottom: 5px; }
+        .letterhead h4 { color: #2c3e50; font-size: 14px; font-weight: normal; margin-bottom: 3px; }
+        .login-form { margin-top: 30px; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-weight: bold; color: #2c3e50; margin-bottom: 8px; }
+        .form-group input { width: 100%; padding: 12px 15px; border: 1px solid #ddd; border-radius: 5px; font-size: 16px; transition: border-color 0.3s; }
+        .form-group input:focus { outline: none; border-color: #3498db; box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2); }
+        .btn { width: 100%; padding: 14px; background-color: #3498db; color: white; border: none; border-radius: 5px; font-size: 16px; font-weight: bold; cursor: pointer; transition: background-color 0.3s; margin-top: 10px; }
+        .btn:hover { background-color: #2980b9; }
+        .btn-demo { background-color: #2ecc71; margin-top: 15px; }
+        .btn-demo:hover { background-color: #27ae60; }
+        .error-message { color: #e74c3c; font-size: 14px; margin-top: 5px; text-align: center; display: none; }
+        .info-section { margin-bottom: 25px; }
+        .info-row { display: flex; margin-bottom: 8px; align-items: flex-start; }
+        .info-label { font-weight: bold; color: #2c3e50; min-width: 320px; flex-shrink: 0; }
+        .colon { margin-right: 10px; }
+        .info-value { color: #34495e; flex-grow: 1; }
+        .text-content { margin: 25px 0; padding: 15px; background-color: #f8f9fa; border-radius: 6px; border-left: 4px solid #3498db; line-height: 1.7; }
+        .result-title { text-align: center; font-weight: bold; font-size: 18px; margin: 25px 0 15px 0; color: #2c3e50; padding-bottom: 10px; border-bottom: 1px solid #ddd; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05); }
+        caption { font-weight: bold; text-align: left; margin-bottom: 10px; color: #2c3e50; font-size: 16px; }
+        th { background-color: #3498db; color: white; font-weight: 600; text-align: center; padding: 12px 8px; border: 1px solid #ddd; }
+        td { padding: 10px 8px; border: 1px solid #e1e1e1; }
+        td:nth-child(2) { text-align: left; padding-left: 15px; }
+        td:nth-child(3), td:nth-child(4) { text-align: center; }
+        tr:nth-child(even) { background-color: #f8f9fa; }
+        .subject-choice { margin-top: 30px; }
+        .footer-note { margin-top: 30px; font-style: italic; color: #7f8c8d; text-align: center; padding-top: 15px; border-top: 1px dashed #ddd; }
+        .logout-btn { background-color: #e74c3c; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 20px; display: block; margin-left: auto; }
+        .logout-btn:hover { background-color: #c0392b; }
+        @media print { body { background-color: white; padding: 10px; } .login-container { display: none; } .result-container { box-shadow: none; padding: 15px; } .logout-btn { display: none; } }
+        @media (max-width: 768px) { .login-container, .result-container { padding: 20px; } .info-row { flex-direction: column; } .info-label { min-width: 100%; margin-bottom: 5px; } .colon { display: none; } table { font-size: 14px; } th, td { padding: 8px 5px; } }
+        .loading { display: none; text-align: center; margin: 20px 0; }
+        .spinner { border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 10px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
@@ -336,6 +74,11 @@
                 <input type="text" id="birthdate" name="birthdate" placeholder="Contoh: 31-12-2008" required>
             </div>
             
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Memeriksa data...</p>
+            </div>
+            
             <div class="error-message" id="errorMessage">
                 NISN atau tanggal lahir salah. Silakan coba lagi.
             </div>
@@ -345,253 +88,303 @@
             
             <div class="info-text">
                 <p>Untuk akun demo:<br>
-                <strong>NISN:</strong> 0123456789<br>
-                <strong>Tanggal Lahir:</strong> 31-12-2008</p>
+                <strong>NISN:</strong> 0086565132<br>
+                <strong>Tanggal Lahir:</strong> 27-04-2008</p>
             </div>
         </form>
+        
+        <!-- Admin Panel (Hidden) -->
+        <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee; display: none;" id="adminPanel">
+            <h3 style="color: #2c3e50; margin-bottom: 15px;">Admin Panel</h3>
+            <input type="file" id="csvFile" accept=".csv,.txt" style="margin-bottom: 10px;">
+            <button class="btn" onclick="importCSV()">Import Data CSV</button>
+            <div id="importResult" style="margin-top: 10px; font-size: 14px;"></div>
+        </div>
     </div>
     
-    <!-- Result Container (hidden by default) -->
+    <!-- Result Container -->
     <div class="result-container" id="resultContainer">
-        <div class="letterhead">
-            <h2>SMAN 2 CIKARANG BARAT</h2>
-            <h3>KCD WIL III DINAS PENDIDIKAN PROVINSI JAWA BARAT</h3>
-            <h4>Perum Metland Cibitung, Cikarang Barat, Bekasi</h4>
-            <h4>sman2cikarangbarat.pages.dev | Email: sman2cikarangbarat@gmail.com</h4>
-        </div>
-        
-        <div class="result-title">
-            HASIL TES KOMPETENSI AKADEMIK (TKA)
-        </div>
-        
-        <div class="info-section">
-            <div class="info-row">
-                <div class="info-label">Nama</div>
-                <div class="colon">:</div>
-                <div class="info-value">Siswa SMAN 2 Cikbar</div>
-            </div>
-            <div class="info-row">
-                <div class="info-label">Tempat, Tanggal Lahir</div>
-                <div class="colon">:</div>
-                <div class="info-value">Bekasi, 31 Desember 2008</div>
-            </div>
-            <div class="info-row">
-                <div class="info-label">Nomor Induk Siswa Nasional</div>
-                <div class="colon">:</div>
-                <div class="info-value">0123456789</div>
-            </div>
-            <div class="info-row">
-                <div class="info-label">Nomor Peserta TKA</div>
-                <div class="colon">:</div>
-                <div class="info-value">T3-25-02-12-1005-0009-8 0123456789</div>
-            </div>
-            <div class="info-row">
-                <div class="info-label">NPSN - Satuan Pendidikan Asal</div>
-                <div class="colon">:</div>
-                <div class="info-value">69964653</div>
-            </div>
-            <div class="info-row">
-                <div class="info-label">NPSN - Satuan Pendidikan Pelaksana</div>
-                <div class="colon">:</div>
-                <div class="info-value">69964653</div>
-            </div>
-            <div class="info-row">
-                <div class="info-label">Tanggal Pelaksanaan TKA</div>
-                <div class="colon">:</div>
-                <div class="info-value">3 - 6 November 2025</div>
-            </div>
-        </div>
-        
-        <div class="text-content">
-            <p>Yang telah mengikuti TKA di Kabupaten Bekasi, Provinsi Jawa Barat sesuai Pedoman Penyelenggaraan, Nomor 9 yang diterbitkan tahun 2025 dengan hasil:</p>
-        </div>
-        
-        <table>
-            <caption>Hasil Tes Kompetensi Akademik</caption>
-            <thead>
-                <tr>
-                    <th width="10%">No</th>
-                    <th width="50%">Mata Pelajaran</th>
-                    <th width="20%">Nilai</th>
-                    <th width="20%">Kategori</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>1</td>
-                    <td>Bahasa Indonesia</td>
-                    <!-- PERUBAHAN: Nilai rata tengah dan "100.00" -->
-                    <td>100.00</td>
-                    <!-- PERUBAHAN: Kategori "Istimewa" -->
-                    <td>Istimewa</td>
-                </tr>
-                <tr>
-                    <td>2</td>
-                    <td>Matematika</td>
-                    <td>100.00</td>
-                    <td>Istimewa</td>
-                </tr>
-                <tr>
-                    <td>3</td>
-                    <td>Bahasa Inggris</td>
-                    <td>100.00</td>
-                    <td>Istimewa</td>
-                </tr>
-            </tbody>
-        </table>
-        
-        <div class="subject-choice">
-            <table>
-                <caption>Mata Pelajaran Pilihan</caption>
-                <thead>
-                    <tr>
-                        <th width="10%">No</th>
-                        <th width="50%">Mata Pelajaran</th>
-                        <th width="20%">Nilai</th>
-                        <th width="20%">Kategori</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>4</td>
-                        <td>Fisika</td>
-                        <td>100.00</td>
-                        <td>Istimewa</td>
-                    </tr>
-                    <tr>
-                        <td>5</td>
-                        <td>Kimia</td>
-                        <td>100.00</td>
-                        <td>Istimewa</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        
-        <div class="footer-note">
-            <p>* Dokumen ini merupakan hasil dari Tes Kompetensi Akademik (TKA) yang dilakukan sesuai dengan pedoman penyelenggaraan yang berlaku.</p>
-        </div>
-        
-        <button class="logout-btn" id="logoutBtn">Keluar</button>
+        <!-- Isi akan di-generate oleh JavaScript -->
     </div>
     
     <script>
-        // Login Form Handler
-        document.addEventListener('DOMContentLoaded', function() {
-            const loginForm = document.getElementById('loginForm');
-            const demoBtn = document.getElementById('demoBtn');
-            const loginContainer = document.getElementById('loginContainer');
-            const resultContainer = document.getElementById('resultContainer');
-            const errorMessage = document.getElementById('errorMessage');
-            const logoutBtn = document.getElementById('logoutBtn');
-            
-            // Format NISN input (hanya angka, max 10 digit)
-            const nisnInput = document.getElementById('nisn');
-            nisnInput.addEventListener('input', function() {
-                this.value = this.value.replace(/\D/g, '').slice(0, 10);
-            });
-            
-            // Format tanggal lahir input
-            const birthdateInput = document.getElementById('birthdate');
-            birthdateInput.addEventListener('input', function(e) {
-                let value = this.value.replace(/\D/g, '');
-                
-                if (value.length >= 2 && value.length < 4) {
-                    value = value.slice(0, 2) + '-' + value.slice(2);
-                } else if (value.length >= 4 && value.length < 8) {
-                    value = value.slice(0, 2) + '-' + value.slice(2, 4) + '-' + value.slice(4);
-                } else if (value.length >= 8) {
-                    value = value.slice(0, 2) + '-' + value.slice(2, 4) + '-' + value.slice(4, 8);
-                }
-                
-                this.value = value;
-            });
-            
-            // Fungsi validasi login
-            function validateLogin(nisn, birthdate) {
-                // Format tanggal harus DD-MM-YYYY
-                const datePattern = /^(\d{2})-(\d{2})-(\d{4})$/;
-                
-                if (!datePattern.test(birthdate)) {
-                    return false;
-                }
-                
-                // Demo account credentials
-                if (nisn === '0123456789' && birthdate === '31-12-2008') {
-                    return true;
-                }
-                
-                // Untuk keperluan demo, kita bisa tambahkan validasi lain di sini
-                return false;
-            }
-            
-            // Fungsi untuk menampilkan hasil tes
-            function showResult() {
-                loginContainer.style.display = 'none';
-                resultContainer.style.display = 'block';
-                errorMessage.style.display = 'none';
-            }
-            
-            // Fungsi untuk kembali ke login
-            function showLogin() {
-                loginContainer.style.display = 'block';
-                resultContainer.style.display = 'none';
-                // Reset form
-                loginForm.reset();
-            }
-            
-            // Handle form submission
-            loginForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const nisn = nisnInput.value.trim();
-                const birthdate = birthdateInput.value.trim();
-                
-                if (nisn.length !== 10) {
-                    errorMessage.textContent = 'NISN harus 10 digit angka';
-                    errorMessage.style.display = 'block';
-                    return;
-                }
-                
-                if (validateLogin(nisn, birthdate)) {
-                    showResult();
-                } else {
-                    errorMessage.textContent = 'NISN atau tanggal lahir salah. Silakan coba lagi.';
-                    errorMessage.style.display = 'block';
-                }
-            });
-            
-            // Handle demo button
-            demoBtn.addEventListener('click', function() {
-                nisnInput.value = '0123456789';
-                birthdateInput.value = '31-12-2008';
-                
-                // Auto submit after 500ms
-                setTimeout(function() {
-                    if (validateLogin('0123456789', '31-12-2008')) {
-                        showResult();
-                    }
-                }, 500);
-            });
-            
-            // Handle logout button
-            logoutBtn.addEventListener('click', function() {
-                showLogin();
-            });
-            
-            // Enter key untuk submit
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter' && loginContainer.style.display !== 'none') {
-                    loginForm.dispatchEvent(new Event('submit'));
-                }
-            });
-            
-            // Informasi akun demo di console
-            console.log('=== AKUN DEMO ===');
-            console.log('NISN: 0123456789');
-            console.log('Tanggal Lahir: 31-12-2008');
-            console.log('=================');
+        // Konfigurasi API
+        const API_BASE = window.location.hostname === 'localhost' 
+            ? 'http://localhost:8787' 
+            : ''; // Gunakan origin yang sama di production
+        
+        // DOM Elements
+        const loginContainer = document.getElementById('loginContainer');
+        const resultContainer = document.getElementById('resultContainer');
+        const loginForm = document.getElementById('loginForm');
+        const demoBtn = document.getElementById('demoBtn');
+        const errorMessage = document.getElementById('errorMessage');
+        const loadingElement = document.getElementById('loading');
+        
+        // Format input
+        document.getElementById('nisn').addEventListener('input', function() {
+            this.value = this.value.replace(/\D/g, '').slice(0, 10);
         });
+        
+        document.getElementById('birthdate').addEventListener('input', function(e) {
+            let value = this.value.replace(/\D/g, '');
+            if (value.length >= 2 && value.length < 4) {
+                value = value.slice(0, 2) + '-' + value.slice(2);
+            } else if (value.length >= 4 && value.length < 8) {
+                value = value.slice(0, 2) + '-' + value.slice(2, 4) + '-' + value.slice(4);
+            } else if (value.length >= 8) {
+                value = value.slice(0, 2) + '-' + value.slice(2, 4) + '-' + value.slice(4, 8);
+            }
+            this.value = value;
+        });
+        
+        // Handle login form
+        loginForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const nisn = document.getElementById('nisn').value.trim();
+            const birthdate = document.getElementById('birthdate').value.trim();
+            
+            if (nisn.length !== 10) {
+                showError('NISN harus 10 digit angka');
+                return;
+            }
+            
+            await login(nisn, birthdate);
+        });
+        
+        // Handle demo button
+        demoBtn.addEventListener('click', function() {
+            document.getElementById('nisn').value = '0086565132';
+            document.getElementById('birthdate').value = '27-04-2008';
+            setTimeout(() => loginForm.dispatchEvent(new Event('submit')), 100);
+        });
+        
+        // Login function
+        async function login(nisn, birthdate) {
+            showLoading(true);
+            hideError();
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ nisn, birthdate })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    displayResult(data.student);
+                } else {
+                    showError(data.error || 'Login gagal');
+                }
+            } catch (error) {
+                showError('Koneksi ke server gagal');
+                console.error('Login error:', error);
+            } finally {
+                showLoading(false);
+            }
+        }
+        
+        // Display result
+        function displayResult(student) {
+            const nilai = student.nilai;
+            const keterangan = student.keterangan;
+            const mapel = student.mapelPilihan;
+            
+            const resultHTML = `
+                <div class="letterhead">
+                    <h2>SMAN 2 CIKARANG BARAT</h2>
+                    <h3>KCD WIL III DINAS PENDIDIKAN PROVINSI JAWA BARAT</h3>
+                    <h4>Perum Metland Cibitung, Cikarang Barat, Bekasi</h4>
+                    <h4>sman2cikarangbarat.pages.dev | Email: sman2cikarangbarat@gmail.com</h4>
+                </div>
+                
+                <div class="result-title">
+                    HASIL TES KOMPETENSI AKADEMIK (TKA)
+                </div>
+                
+                <div class="info-section">
+                    <div class="info-row">
+                        <div class="info-label">Nama</div>
+                        <div class="colon">:</div>
+                        <div class="info-value">${student.nama}</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Tempat, Tanggal Lahir</div>
+                        <div class="colon">:</div>
+                        <div class="info-value">${student.ttl}</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Nomor Induk Siswa Nasional</div>
+                        <div class="colon">:</div>
+                        <div class="info-value">${student.nisn}</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Nomor Peserta TKA</div>
+                        <div class="colon">:</div>
+                        <div class="info-value">${student.noUjian}</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">NPSN - Satuan Pendidikan Asal</div>
+                        <div class="colon">:</div>
+                        <div class="info-value">69964653</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">NPSN - Satuan Pendidikan Pelaksana</div>
+                        <div class="colon">:</div>
+                        <div class="info-value">69964653</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Tanggal Pelaksanaan TKA</div>
+                        <div class="colon">:</div>
+                        <div class="info-value">3 - 6 November 2025</div>
+                    </div>
+                </div>
+                
+                <div class="text-content">
+                    <p>Yang telah mengikuti TKA di Kabupaten Bekasi, Provinsi Jawa Barat sesuai Pedoman Penyelenggaraan, Nomor 9 yang diterbitkan tahun 2025 dengan hasil:</p>
+                </div>
+                
+                <table>
+                    <caption>Hasil Tes Kompetensi Akademik</caption>
+                    <thead>
+                        <tr>
+                            <th width="10%">No</th>
+                            <th width="50%">Mata Pelajaran</th>
+                            <th width="20%">Nilai</th>
+                            <th width="20%">Kategori</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>Bahasa Indonesia</td>
+                            <td>${nilai.bin.toFixed(2)}</td>
+                            <td>${keterangan.k_bin}</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Matematika</td>
+                            <td>${nilai.mtk.toFixed(2)}</td>
+                            <td>${keterangan.k_mtk}</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Bahasa Inggris</td>
+                            <td>${nilai.big.toFixed(2)}</td>
+                            <td>${keterangan.k_big}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div class="subject-choice">
+                    <table>
+                        <caption>Mata Pelajaran Pilihan</caption>
+                        <thead>
+                            <tr>
+                                <th width="10%">No</th>
+                                <th width="50%">Mata Pelajaran</th>
+                                <th width="20%">Nilai</th>
+                                <th width="20%">Kategori</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>4</td>
+                                <td>${mapel.m1}</td>
+                                <td>${nilai.mp1.toFixed(2)}</td>
+                                <td>${keterangan.k_mp1}</td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td>${mapel.m2}</td>
+                                <td>${nilai.mp2.toFixed(2)}</td>
+                                <td>${keterangan.k_mp2}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="footer-note">
+                    <p>* Dokumen ini merupakan hasil dari Tes Kompetensi Akademik (TKA) yang dilakukan sesuai dengan pedoman penyelenggaraan yang berlaku.</p>
+                </div>
+                
+                <button class="logout-btn" onclick="logout()">Keluar</button>
+            `;
+            
+            resultContainer.innerHTML = resultHTML;
+            loginContainer.style.display = 'none';
+            resultContainer.style.display = 'block';
+        }
+        
+        // Helper functions
+        function showLoading(show) {
+            loadingElement.style.display = show ? 'block' : 'none';
+        }
+        
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+        }
+        
+        function hideError() {
+            errorMessage.style.display = 'none';
+        }
+        
+        function logout() {
+            loginContainer.style.display = 'block';
+            resultContainer.style.display = 'none';
+            loginForm.reset();
+            hideError();
+        }
+        
+        // Admin functions
+        async function importCSV() {
+            const fileInput = document.getElementById('csvFile');
+            if (!fileInput.files[0]) {
+                alert('Pilih file CSV terlebih dahulu');
+                return;
+            }
+            
+            const formData = new FormData();
+            formData.append('csv', fileInput.files[0]);
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/import`, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                document.getElementById('importResult').innerHTML = 
+                    `<strong>${result.message}</strong><br>
+                     ${result.details ? `Details: ${JSON.stringify(result.details)}` : ''}`;
+            } catch (error) {
+                document.getElementById('importResult').innerHTML = 
+                    `<strong style="color: red;">Error: ${error.message}</strong>`;
+            }
+        }
+        
+        // Enter key untuk submit
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && loginContainer.style.display !== 'none') {
+                loginForm.dispatchEvent(new Event('submit'));
+            }
+        });
+        
+        // Check if admin
+        function checkAdmin() {
+            // Simple admin check (bisa diganti dengan auth yang lebih aman)
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('admin') === 'true') {
+                document.getElementById('adminPanel').style.display = 'block';
+            }
+        }
+        
+        // Initialize
+        checkAdmin();
+        console.log('TKA SMAN 2 Cikarang Barat - Sistem Hasil Ujian');
     </script>
 </body>
 </html>
