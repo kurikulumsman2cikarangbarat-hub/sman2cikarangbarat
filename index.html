@@ -83,7 +83,7 @@
             
             <div class="form-group">
                 <label for="birthdate">Tanggal Lahir (DD-MM-YYYY)</label>
-                <input type="text" id="birthdate" name="birthdate" placeholder="Contoh: 31-12-2008" required>
+                <input type="text" id="birthdate" name="birthdate" placeholder="Contoh: 31-12-2008">
             </div>
             
             <div class="error-message" id="errorMessage"></div>
@@ -220,26 +220,26 @@
                 this.value = value;
             });
 
-            // Handle Submit hanya dengan NISN
+            // Handle Submit - VERSI FIX (Hanya NISN)
 loginForm.addEventListener('submit', function(e) {
     e.preventDefault();
     
-    const nisn = nisnInput.value.trim();
-    // Tanggal lahir diabaikan atau diisi string kosong
-    const birthdate = ""; 
+    const nisn = document.getElementById('nisn').value.trim();
 
+    // Validasi sederhana di sisi klien
     if (nisn.length < 3) {
         showError("Mohon masukkan NISN dengan benar.");
         return;
     }
 
-    // UI Loading State
     setLoading(true);
 
-    // Kirim data ke Apps Script (Hanya mengirim NISN, tgl dikirim kosong)
+    // Kirim HANYA data nisn ke Apps Script
     fetch(SCRIPT_URL, {
         method: 'POST',
-        body: JSON.stringify({ nisn: nisn, tgl: birthdate }) 
+        // Menggunakan mode 'cors' untuk memastikan komunikasi lancar
+        mode: 'cors', 
+        body: JSON.stringify({ nisn: nisn }) 
     })
     .then(response => response.json())
     .then(response => {
@@ -248,14 +248,13 @@ loginForm.addEventListener('submit', function(e) {
             populateData(response.data);
             showResult();
         } else {
-            // Pesan error diubah agar tidak menyebutkan tanggal lahir
-            showError("Data tidak ditemukan! Periksa kembali NISN Anda.");
+            showError("NISN tidak ditemukan! Pastikan nomor yang dimasukkan benar.");
         }
     })
     .catch(error => {
         setLoading(false);
         console.error('Error:', error);
-        showError("Terjadi kesalahan koneksi. Silakan coba lagi.");
+        showError("Terjadi kesalahan koneksi atau URL Script salah.");
     });
 });
             function populateData(data) {
