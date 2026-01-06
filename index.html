@@ -212,43 +212,35 @@
             border: 1px solid #e9ecef;
         }
         
-        /* Data Item Styling yang DIPERBAIKI - Format Mobile Baru */
-        .data-item {
-            display: flex;
-            flex-wrap: nowrap;
-            margin-bottom: 10px;
-            align-items: flex-start;
-            line-height: 1.4;
+        /* Data Item Styling untuk Mobile - FORMAT VERTIKAL (key di atas, value di bawah) */
+        .data-item-mobile {
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #dee2e6;
         }
         
-        .data-item:last-child {
+        .data-item-mobile:last-child {
             margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
         }
         
         .data-label-mobile {
             color: #333;
             font-weight: 600;
             font-size: 13px;
-            flex-shrink: 0;
-            min-width: 150px;
-            padding-right: 5px;
-        }
-        
-        .data-separator-mobile {
-            color: #333;
-            font-weight: 600;
-            font-size: 13px;
-            margin-right: 5px;
-            flex-shrink: 0;
+            margin-bottom: 4px;
+            display: block;
         }
         
         .data-value-mobile {
             color: #000;
             font-weight: 500;
-            font-size: 13px;
+            font-size: 14px;
             line-height: 1.4;
             word-break: break-word;
-            flex: 1;
+            display: block;
+            padding-left: 10px;
         }
         
         /* Desktop Layout - Sembunyikan untuk mobile */
@@ -439,7 +431,7 @@
             }
             
             /* Desktop Layout - Tampilkan untuk desktop */
-            .data-item {
+            .data-item-mobile {
                 display: none; /* Sembunyikan mobile layout */
             }
             
@@ -526,14 +518,20 @@
                 font-size: 14px;
             }
             
-            /* Untuk landscape, perbaiki layout data-item */
+            /* Untuk landscape, kompaktkan layout mobile */
+            .data-item-mobile {
+                margin-bottom: 8px;
+                padding-bottom: 6px;
+            }
+            
             .data-label-mobile {
-                min-width: 120px;
                 font-size: 12px;
+                margin-bottom: 2px;
             }
             
             .data-value-mobile {
                 font-size: 12px;
+                padding-left: 8px;
             }
         }
     </style>
@@ -754,7 +752,7 @@
             const isDesktop = window.innerWidth >= 768;
             
             if (isDesktop) {
-                // Layout untuk Desktop (format asli)
+                // Layout untuk Desktop (format asli horizontal)
                 document.getElementById('studentInfo').innerHTML = `
                     <div class="desktop-data-item">
                         <div class="desktop-data-label">Nama</div>
@@ -793,41 +791,34 @@
                     </div>
                 `;
             } else {
-                // Layout untuk Mobile - Format "Label: Value" dalam satu baris
+                // Layout untuk Mobile - FORMAT VERTIKAL: key di atas, value di bawah
                 document.getElementById('studentInfo').innerHTML = `
-                    <div class="data-item">
+                    <div class="data-item-mobile">
                         <div class="data-label-mobile">Nama</div>
-                        <div class="data-separator-mobile">:</div>
                         <div class="data-value-mobile">${data.nama}</div>
                     </div>
-                    <div class="data-item">
+                    <div class="data-item-mobile">
                         <div class="data-label-mobile">Tempat, Tanggal Lahir</div>
-                        <div class="data-separator-mobile">:</div>
                         <div class="data-value-mobile">${data.ttl}</div>
                     </div>
-                    <div class="data-item">
+                    <div class="data-item-mobile">
                         <div class="data-label-mobile">Nomor Induk Siswa Nasional</div>
-                        <div class="data-separator-mobile">:</div>
                         <div class="data-value-mobile">${data.nisn}</div>
                     </div>
-                    <div class="data-item">
+                    <div class="data-item-mobile">
                         <div class="data-label-mobile">Nomor Peserta TKA</div>
-                        <div class="data-separator-mobile">:</div>
                         <div class="data-value-mobile">${nomorPeserta}</div>
                     </div>
-                    <div class="data-item">
+                    <div class="data-item-mobile">
                         <div class="data-label-mobile">NPSN - Satuan Pendidikan Asal</div>
-                        <div class="data-separator-mobile">:</div>
                         <div class="data-value-mobile">69964653</div>
                     </div>
-                    <div class="data-item">
+                    <div class="data-item-mobile">
                         <div class="data-label-mobile">NPSN - Satuan Pendidikan Pelaksana</div>
-                        <div class="data-separator-mobile">:</div>
                         <div class="data-value-mobile">69964653</div>
                     </div>
-                    <div class="data-item">
+                    <div class="data-item-mobile">
                         <div class="data-label-mobile">Tanggal Pelaksanaan TKA</div>
-                        <div class="data-separator-mobile">:</div>
                         <div class="data-value-mobile">3 - 6 November 2025</div>
                     </div>
                 `;
