@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Tool Lengkap - TKA</title>
+    <style>
+        body { font-family: 'Consolas', monospace; padding: 20px; background: #222; color: #ddd; max-width: 600px; margin: auto; }
+        .debug-box { border: 1px solid #444; padding: 20px; margin-bottom: 20px; background: #333; border-radius: 8px; }
+        h2 { margin-top: 0; color: #4CAF50; border-bottom: 1px solid #555; padding-bottom: 10px; font-size: 18px; }
+        label { display: block; margin-bottom: 5px; color: #aaa; font-size: 14px; }
+        input { width: 100%; padding: 10px; box-sizing: border-box; background: #111; border: 1px solid #555; color: #fff; margin-bottom: 10px; border-radius: 4px; }
+        button { width: 100%; padding: 10px; cursor: pointer; font-weight: bold; border: none; border-radius: 4px; transition: 0.2s; }
+        
+        .btn-1 { background-color: #2196F3; color: white; }
+        .btn-1:hover { background-color: #1976D2; }
+        
+        .btn-2 { background-color: #FF9800; color: white; }
+        .btn-2:hover { background-color: #F57C00; }
+
+        .btn-3 { background-color: #9C27B0; color: white; } /* Warna Ungu untuk Input 3 */
+        .btn-3:hover { background-color: #7B1FA2; }
+
+        .result { margin-top: 10px; padding: 15px; background: #000; border: 1px dashed #555; min-height: 20px; color: #0f0; word-wrap: break-word; line-height: 1.5; }
+        .loading { color: #fe0; }
+        .error { color: #ff5252; }
+    </style>
+</head>
+<body>
+
+    <div class="debug-box">
+        <h2>DEBUG 1: Cari Kolom L &rarr; Hasil K</h2>
+        <label>Masukkan Data (Pencarian di Kolom L):</label>
+        <input type="text" id="input1" placeholder="Contoh: Input NISN...">
+        <button class="btn-1" onclick="handleDebug('search_l')">CARI DI L (TAMPILKAN K)</button>
+        <div id="result1" class="result">Menunggu input...</div>
+    </div>
+
+    <div class="debug-box">
+        <h2>DEBUG 2: Cari Kolom K &rarr; Hasil L</h2>
+        <label>Masukkan Data (Pencarian di Kolom K):</label>
+        <input type="text" id="input2" placeholder="Contoh: Input No Ujian...">
+        <button class="btn-2" onclick="handleDebug('search_k')">CARI DI K (TAMPILKAN L)</button>
+        <div id="result2" class="result">Menunggu input...</div>
+    </div>
+
+    <div class="debug-box" style="border-color: #9C27B0;">
+        <h2 style="color: #E040FB;">DEBUG 3: Cek Baris (Row Index)</h2>
+        <label>Masukkan Angka Baris (1 - 243):</label>
+        <input type="number" id="input3" placeholder="Contoh: 1, 5, 10...">
+        <button class="btn-3" onclick="handleDebug('get_by_row')">LIHAT ISI BARIS TERSEBUT</button>
+        <div id="result3" class="result">Menunggu input...</div>
+    </div>
+
+    <script>
+        // URL Script Debugging Anda
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwOTevJfl1zO5-7YvGHmJsIQ-2-7czlvJ9DBgp7_v4bQqZEexGs6gyVDqHlZZK4Ajq3/exec";
+
+        function handleDebug(mode) {
+            let inputVal, resultEl;
+
+            // Tentukan elemen berdasarkan mode
+            if (mode === 'search_l') {
+                inputVal = document.getElementById('input1').value;
+                resultEl = document.getElementById('result1');
+            } else if (mode === 'search_k') {
+                inputVal = document.getElementById('input2').value;
+                resultEl = document.getElementById('result2');
+            } else if (mode === 'get_by_row') {
+                inputVal = document.getElementById('input3').value;
+                resultEl = document.getElementById('result3');
+            }
+
+            if (!inputVal) {
+                resultEl.innerHTML = "<span class='error'>Input tidak boleh kosong!</span>";
+                return;
+            }
+
+            // Tampilkan status loading
+            resultEl.innerHTML = "<span class='loading'>Sedang mengambil data dari server...</span>";
+
+            // Kirim data ke Apps Script
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                body: JSON.stringify({ 
+                    query: inputVal, 
+                    mode: mode 
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    // Tampilkan hasil (bisa HTML karena kita kirim tag <br> dari server untuk Input 3)
+                    resultEl.innerHTML = `STATUS: DITEMUKAN<hr>${data.result}`;
+                } else {
+                    resultEl.innerHTML = `<span class='error'>${data.message || 'Error tidak diketahui'}</span>`;
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                resultEl.innerHTML = "<span class='error'>Gagal Terhubung ke Script URL!</span>";
+            });
+        }
+    </script>
+</body>
+</html>
