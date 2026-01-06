@@ -6,10 +6,16 @@
     <title>Login - Hasil TKA SMAN 2 Cikarang Barat</title>
     <style>
         /* CSS */
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+        }
+        
         body { 
             background: linear-gradient(135deg, #1e3c72, #2a5298);
-            padding: 20px; 
+            padding: 15px; 
             display: flex; 
             justify-content: center; 
             align-items: center;
@@ -33,71 +39,72 @@
         /* Login Container */
         .container { 
             background: white; 
-            max-width: 500px; 
             width: 100%; 
-            padding: 40px; 
+            padding: 25px 20px; 
             border-radius: 12px; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2); 
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15); 
             height: fit-content; 
-            transition: transform 0.3s ease;
-        }
-        .container:hover {
-            transform: translateY(-5px);
         }
         
-        /* Header Styling */
+        /* Header Styling - Mobile Friendly */
         .header {
             display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 20px;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
+            text-align: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
             border-bottom: 2px solid #007bff;
         }
+        
         .logo-container {
-            flex-shrink: 0;
+            margin-bottom: 15px;
         }
+        
         .school-logo {
-            width: 80px;
-            height: 80px;
+            width: 70px;
+            height: 70px;
             border-radius: 8px;
             object-fit: cover;
             border: 2px solid #1e3c72;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 3px 8px rgba(0,0,0,0.1);
         }
-        .header-text {
-            flex: 1;
-        }
+        
         .header h2 { 
             color: #1e3c72; 
             margin-bottom: 5px;
-            font-size: 24px;
+            font-size: 20px;
+            line-height: 1.2;
         }
+        
         .header h4 { 
             color: #2a5298;
             font-weight: 600;
-            font-size: 16px;
+            font-size: 15px;
         }
         
         /* Form Styling */
         .form-group { 
-            margin-bottom: 20px; 
+            margin-bottom: 18px; 
         }
+        
         label { 
             display: block; 
-            margin-bottom: 8px; 
+            margin-bottom: 6px; 
             font-weight: 600;
             color: #333;
             font-size: 14px;
         }
+        
         input { 
             width: 100%; 
             padding: 12px 15px; 
             border: 1px solid #ccc; 
             border-radius: 4px; 
-            font-size: 16px; 
+            font-size: 15px; 
             transition: border-color 0.3s;
         }
+        
         input:focus {
             outline: none;
             border-color: #007bff;
@@ -112,16 +119,15 @@
             color: white; 
             border: none; 
             border-radius: 4px; 
-            font-size: 16px; 
+            font-size: 15px; 
             font-weight: 600;
             cursor: pointer; 
             margin-top: 10px; 
             transition: all 0.3s;
         }
+        
         .btn:hover { 
             background: linear-gradient(to right, #0056b3, #004494);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,86,179,0.3);
         }
         
         /* Error Message */
@@ -140,193 +146,220 @@
         /* Result Container */
         #resultContainer { 
             display: none; 
-            max-width: 900px; 
-            padding: 40px;
+            width: 100%;
+            padding: 20px 15px;
             background: white;
             border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+            overflow-x: hidden;
         }
         
-        /* Kop Surat Styling */
+        /* Kop Surat Styling - Mobile */
         .kop-surat {
             text-align: center;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
             border-bottom: 2px solid #1e3c72;
         }
+        
         .kop-surat h1 {
             color: #1e3c72;
-            font-size: 22px;
+            font-size: 18px;
             margin-bottom: 3px;
             font-weight: 700;
+            line-height: 1.3;
         }
+        
         .kop-surat h2 {
             color: #2a5298;
-            font-size: 16px;
-            margin-bottom: 2px;
+            font-size: 14px;
+            margin-bottom: 5px;
             font-weight: 600;
+            line-height: 1.2;
         }
+        
         .kop-surat .address {
             color: #333;
-            font-size: 13px;
+            font-size: 12px;
             margin-bottom: 5px;
+            line-height: 1.3;
         }
+        
         .kop-surat .contact {
             color: #666;
-            font-size: 12px;
-            margin-top: 8px;
+            font-size: 11px;
+            margin-top: 5px;
+            line-height: 1.2;
         }
         
         /* Judul Hasil TKA */
         .judul-tka {
             text-align: center;
-            margin: 25px 0 30px 0;
+            margin: 20px 0 25px 0;
             color: #1e3c72;
-            font-size: 20px;
+            font-size: 16px;
             font-weight: 700;
-            padding-bottom: 15px;
+            padding-bottom: 10px;
             border-bottom: 2px solid #1e3c72;
         }
         
-        /* Container Data Siswa */
+        /* Container Data Siswa - Mobile Optimized */
         .data-container {
-            margin: 30px 0;
+            margin: 20px 0;
         }
         
-        /* Data Item Styling - Mengikuti format tabel dari gambar */
+        /* Data Item Styling untuk Mobile */
         .data-item {
             display: flex;
-            margin-bottom: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 8px;
             align-items: flex-start;
         }
+        
         .data-label {
-            width: 320px;
+            width: 100%;
             color: #333;
             font-weight: 500;
-            font-size: 14px;
+            font-size: 12px;
             text-align: left;
+            margin-bottom: 2px;
         }
+        
         .data-separator {
-            width: 20px;
+            width: 15px;
             color: #333;
             font-weight: 500;
-            font-size: 14px;
+            font-size: 12px;
             text-align: center;
+            flex-shrink: 0;
         }
+        
         .data-value {
             flex: 1;
             color: #000;
             font-weight: 500;
-            font-size: 14px;
+            font-size: 12px;
+            line-height: 1.3;
+            word-break: break-word;
         }
         
-        /* Penjelasan TKA - ukuran font lebih besar */
+        /* Penjelasan TKA - Mobile */
         .penjelasan {
-            font-size: 14px;
+            font-size: 12px;
             color: #555;
-            margin: 30px 0;
-            padding: 15px;
+            margin: 20px 0;
+            padding: 12px;
             background: #f5f5f5;
             border-radius: 6px;
             font-style: italic;
             text-align: justify;
-            line-height: 1.6;
+            line-height: 1.5;
         }
         
-        /* Table Styling */
+        /* Table Styling - Mobile Responsive */
         .table-container {
-            margin: 30px 0;
+            margin: 20px 0;
+            overflow-x: auto;
         }
+        
         .table-title {
             background: #1e3c72;
             color: white;
-            padding: 12px;
+            padding: 10px;
             font-weight: 600;
             text-align: center;
             border-radius: 6px 6px 0 0;
-            font-size: 16px;
+            font-size: 14px;
             margin-bottom: 0;
         }
+        
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             border: 1px solid #ddd;
+            min-width: 300px;
         }
+        
         th {
             background: #2a5298;
             color: white;
-            padding: 10px;
+            padding: 8px 5px;
             text-align: center;
             font-weight: 600;
             border: 1px solid #ddd;
-            font-size: 14px;
+            font-size: 12px;
+            white-space: nowrap;
         }
+        
         td {
-            padding: 10px;
+            padding: 8px 5px;
             border: 1px solid #ddd;
             text-align: left;
-            font-size: 14px;
+            font-size: 12px;
             color: #000;
         }
+        
         td:first-child {
             text-align: center;
-            width: 60px;
+            width: 40px;
             font-weight: 500;
         }
+        
         td:nth-child(2) {
             font-weight: 500;
+            min-width: 120px;
         }
+        
         td:nth-child(3), td:nth-child(4) {
             text-align: center;
-            width: 120px;
+            width: 80px;
             font-weight: 500;
         }
+        
         tr:nth-child(even) {
             background-color: #f8f9fa;
         }
         
-        /* Catatan Kaki - dipindah di atas tombol */
+        /* Catatan Kaki */
         .catatan-container {
-            margin: 20px 0 30px 0;
-            padding: 15px;
+            margin: 15px 0 20px 0;
+            padding: 12px;
             background: #f9f9f9;
             border-radius: 6px;
             border: 1px solid #eee;
         }
+        
         .catatan {
-            font-size: 12px;
+            font-size: 11px;
             color: #666;
             font-style: italic;
             text-align: justify;
-            line-height: 1.5;
+            line-height: 1.4;
             margin: 0;
         }
         
-        /* Logout Button - ukuran lebih kecil */
+        /* Logout Button */
         .logout-container {
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
+        
         .logout { 
             background: linear-gradient(to right, #dc3545, #c82333); 
             width: 100%;
             padding: 10px;
             font-size: 14px;
         }
-        .logout:hover { 
-            background: linear-gradient(to right, #c82333, #a71d2a);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(220,53,69,0.3);
-        }
         
         /* Kurikulum Footnote */
         .kurikulum-container {
-            margin-top: 20px;
-            padding-top: 15px;
+            margin-top: 15px;
+            padding-top: 12px;
             border-top: 1px dashed #ccc;
         }
+        
         .kurikulum {
-            font-size: 11px;
+            font-size: 10px;
             color: #888;
             text-align: center;
             font-style: italic;
@@ -334,15 +367,125 @@
         
         /* Footer di menu login */
         .login-footer {
-            margin-top: 30px;
+            margin-top: 25px;
             padding-top: 15px;
             border-top: 1px solid #eee;
             text-align: center;
         }
+        
         .login-kurikulum {
-            font-size: 11px;
+            font-size: 10px;
             color: #888;
             font-style: italic;
+        }
+        
+        /* Small text */
+        small {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        /* Media Queries untuk tablet dan desktop */
+        @media (min-width: 768px) {
+            body {
+                padding: 20px;
+            }
+            
+            .container {
+                max-width: 500px;
+                padding: 35px 30px;
+            }
+            
+            #resultContainer {
+                max-width: 900px;
+                padding: 30px 25px;
+            }
+            
+            .header {
+                flex-direction: row;
+                text-align: left;
+                gap: 20px;
+            }
+            
+            .logo-container {
+                margin-bottom: 0;
+            }
+            
+            .school-logo {
+                width: 80px;
+                height: 80px;
+            }
+            
+            .header h2 {
+                font-size: 24px;
+            }
+            
+            .header h4 {
+                font-size: 16px;
+            }
+            
+            .data-item {
+                flex-wrap: nowrap;
+            }
+            
+            .data-label {
+                width: 320px;
+                font-size: 14px;
+                margin-bottom: 0;
+            }
+            
+            .data-value {
+                font-size: 14px;
+            }
+            
+            .kop-surat h1 {
+                font-size: 22px;
+            }
+            
+            .kop-surat h2 {
+                font-size: 16px;
+            }
+            
+            .judul-tka {
+                font-size: 20px;
+            }
+            
+            th, td {
+                font-size: 14px;
+                padding: 10px;
+            }
+            
+            td:first-child {
+                width: 60px;
+            }
+            
+            td:nth-child(3), td:nth-child(4) {
+                width: 120px;
+            }
+        }
+        
+        /* Media Query untuk landscape mode */
+        @media (orientation: landscape) and (max-height: 600px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                padding: 20px 15px;
+            }
+            
+            .header {
+                margin-bottom: 15px;
+            }
+            
+            .form-group {
+                margin-bottom: 12px;
+            }
+            
+            .judul-tka {
+                margin: 15px 0;
+                font-size: 14px;
+            }
         }
     </style>
 </head>
@@ -370,8 +513,8 @@
             
             <div class="form-group">
                 <label>Tanggal Lahir (DD/MM/YYYY)</label>
-                <input type="text" id="birthdate" placeholder="Contoh: 27/04/2008" required>
-                <small style="color:#666; display:block; margin-top:5px;">Gunakan format: DD/MM/YYYY</small>
+                <input type="text" id="birthdate" placeholder="Contoh: 31/12/2008" required>
+                <small>Gunakan format: DD/MM/YYYY</small>
             </div>
             
             <button type="submit" class="btn" id="submitBtn">LIHAT HASIL</button>
@@ -403,7 +546,7 @@
             <!-- Data akan diisi oleh JavaScript -->
         </div>
 
-        <!-- Penjelasan TKA - Font size sama dengan teks lainnya -->
+        <!-- Penjelasan TKA -->
         <div class="penjelasan">
             Yang telah mengikuti TKA di Kabupaten Bekasi, Provinsi Jawa Barat sesuai Pedoman Penyelenggaraan, Nomor 9 yang diterbitkan tahun 2025 dengan hasil:
         </div>
@@ -444,19 +587,19 @@
             </table>
         </div>
 
-        <!-- Catatan Kaki di bawah tabel -->
+        <!-- Catatan Kaki -->
         <div class="catatan-container">
             <div class="catatan">
                 * Dokumen ini merupakan hasil dari Tes Kompetensi Akademik (TKA) yang dilakukan sesuai dengan pedoman penyelenggaraan yang berlaku.
             </div>
         </div>
 
-        <!-- Logout Button - ukuran lebih kecil dan hanya "Keluar" -->
+        <!-- Logout Button -->
         <div class="logout-container">
             <button class="btn logout" onclick="location.reload()">KELUAR</button>
         </div>
 
-        <!-- Kurikulum Footnote di bawah tombol -->
+        <!-- Kurikulum Footnote -->
         <div class="kurikulum-container">
             <div class="kurikulum">
                 Kurikulum SMAN 2 Cikarang Barat
@@ -464,7 +607,7 @@
         </div>
     </div>
 
-<script>
+    <script>
         // Blokir F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
         document.addEventListener('keydown', function(e) {
             if (e.key === 'F12' || 
