@@ -638,7 +638,7 @@
             return false;
         });
 
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw8CBBQA_pdm_7AihngbfQ_swaSWAm6oAz4KptsRvQtxsZciWLDmypOJCIlgbStwj2A/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx1eI_ErJqe4PocYAQYI2E-xlwfJvB_53oDCIf7Xtcpjz7ZH2nwUU5pIdnAf_uUI1Rb/exec";
 
         // Format tanggal otomatis
         document.getElementById('birthdate').addEventListener('input', function(e) {
@@ -699,7 +699,7 @@
             document.getElementById('resultContainer').style.display = 'block';
 
             // Format nomor peserta sesuai contoh dari gambar
-            const nomorPeserta = `T3-25-02-12-1005-${data.no_ujian} ${data.nisn}`;
+            const nomorPeserta = `T3-25-02-12-1005-${data.no_ujian}`;
 
             // Data Siswa dalam format tabel seperti gambar
             document.getElementById('studentInfo').innerHTML = `
