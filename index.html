@@ -220,7 +220,7 @@
             font-size: 14px;
         }
         
-        /* Penjelasan TKA */
+        /* Penjelasan TKA - ukuran font lebih besar */
         .penjelasan {
             font-size: 14px;
             color: #555;
@@ -250,7 +250,7 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             border: 1px solid #ddd;
         }
         th {
@@ -286,11 +286,13 @@
             background-color: #f8f9fa;
         }
         
-        /* Catatan Kaki dan Footer */
-        .footer-container {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px dashed #ccc;
+        /* Catatan Kaki - dipindah di atas tombol */
+        .catatan-container {
+            margin: 20px 0 30px 0;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 6px;
+            border: 1px solid #eee;
         }
         .catatan {
             font-size: 12px;
@@ -298,31 +300,36 @@
             font-style: italic;
             text-align: justify;
             line-height: 1.5;
-            margin-bottom: 10px;
-        }
-        .kurikulum {
-            font-size: 11px;
-            color: #888;
-            text-align: center;
-            margin-top: 15px;
-            padding-top: 10px;
-            border-top: 1px solid #eee;
-            font-style: italic;
+            margin: 0;
         }
         
-        /* Logout Button di atas footnote */
+        /* Logout Button - ukuran lebih kecil */
         .logout-container {
-            margin-top: 30px;
             margin-bottom: 20px;
         }
         .logout { 
             background: linear-gradient(to right, #dc3545, #c82333); 
             width: 100%;
+            padding: 10px;
+            font-size: 14px;
         }
         .logout:hover { 
             background: linear-gradient(to right, #c82333, #a71d2a);
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(220,53,69,0.3);
+        }
+        
+        /* Kurikulum Footnote */
+        .kurikulum-container {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px dashed #ccc;
+        }
+        .kurikulum {
+            font-size: 11px;
+            color: #888;
+            text-align: center;
+            font-style: italic;
         }
         
         /* Footer di menu login */
@@ -396,7 +403,7 @@
             <!-- Data akan diisi oleh JavaScript -->
         </div>
 
-        <!-- Penjelasan TKA -->
+        <!-- Penjelasan TKA - Font size sama dengan teks lainnya -->
         <div class="penjelasan">
             Yang telah mengikuti TKA di Kabupaten Bekasi, Provinsi Jawa Barat sesuai Pedoman Penyelenggaraan, Nomor 9 yang diterbitkan tahun 2025 dengan hasil:
         </div>
@@ -437,19 +444,20 @@
             </table>
         </div>
 
-        <!-- Logout Button di atas footnote -->
-        <div class="logout-container">
-            <button class="btn logout" onclick="location.reload()">KELUAR / CARI LAGI</button>
-        </div>
-
-        <!-- Footer Container -->
-        <div class="footer-container">
-            <!-- Catatan Kaki -->
+        <!-- Catatan Kaki di bawah tabel -->
+        <div class="catatan-container">
             <div class="catatan">
                 * Dokumen ini merupakan hasil dari Tes Kompetensi Akademik (TKA) yang dilakukan sesuai dengan pedoman penyelenggaraan yang berlaku.
             </div>
-            
-            <!-- Kurikulum Footnote -->
+        </div>
+
+        <!-- Logout Button - ukuran lebih kecil dan hanya "Keluar" -->
+        <div class="logout-container">
+            <button class="btn logout" onclick="location.reload()">KELUAR</button>
+        </div>
+
+        <!-- Kurikulum Footnote di bawah tombol -->
+        <div class="kurikulum-container">
             <div class="kurikulum">
                 Kurikulum SMAN 2 Cikarang Barat
             </div>
