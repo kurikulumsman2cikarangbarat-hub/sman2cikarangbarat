@@ -4,242 +4,318 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Monitor Keterlambatan Siswa</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
         /* =========================================
-           1. CSS DASAR (MOBILE FIRST)
+           1. CORE VARIABLES & RESET
            ========================================= */
         :root {
-            --primary-color: #1e3c72;
-            --secondary-color: #2a5298;
-            --accent-color: #e74c3c;
-            --bg-color: #f4f7f6;
-            --card-bg: #ffffff;
-            --text-color: #333;
+            --primary: #1e3c72;
+            --secondary: #2a5298;
+            --accent: #e74c3c;
+            --bg-body: #f0f2f5;
+            --bg-card: #ffffff;
+            --text-main: #333;
+            --text-sub: #666;
+            --border: #e0e0e0;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Roboto', sans-serif; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
         
         body { 
-            background: var(--bg-color); 
-            color: var(--text-color); 
-            padding: 15px;
+            background: var(--bg-body); 
+            color: var(--text-main); 
             min-height: 100vh;
+            padding: 20px;
         }
-        
+
+        /* =========================================
+           2. CONTAINER & HEADER
+           ========================================= */
         .container { 
             max-width: 100%; 
             margin: 0 auto; 
-            background: var(--card-bg); 
-            padding: 20px; 
-            border-radius: 12px; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
+            background: transparent;
         }
 
-        h1 { 
-            text-align: center; 
-            color: var(--primary-color); 
-            margin-bottom: 20px; 
-            font-size: 1.5rem; 
-        }
-
-        /* --- CONTROLS AREA (FILTER) --- */
-        .controls-wrapper {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 10px;
-            border: 1px solid #e9ecef;
+        .dashboard-header {
+            background: var(--bg-card);
+            padding: 20px 25px;
+            border-radius: 12px;
+            box-shadow: var(--shadow-sm);
             margin-bottom: 20px;
             display: flex;
-            flex-direction: column; /* Default: Susun ke bawah (Mobile) */
+            flex-direction: column; /* Mobile: Stack vertikal */
             gap: 15px;
         }
 
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            width: 100%;
+        h1 { 
+            color: var(--primary); 
+            font-size: 1.5rem; 
+            font-weight: 700;
+            display: flex; align-items: center; gap: 10px;
         }
 
-        label { margin-bottom: 5px; font-weight: 600; color: #555; font-size: 0.9rem; }
-        
-        select, button { 
-            width: 100%; 
-            padding: 12px; 
-            border: 1px solid #ced4da; 
-            border-radius: 6px; 
-            font-size: 1rem; 
-            background: white;
-            transition: 0.2s;
-        }
-
-        /* --- TOMBOL MODE --- */
+        /* --- MODE SWITCHER (TABS) --- */
         .mode-switch-container {
             display: flex;
-            background: #e9ecef;
+            background: #f1f3f4;
             border-radius: 8px;
             padding: 4px;
-            margin-bottom: 15px;
+            width: 100%;
         }
 
         .mode-btn {
             flex: 1;
             background: transparent;
             border: none;
-            color: #666;
+            color: var(--text-sub);
             font-weight: 600;
             padding: 10px;
             cursor: pointer;
             border-radius: 6px;
+            font-size: 0.9rem;
+            transition: all 0.2s;
         }
 
         .mode-btn.active {
             background: white;
-            color: var(--primary-color);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            color: var(--primary);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
 
-        /* --- TOMBOL UTAMA --- */
+        /* =========================================
+           3. FILTER CONTROL AREA
+           ========================================= */
+        .controls-card {
+            background: var(--bg-card);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 25px;
+            border: 1px solid var(--border);
+        }
+
+        /* Mobile Default Layout */
+        .controls-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .form-group { display: flex; flex-direction: column; }
+        label { margin-bottom: 6px; font-weight: 600; font-size: 0.85rem; color: var(--text-sub); }
+        
+        select, .btn-check { 
+            width: 100%; 
+            padding: 12px 15px; 
+            border-radius: 8px; 
+            font-size: 0.95rem; 
+            outline: none;
+            height: 48px; /* Tinggi seragam */
+        }
+
+        select { 
+            border: 1px solid var(--border); 
+            background: #fff; 
+            cursor: pointer;
+        }
+        select:focus { border-color: var(--primary); ring: 2px solid rgba(30,60,114,0.1); }
+
         .btn-check { 
-            background: #27ae60; color: white; border: none; font-weight: bold; cursor: pointer; 
-            margin-top: 5px;
+            background: #27ae60; 
+            color: white; 
+            border: none; 
+            font-weight: 600; 
+            cursor: pointer; 
+            transition: background 0.2s;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
         }
         .btn-check:hover { background: #219150; }
-        .btn-check:active { transform: scale(0.98); }
 
-        /* --- HASIL DATA & TABEL --- */
-        .stats-summary { 
-            display: flex; justify-content: space-between; align-items: center;
-            background: #e8f5e9; padding: 12px; border-radius: 8px; 
-            margin-bottom: 15px; border: 1px solid #c8e6c9; 
-            color: #2e7d32; font-weight: bold; font-size: 0.9rem;
+        /* =========================================
+           4. TABLE & RESULTS
+           ========================================= */
+        .result-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            box-shadow: var(--shadow-md);
+            overflow: hidden; /* Round corners for table */
         }
 
-        /* Wrapper Tabel agar bisa scroll horizontal di HP */
+        .stats-summary {
+            padding: 15px 25px;
+            background: #f8f9fa;
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            font-weight: 600; color: var(--text-main);
+        }
+
         .table-responsive {
             width: 100%;
-            overflow-x: auto; 
-            -webkit-overflow-scrolling: touch;
+            overflow-x: auto;
+            max-height: 600px; /* Scroll vertical jika data banyak */
         }
 
-        table { width: 100%; border-collapse: collapse; min-width: 500px; /* Lebar min agar tidak gepeng di HP */ }
-        
-        th, td { padding: 12px 10px; text-align: left; border-bottom: 1px solid #eee; font-size: 0.95rem; }
-        th { background: var(--primary-color); color: white; white-space: nowrap; }
-        tr:nth-child(even) { background: #fafafa; }
-        
-        /* Tombol Detail Kecil */
-        .btn-detail {
-            background: #3498db; color: white; border: none; 
-            padding: 6px 12px; font-size: 0.85rem; border-radius: 4px; 
-            cursor: pointer; width: auto;
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            min-width: 600px; /* Mencegah tabel gepeng di HP */
         }
 
+        th { 
+            background: var(--primary); 
+            color: white; 
+            font-weight: 600; 
+            text-transform: uppercase; 
+            font-size: 0.8rem; 
+            letter-spacing: 0.5px;
+            position: sticky; /* Sticky Header */
+            top: 0;
+            z-index: 10;
+        }
+
+        th, td { padding: 16px 20px; text-align: left; border-bottom: 1px solid #f0f0f0; }
+        
+        tr:hover { background-color: #f8fbff; }
+        tr:last-child td { border-bottom: none; }
+
+        /* Badges & Buttons */
         .badge-count { 
-            background: var(--accent-color); color: white; 
-            padding: 4px 10px; border-radius: 12px; font-size: 0.8rem; font-weight: bold;
+            background: #fff0f0; color: var(--accent); 
+            padding: 4px 12px; border-radius: 20px; 
+            font-weight: 700; font-size: 0.9rem; border: 1px solid #ffcccc;
         }
 
-        /* --- MODAL (POPUP) --- */
-        .modal-overlay {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6); z-index: 1000; align-items: center; justify-content: center;
-            padding: 20px;
+        .btn-detail {
+            background: white; border: 1px solid var(--secondary); color: var(--secondary);
+            padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: 600;
+            transition: all 0.2s;
         }
-        .modal-content {
-            background: white; width: 100%; max-width: 500px; padding: 0;
-            border-radius: 10px; overflow: hidden; display: flex; flex-direction: column;
-            max-height: 85vh;
-        }
-        .modal-header {
-            background: var(--primary-color); color: white; padding: 15px 20px;
-            display: flex; justify-content: space-between; align-items: center;
-        }
-        .modal-body { padding: 20px; overflow-y: auto; }
-        .detail-item {
-            background: #f8f9fa; padding: 12px; margin-bottom: 10px;
-            border-left: 4px solid var(--secondary-color); border-radius: 4px;
-            display: flex; justify-content: space-between;
-        }
-        .close-btn { background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; width: auto; }
+        .btn-detail:hover { background: var(--secondary); color: white; }
 
-        .spinner { text-align: center; padding: 20px; color: var(--primary-color); display: none; }
+        .spinner { text-align: center; padding: 40px; color: var(--primary); display: none; }
         .hidden { display: none !important; }
 
         /* =========================================
-           2. MEDIA QUERY: TAMPILAN DESKTOP / TABLET
-           (Aktif jika layar lebih lebar dari 768px)
+           5. MODAL
            ========================================= */
-        @media (min-width: 768px) {
-            body { padding: 30px; background: #eaeff2; }
-            .container { max-width: 1000px; padding: 30px; }
-            h1 { font-size: 2rem; margin-bottom: 30px; }
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); z-index: 2000; align-items: center; justify-content: center;
+            backdrop-filter: blur(3px);
+            padding: 20px;
+        }
+        .modal-content {
+            background: white; width: 100%; max-width: 480px; 
+            border-radius: 12px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            animation: slideUp 0.3s ease;
+        }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-            /* Filter menjadi horizontal (berjajar) */
-            .controls-wrapper.filter-active {
-                flex-direction: row; 
-                align-items: flex-end; /* Ratakan tombol dengan input */
+        .modal-header { background: var(--primary); color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
+        .modal-body { padding: 0; max-height: 60vh; overflow-y: auto; }
+        
+        .detail-item {
+            padding: 15px 20px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;
+        }
+        .detail-item:last-child { border-bottom: none; }
+
+        /* =========================================
+           6. DESKTOP OPTIMIZATION (min-width: 900px)
+           ========================================= */
+        @media (min-width: 900px) {
+            body { padding: 40px; }
+            .container { max-width: 1100px; margin: 0 auto; }
+
+            /* Header menjadi Horizontal (Judul Kiri, Tab Kanan) */
+            .dashboard-header {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+                padding: 15px 30px;
+            }
+            .mode-switch-container { width: 300px; margin: 0; }
+
+            /* Grid Layout untuk Filter */
+            .controls-card { padding: 30px; }
+            
+            /* Jika mode Per Kelas aktif, gunakan Grid 3 Kolom */
+            .controls-grid.filter-active {
+                display: grid;
+                grid-template-columns: 1fr 1fr 200px; /* Jenjang, Kelas, Tombol Fixed */
                 gap: 20px;
+                align-items: end; /* Ratakan tombol ke bawah sejajar input */
             }
 
-            .form-group { flex: 1; } /* Input membagi rata lebar layar */
-            
-            .btn-check { width: auto; padding-left: 30px; padding-right: 30px; }
+            /* Jika mode Semua Siswa, Tombol di kiri saja atau full width kecil */
+            .controls-grid:not(.filter-active) .btn-check {
+                width: 250px;
+            }
 
-            /* Tabel lebih luas */
-            table { min-width: 100%; }
-            th, td { padding: 15px; }
+            /* Table Refinements */
+            th, td { padding: 18px 25px; }
+            .badge-count { font-size: 1rem; }
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>📊 Monitor Kedisiplinan</h1>
-
-    <div class="mode-switch-container">
-        <button class="mode-btn active" onclick="setMode('all')" id="btn-all">Semua Siswa</button>
-        <button class="mode-btn" onclick="setMode('class')" id="btn-class">Filter Per Kelas</button>
+    
+    <div class="dashboard-header">
+        <h1>📊 Monitor Kedisiplinan</h1>
+        <div class="mode-switch-container">
+            <button class="mode-btn active" onclick="setMode('all')" id="btn-all">Semua Data</button>
+            <button class="mode-btn" onclick="setMode('class')" id="btn-class">Filter Kelas</button>
+        </div>
     </div>
 
-    <div id="controls-box" class="controls-wrapper">
-        
-        <div id="class-inputs" class="hidden" style="display: contents;">
-            <div class="form-group">
-                <label>Jenjang</label>
-                <select id="sel-jenjang" onchange="updateKelasOptions()">
-                    <option value="" disabled selected>Pilih Jenjang...</option>
-                    <option value="X">Kelas X</option>
-                    <option value="XI">Kelas XI</option>
-                    <option value="XII">Kelas XII</option>
-                </select>
+    <div class="controls-card">
+        <div id="controls-grid" class="controls-grid">
+            
+            <div id="class-inputs-wrapper" style="display: contents;">
+                <div class="form-group class-input hidden">
+                    <label>Jenjang Pendidikan</label>
+                    <select id="sel-jenjang" onchange="updateKelasOptions()">
+                        <option value="" disabled selected>Pilih Jenjang...</option>
+                        <option value="X">Kelas X</option>
+                        <option value="XI">Kelas XI</option>
+                        <option value="XII">Kelas XII</option>
+                    </select>
+                </div>
+                <div class="form-group class-input hidden">
+                    <label>Nama Kelas</label>
+                    <select id="sel-kelas" disabled>
+                        <option value="" disabled selected>...</option>
+                    </select>
+                </div>
             </div>
-            <div class="form-group">
-                <label>Kelas</label>
-                <select id="sel-kelas" disabled>
-                    <option value="" disabled selected>...</option>
-                </select>
-            </div>
-        </div>
 
-        <div class="form-group" style="flex: 0 0 auto;">
-            <label style="opacity: 0; display: block;" class="desktop-only">&nbsp;</label> <button class="btn-check" onclick="fetchData()">TAMPILKAN DATA</button>
+            <div class="form-group">
+                <label class="desktop-spacer" style="opacity: 0;">&nbsp;</label>
+                <button class="btn-check" onclick="fetchData()">
+                    <span>🔍</span> TAMPILKAN DATA
+                </button>
+            </div>
         </div>
     </div>
 
     <div id="loading" class="spinner">
-        <svg style="width: 40px; height: 40px; animation: spin 1s linear infinite;" viewBox="0 0 50 50">
-            <circle cx="25" cy="25" r="20" fill="none" stroke="#1e3c72" stroke-width="5"></circle>
+        <svg width="50" height="50" viewBox="0 0 50 50" style="animation: spin 1s linear infinite;">
+            <circle cx="25" cy="25" r="20" fill="none" stroke="#1e3c72" stroke-width="4" stroke-linecap="round"></circle>
         </svg>
-        <p style="margin-top: 10px;">Mengambil data...</p>
+        <p style="margin-top: 15px; font-weight: 500;">Mengambil Data Terbaru...</p>
     </div>
 
-    <div id="result-container" class="hidden">
+    <div id="result-container" class="result-card hidden">
         <div class="stats-summary">
-            <span>Hasil Pencarian</span>
-            <span style="background: white; padding: 2px 8px; border-radius: 4px; color: #333;">
-                Total: <span id="total-students">0</span> Siswa
+            <span>Daftar Siswa Terlambat</span>
+            <span style="background: #e3f2fd; color: #1565c0; padding: 5px 10px; border-radius: 6px; font-size: 0.85rem;">
+                Total: <span id="total-students">0</span>
             </span>
         </div>
         
@@ -247,11 +323,11 @@
             <table id="data-table">
                 <thead>
                     <tr>
-                        <th style="width: 50px;">No</th>
+                        <th style="width: 60px; text-align: center;">No</th>
                         <th>Nama Lengkap</th>
                         <th>Kelas</th>
-                        <th style="text-align: center;">Total</th>
-                        <th style="text-align: center;">Detail</th>
+                        <th style="text-align: center;">Total Poin</th>
+                        <th style="text-align: center; width: 120px;">Aksi</th>
                     </tr>
                 </thead>
                 <tbody id="table-body">
@@ -264,22 +340,22 @@
 <div id="modalDetail" class="modal-overlay">
     <div class="modal-content">
         <div class="modal-header">
-            <h3 id="modal-title" style="font-size: 1.1rem;">Detail Siswa</h3>
-            <button class="close-btn" onclick="closeModal()">&times;</button>
+            <h3 id="modal-title" style="font-size: 1.1rem; margin:0;">Detail Siswa</h3>
+            <button onclick="closeModal()" style="background:none; border:none; color:white; font-size:1.5rem; cursor:pointer;">&times;</button>
         </div>
         <div class="modal-body">
-            <div id="modal-loading" style="text-align: center; display: none;">⏳ Memuat riwayat...</div>
+            <div id="modal-loading" style="text-align:center; padding:30px;">⏳ Memuat...</div>
             <div id="modal-list"></div>
         </div>
-        <div style="padding: 15px; border-top: 1px solid #eee; text-align: right;">
-            <button onclick="closeModal()" style="width: auto; background: #eee; color: #333; padding: 8px 20px;">Tutup</button>
+        <div style="padding:15px; text-align:right; border-top:1px solid #eee;">
+            <button onclick="closeModal()" style="padding:8px 20px; border:1px solid #ccc; background:#fff; border-radius:6px; cursor:pointer;">Tutup</button>
         </div>
     </div>
 </div>
 
 <script>
     // ==========================================
-    // KONFIGURASI (JANGAN LUPA GANTI URL INI)
+    // CONFIG URL
     // ==========================================
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzXIlrXJCqGY0GxnJBKFmU1GMM6doWmUHLo1jffSufMsPsLnO8JvJHk1flOfcxcq9ncCQ/exec"; 
 
@@ -294,20 +370,23 @@
     function setMode(mode) {
         currentMode = mode;
         
-        // Update UI Button Active State
+        // Update Tombol Tab
         document.getElementById('btn-all').className = mode === 'all' ? 'mode-btn active' : 'mode-btn';
         document.getElementById('btn-class').className = mode === 'class' ? 'mode-btn active' : 'mode-btn';
         
-        const classInputs = document.getElementById('class-inputs');
-        const controlsBox = document.getElementById('controls-box');
+        const controlsGrid = document.getElementById('controls-grid');
+        const classInputs = document.querySelectorAll('.class-input');
 
         if (mode === 'class') {
-            classInputs.classList.remove('hidden'); // Hilangkan class hidden bawaan CSS
-            classInputs.style.display = 'contents'; // Agar anak elemennya (form-group) ikut aturan flex parent
-            controlsBox.classList.add('filter-active'); // Trigger layout horizontal di desktop
+            // Tampilkan Input Kelas
+            classInputs.forEach(el => el.classList.remove('hidden'));
+            // Aktifkan Grid Layout Desktop
+            controlsGrid.classList.add('filter-active');
         } else {
-            classInputs.style.display = 'none';
-            controlsBox.classList.remove('filter-active');
+            // Sembunyikan Input Kelas
+            classInputs.forEach(el => el.classList.add('hidden'));
+            // Matikan Grid Layout Desktop (Balik ke default)
+            controlsGrid.classList.remove('filter-active');
         }
         
         document.getElementById('result-container').classList.add('hidden');
@@ -316,10 +395,8 @@
     function updateKelasOptions() {
         const jenjang = document.getElementById("sel-jenjang").value;
         const selKelas = document.getElementById("sel-kelas");
-        
         selKelas.innerHTML = '<option value="" disabled selected>Pilih Kelas...</option>';
         selKelas.disabled = false;
-
         if (dataKelas[jenjang]) {
             dataKelas[jenjang].forEach(kelas => {
                 let opt = document.createElement("option");
@@ -340,7 +417,7 @@
 
         if (currentMode === 'class') {
             const kelasDipilih = document.getElementById('sel-kelas').value;
-            if (!kelasDipilih) { alert("Harap pilih Kelas terlebih dahulu."); return; }
+            if (!kelasDipilih) { alert("Silakan pilih Kelas terlebih dahulu."); return; }
             payload.kelas = kelasDipilih;
         }
 
@@ -348,50 +425,36 @@
         resultContainer.classList.add('hidden');
         tbody.innerHTML = "";
 
-        fetch(GOOGLE_SCRIPT_URL, {
-            method: 'POST', body: JSON.stringify(payload)
-        })
+        fetch(GOOGLE_SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) })
         .then(res => res.json())
         .then(data => {
             loading.style.display = 'none';
             if (data.result === "success") {
                 const siswaList = data.data;
-                if (siswaList.length === 0) { alert("Tidak ada data keterlambatan."); return; }
+                if (siswaList.length === 0) { alert("Tidak ada data ditemukan."); return; }
 
                 resultContainer.classList.remove('hidden');
                 totalStudents.innerText = siswaList.length;
 
                 let no = 1;
                 siswaList.forEach(siswa => {
-                    let row = `
+                    tbody.innerHTML += `
                         <tr>
-                            <td>${no++}</td>
-                            <td>
-                                <div style="font-weight:bold;">${siswa.nama}</div>
-                                <div style="font-size:0.8rem; color:#888; display:none;" class="mobile-class-info">${siswa.kelas}</div> 
-                            </td>
+                            <td style="text-align: center; color: #888;">${no++}</td>
+                            <td><div style="font-weight:600; color:#333;">${siswa.nama}</div></td>
                             <td>${siswa.kelas}</td>
                             <td style="text-align: center;"><span class="badge-count">${siswa.poin}</span></td>
                             <td style="text-align: center;">
-                                <button class="btn-detail" onclick="viewDetail('${siswa.nama}')">
-                                    <span style="font-size:1.2rem; line-height:0;">👁️</span>
-                                </button>
+                                <button class="btn-detail" onclick="viewDetail('${siswa.nama}')">Lihat Detail</button>
                             </td>
                         </tr>
                     `;
-                    tbody.innerHTML += row;
                 });
-            } else {
-                alert("Gagal: " + (data.message || "Unknown Error"));
-            }
+            } else { alert("Gagal mengambil data."); }
         })
-        .catch(err => {
-            loading.style.display = 'none';
-            alert("Gagal terhubung ke server.");
-        });
+        .catch(err => { loading.style.display = 'none'; alert("Error koneksi server."); });
     }
 
-    // --- DETAIL MODAL LOGIC ---
     function viewDetail(namaSiswa) {
         const modal = document.getElementById('modalDetail');
         const list = document.getElementById('modal-list');
@@ -399,60 +462,45 @@
         const title = document.getElementById('modal-title');
 
         modal.style.display = 'flex';
-        title.innerText = namaSiswa;
+        title.innerText = "Detail: " + namaSiswa;
         list.innerHTML = "";
         loading.style.display = 'block';
 
-        fetch(GOOGLE_SCRIPT_URL, {
-            method: 'POST',
-            body: JSON.stringify({ action: "getStudentDetail", nama: namaSiswa })
-        })
+        fetch(GOOGLE_SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: "getStudentDetail", nama: namaSiswa }) })
         .then(res => res.json())
         .then(data => {
             loading.style.display = 'none';
             if (data.result === "success") {
                 if (data.details.length === 0) {
-                    list.innerHTML = "<div style='text-align:center; padding:10px; color:#888;'>Belum ada riwayat detail.</div>";
+                    list.innerHTML = "<div style='text-align:center; padding:20px; color:#999;'>Belum ada riwayat.</div>";
                 } else {
                     data.details.forEach(item => {
-                        let dateObj = new Date(item.waktu);
-                        let dateStr = dateObj.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
-                        let timeStr = dateObj.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
-
+                        let d = new Date(item.waktu);
+                        let tgl = d.toLocaleDateString('id-ID', {weekday:'long', day:'numeric', month:'short', year:'numeric'});
+                        let jam = d.toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'});
                         list.innerHTML += `
                             <div class="detail-item">
                                 <div>
-                                    <div style="font-weight:bold; color:#333;">${dateStr}</div>
-                                    <div style="font-size:0.85rem; color:#666;">Pukul ${timeStr} WIB</div>
+                                    <div style="font-weight:600; color:#333;">${tgl}</div>
+                                    <div style="font-size:0.85rem; color:#666;">Pukul ${jam} WIB</div>
                                 </div>
-                                <div style="font-size:0.85rem; font-weight:bold; color:#1e3c72; align-self:center;">
-                                    ${item.info || "Terlambat"}
-                                </div>
+                                <div style="font-size:0.85rem; font-weight:700; color:#1e3c72;">${item.info || 'Tercatat'}</div>
                             </div>
                         `;
                     });
                 }
-            } else {
-                list.innerHTML = "<div style='color:red; text-align:center;'>Gagal memuat data.</div>";
-            }
+            } else { list.innerHTML = "<div style='color:red; text-align:center'>Gagal memuat.</div>"; }
         })
-        .catch(err => {
-            loading.style.display = 'none';
-            list.innerHTML = "<div style='color:red; text-align:center;'>Error koneksi internet.</div>";
-        });
+        .catch(() => { loading.style.display='none'; list.innerHTML = "<div style='color:red; text-align:center'>Koneksi Error.</div>"; });
     }
 
-    function closeModal() {
-        document.getElementById('modalDetail').style.display = 'none';
-    }
+    function closeModal() { document.getElementById('modalDetail').style.display = 'none'; }
     
-    // Animasi Loading CSS
+    // Animasi Spin
     const styleSheet = document.createElement("style");
     styleSheet.innerText = `@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`;
     document.head.appendChild(styleSheet);
-
 </script>
 
 </body>
-
 </html>
