@@ -199,12 +199,10 @@ function startTimer(s) {
 // ==========================================
 function checkAnswer(selectedAnswer) {
     totalAttempts++;
-    console.log("Jawaban Dipilih: " + selectedAnswer);
-    
     if (selectedAnswer.toString().trim() === currentCorrectAnswer.toString().trim()) {
-        success(); // PANGGIL FUNGSI SUKSES
+        success();
     } else {
-        fetchSoal(); // JIKA SALAH, GANTI SOAL
+        fetchSoal(); 
     }
 }
 
@@ -214,36 +212,23 @@ function success() {
     const tm = new Date().toLocaleString('id-ID', { hour12: false });
     const attemptText = `${totalAttempts} Percobaan`;
 
-    // 1. Sembunyikan Container Utama
-    const mainContainer = document.getElementById('main-container');
-    if (mainContainer) mainContainer.style.display = 'none';
+    // 1. Sembunyikan semua halaman lain
+    document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
     
-    // 2. Tampilkan Halaman Sukses Fullscreen
-    const pageSuccess = document.getElementById('page-success');
-    pageSuccess.style.display = 'flex'; // Pakai flex agar centered
+    // 2. Tampilkan Halaman Sukses di dalam container
+    document.getElementById('page-success').style.display = 'block';
     
     document.getElementById('final-name').innerText = nm;
     document.getElementById('final-time').innerText = tm;
     document.getElementById('attempt-info').innerText = attemptText;
     
-    // 3. Generate QR Code
+    // 3. Generate QR Code (Ukuran disesuaikan CSS)
     document.getElementById("qrcode").innerHTML = "";
-    new QRCode(document.getElementById("qrcode"), { text: `TIKET VALID\n${nm}\n${tm}\n${attemptText}`, width: 250, height: 250 });
+    new QRCode(document.getElementById("qrcode"), { text: `TIKET VALID\n${nm}\n${tm}\n${attemptText}`, width: 200, height: 200 });
     
-    // 4. Efek Confetti (Perayaan)
+    // 4. Efek Confetti (Perayaan) - Akan terlihat karena dalam container
     if (typeof confetti === "function") {
-        var duration = 3 * 1000;
-        var animationEnd = Date.now() + duration;
-        var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 99999 };
-        var randomInRange = function(min, max) { return Math.random() * (max - min) + min; };
-
-        var interval = setInterval(function() {
-            var timeLeft = animationEnd - Date.now();
-            if (timeLeft <= 0) return clearInterval(interval);
-            var particleCount = 50 * (timeLeft / duration);
-            confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
-            confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
-        }, 250);
+        confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 }, zIndex: 999 });
     }
 
     // 5. Kirim Data ke Server
