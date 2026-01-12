@@ -12,7 +12,7 @@
 </head>
 <body>
 
-<div class="container" id="main-container">
+<div class="container">
     <header>
         <h1>TIKET MASUK</h1>
         <div class="subtitle">Sistem Kedisiplinan Online</div>
@@ -61,27 +61,28 @@
         <div id="question-area">
             </div>
     </div>
-</div> 
-<div id="page-success" class="page-fullscreen">
-    <div id="sending-overlay">
-        <div style="font-size: 4rem; margin-bottom: 10px;">📡</div>
-        <h3>Menyimpan Data...</h3>
-    </div>
-    
-    <div class="ticket-content">
-        <h2 style="color: #27ae60; margin-bottom: 5px; font-size: 2rem;">IZIN MASUK KELAS</h2>
-        <div style="font-size: 0.9rem; color: #7f8c8d; margin-bottom: 20px;">Tunjukkan layar ini ke Guru Piket</div>
-        
-        <div id="final-name" class="student-name-large">SISWA</div>
-        
-        <div id="qrcode"></div>
-        
-        <div class="ticket-footer" style="margin-top: 20px; width: 100%; max-width: 300px;">
-            <div style="border-bottom: 1px solid #ddd; padding: 5px 0;">📅 Waktu: <strong id="final-time"></strong></div>
-            <div style="border-bottom: 1px solid #ddd; padding: 5px 0;">📊 Hasil: <strong id="attempt-info" style="color: #27ae60;"></strong></div>
-            <div style="padding: 5px 0;">✅ Status: <strong id="sent-status" style="color: #f39c12;">Menunggu Server...</strong></div>
-        </div>
 
+    <div id="page-success" class="page">
+        <div id="sending-overlay">
+            <div style="font-size: 4rem; margin-bottom: 10px;">📡</div>
+            <h3>Menyimpan Data...</h3>
+        </div>
+        
+        <div id="ticket-area" class="ticket">
+            <h2 style="color: #27ae60; margin-bottom: 5px;">IZIN MASUK KELAS</h2>
+            <div style="font-size: 0.8rem; color: #7f8c8d; margin-bottom: 15px;">Tunjukkan layar ini ke Guru Piket</div>
+            
+            <div id="final-name" class="student-name">SISWA</div>
+            
+            <div id="qrcode"></div>
+            
+            <div class="ticket-footer" style="font-size: 0.85rem; color: #555; text-align: left; margin-top: 10px;">
+                📅 Waktu: <strong id="final-time"></strong><br>
+                📊 Hasil: <strong id="attempt-info" style="color: #27ae60;"></strong><br>
+                ✅ Status: <strong id="sent-status" style="color: #f39c12;">Menunggu Server...</strong>
+            </div>
+        </div>
+        
         <button id="btn-out" onclick="goToYoutube()">KELUAR</button>
     </div>
 </div>
