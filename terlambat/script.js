@@ -1,7 +1,6 @@
 // ==========================================
 // KONFIGURASI DAN VARIABEL GLOBAL
 // ==========================================
-// Ganti URL ini dengan Web App URL dari Deployment Google Apps Script Anda
 const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyf56H0Kgff5zjVAFoaJth2fWv9fo9hth16Jsn-NLtNBofSwNJMhfuwLuLzRzQWZapI1g/exec"; 
 
 let currentCorrectAnswer = "";
@@ -23,7 +22,6 @@ function updateKelasOptions() {
     const selKelas = document.getElementById("sel-kelas");
     const selNama = document.getElementById("sel-nama");
     
-    // Reset dropdown kelas & nama
     selKelas.innerHTML = '<option value="" disabled selected>-- Pilih Kelas --</option>';
     selKelas.disabled = false;
     selNama.innerHTML = '<option value="" disabled selected>-- Pilih Nama Siswa --</option>';
@@ -46,12 +44,10 @@ function getStudentNames() {
 
     if(!kelasDipilih) return;
 
-    // UI Loading State di Dropdown
     selNama.innerHTML = '<option>🔄 Mengambil data...</option>';
     selNama.disabled = true;
     btnStart.disabled = true;
 
-    // Fetch ke Google Script
     fetch(GOOGLE_SCRIPT_URL, {
         method: 'POST',
         body: JSON.stringify({ action: "getNames", kelas: kelasDipilih })
@@ -73,43 +69,35 @@ function getStudentNames() {
         }
     })
     .catch(err => {
-        console.error(err);
         selNama.innerHTML = '<option>❌ Gagal koneksi</option>';
-        btnStart.disabled = false; // Biarkan user coba lagi
+        btnStart.disabled = false;
     });
 }
 
-// ==========================================
-// NAVIGASI HALAMAN
-// ==========================================
 function toNamePage() {
     document.getElementById('page-quote').style.display = 'none';
     document.getElementById('page-name').style.display = 'block';
 }
 
 // ==========================================
-// LOGIKA UTAMA (CEK HISTORI & MULAI TES)
+// LOGIKA UTAMA
 // ==========================================
 function checkHistoryAndStart() {
     const name = document.getElementById('sel-nama').value;
-    
     const btn = document.getElementById('btn-start');
     const alertBox = document.getElementById('history-alert');
     const errName = document.getElementById('err-name');
     
-    // Validasi Input
     if(!name || name === "" || name.includes("Pilih")) { 
         errName.style.display = 'block'; return; 
     }
     errName.style.display = 'none';
 
-    // Jika data sudah dicek, langsung ambil soal
     if (isDataChecked) { fetchSoal(); return; }
 
     btn.disabled = true; btn.innerHTML = "Mengecek Database...";
     alertBox.style.display = 'none';
 
-    // Cek Histori Keterlambatan
     fetch(GOOGLE_SCRIPT_URL, {
         method: 'POST', body: JSON.stringify({ action: "check", nama: name })
     })
@@ -126,12 +114,10 @@ function checkHistoryAndStart() {
             alertBox.style.display = 'block'; alertBox.style.background = color; alertBox.innerHTML = msg;
             isDataChecked = true; btn.innerText = "LANJUT KERJAKAN SOAL";
         } else { 
-            // Jika gagal cek (misal server error), tetap lanjut ke soal (fallback)
             fetchSoal(); 
         }
     })
     .catch(err => { 
-        console.error(err); 
         isDataChecked = true;
         fetchSoal(); 
     });
@@ -164,14 +150,9 @@ function setupQuestion(soalData) {
     document.getElementById('page-loading').style.display = 'none';
     document.getElementById('page-test').style.display = 'block';
 
-    triggerFullScreen();
-
     currentCorrectAnswer = soalData.correct.toString().trim();
     
-    // Gabungkan jawaban benar dan salah
     let options = [soalData.correct, ...soalData.wrongs];
-    
-    // Acak posisi jawaban (Fisher-Yates Shuffle)
     for (let i = options.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [options[i], options[j]] = [options[j], options[i]];
@@ -190,9 +171,8 @@ function setupQuestion(soalData) {
         ${htmlOptions}
     `;
 
-    // Mulai Timer jika belum aktif
     if (!isTestActive) {
-         startTimer(300); // 300 detik = 5 menit
+         startTimer(300); 
          isTestActive = true;
     }
 }
@@ -219,7 +199,6 @@ function checkAnswer(selectedAnswer) {
     if (selectedAnswer.toString().trim() === currentCorrectAnswer) {
         success();
     } else {
-        // Jika Salah: Ambil soal baru
         fetchSoal(); 
     }
 }
@@ -230,21 +209,22 @@ function success() {
     const tm = new Date().toLocaleString('id-ID', { hour12: false });
     const attemptText = `${totalAttempts} Percobaan`;
 
-    document.querySelectorAll('.page').forEach(p=>p.style.display='none');
-    document.getElementById('page-success').style.display='block';
+    // Sembunyikan Container Utama (Form/Soal)
+    document.getElementById('main-container').style.display = 'none';
+    
+    // Tampilkan Halaman Sukses Fullscreen
+    const pageSuccess = document.getElementById('page-success');
+    pageSuccess.style.display = 'flex'; // Menggunakan flex agar centered
     
     document.getElementById('final-name').innerText = nm;
     document.getElementById('final-time').innerText = tm;
     document.getElementById('attempt-info').innerText = attemptText;
     
-    // Generate QR Code
     document.getElementById("qrcode").innerHTML = "";
-    new QRCode(document.getElementById("qrcode"), { text: `TIKET VALID\n${nm}\n${tm}\n${attemptText}`, width: 150, height: 150 });
+    new QRCode(document.getElementById("qrcode"), { text: `TIKET VALID\n${nm}\n${tm}\n${attemptText}`, width: 250, height: 250 });
     
-    // Efek Konfeti
-    confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
+    confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 } });
     
-    // Kirim Data ke Server
     document.getElementById('sending-overlay').style.display = 'flex';
 
     fetch(GOOGLE_SCRIPT_URL, {
@@ -265,64 +245,31 @@ function success() {
 }
 
 // ==========================================
-// FULLSCREEN LOGIC
+// FUNGSI BARU: MENUJU YOUTUBE
 // ==========================================
-function triggerFullScreen() {
-    const ticket = document.getElementById('ticket-area');
-    const btnFs = document.getElementById('btn-fullscreen');
-    const btnExit = document.getElementById('btn-exit-fs');
-    const header = document.querySelector('header');
-
-    if (document.documentElement.requestFullscreen) { document.documentElement.requestFullscreen(); }
-    else if (document.documentElement.webkitRequestFullscreen) { document.documentElement.webkitRequestFullscreen(); }
-
-    ticket.classList.add('fullscreen-mode');
-    btnFs.style.display = 'none'; btnExit.style.display = 'block';
-    if(header) header.style.display = 'none';
-}
-
-function exitFullScreen() {
-    const ticket = document.getElementById('ticket-area');
-    const btnFs = document.getElementById('btn-fullscreen');
-    const btnExit = document.getElementById('btn-exit-fs');
-    const header = document.querySelector('header');
-
-    if (document.exitFullscreen) { document.exitFullscreen(); }
-    else if (document.webkitExitFullscreen) { document.webkitExitFullscreen(); }
-
-    ticket.classList.remove('fullscreen-mode');
-    btnFs.style.display = 'block'; btnExit.style.display = 'none';
-    if(header) header.style.display = 'block';
+function goToYoutube() {
+    // Redirect ke Link YouTube
+    window.location.href = "https://www.youtube.com/watch?v=pPI4LOBRT04";
 }
 
 // ==========================================
-// FITUR ANTI CURANG (EVENT LISTENERS)
+// FITUR ANTI CURANG
 // ==========================================
-
-// 1. Mencegah Klik Kanan
 document.addEventListener('contextmenu', event => event.preventDefault());
 
-// 2. Mencegah Shortcut Keyboard (DevTools, Print, View Source)
 document.onkeydown = function(e) {
-    if (e.keyCode == 123) { return false; } // F12
-    if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) { return false; }
-    if (e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) { return false; }
-    if (e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) { return false; }
-    if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) { return false; }
-    if (e.ctrlKey && e.keyCode == 'P'.charCodeAt(0)) { return false; }
-    if (e.ctrlKey && e.keyCode == 'S'.charCodeAt(0)) { return false; }
+    if (e.keyCode == 123) return false;
+    if (e.ctrlKey && e.shiftKey && (e.keyCode == 'I'.charCodeAt(0) || e.keyCode == 'C'.charCodeAt(0) || e.keyCode == 'J'.charCodeAt(0))) return false;
+    if (e.ctrlKey && (e.keyCode == 'U'.charCodeAt(0) || e.keyCode == 'P'.charCodeAt(0) || e.keyCode == 'S'.charCodeAt(0))) return false;
 };
 
-// 3. Mencegah Copy / Paste / Cut
-document.addEventListener("cut", (e) => { e.preventDefault(); });
-document.addEventListener("copy", (e) => { e.preventDefault(); });
-document.addEventListener("paste", (e) => { e.preventDefault(); });
+document.addEventListener("cut", (e) => e.preventDefault());
+document.addEventListener("copy", (e) => e.preventDefault());
+document.addEventListener("paste", (e) => e.preventDefault());
 
-// 4. Deteksi Pindah Tab / Minimize
 document.addEventListener("visibilitychange", () => {
     if(document.hidden && isTestActive) {
         cheatCount++; 
-        // Hukuman: Ganti soal jika curang
         fetchSoal(); 
     } 
 });
