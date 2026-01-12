@@ -1,0 +1,86 @@
+/* CSS RESET & STYLE */
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; -webkit-tap-highlight-color: transparent; }
+
+/* --- FITUR ANTI CURANG (CSS): Mencegah Seleksi Teks --- */
+body { 
+    background: linear-gradient(160deg, #1e3c72 0%, #2a5298 100%); 
+    color: #333; 
+    min-height: 100vh; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    padding: 20px;
+    
+    /* Mencegah seleksi teks (Blok Teks) */
+    -webkit-user-select: none; /* Safari */
+    -moz-user-select: none;    /* Firefox */
+    -ms-user-select: none;     /* IE10+/Edge */
+    user-select: none;         /* Standard */
+}
+
+/* Izinkan seleksi teks hanya pada input dan dropdown agar bisa diisi */
+input, select {
+    user-select: text;
+}
+
+.container { width: 100%; max-width: 420px; background: #ffffff; border-radius: 24px; padding: 30px 25px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); position: relative; overflow: hidden; min-height: 80vh; display: flex; flex-direction: column; justify-content: center; }
+
+/* Headers */
+h1 { text-align: center; color: #1e3c72; font-size: 1.8rem; font-weight: 800; margin-bottom: 5px; }
+.subtitle { text-align: center; color: #7f8c8d; font-size: 0.95rem; margin-bottom: 25px; font-weight: 500; }
+
+/* Pages Animation */
+.page { display: none; animation: fadeIn 0.5s; width: 100%; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+/* Inputs & Buttons */
+input { width: 100%; padding: 16px; border: 2px solid #e0e0e0; border-radius: 12px; font-size: 1.1rem; margin-bottom: 15px; background: #fafafa; transition: 0.3s; }
+input:focus { border-color: #1e3c72; background: #fff; outline: none; }
+
+/* --- STYLE UNTUK DROPDOWN (SELECT) --- */
+select { width: 100%; padding: 16px; border: 2px solid #e0e0e0; border-radius: 12px; font-size: 1.1rem; margin-bottom: 15px; background: #fafafa; transition: 0.3s; appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%231e3c72%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E"); background-repeat: no-repeat; background-position: right 15px top 50%; background-size: 12px auto; }
+select:focus { border-color: #1e3c72; background-color: #fff; outline: none; }
+select:disabled { background-color: #e9ecef; color: #adb5bd; cursor: not-allowed; }
+
+button { width: 100%; padding: 18px; background: #1e3c72; color: white; border: none; border-radius: 12px; font-size: 1.1rem; font-weight: 700; cursor: pointer; margin-top: 10px; transition: 0.2s; }
+button:active { transform: scale(0.98); }
+button:disabled { background: #bdc3c7; cursor: not-allowed; }
+
+/* Alerts */
+.error-msg { background: #fee; color: #c0392b; padding: 12px; border-radius: 8px; margin-bottom: 15px; display: none; text-align: center; border: 1px solid #ffcccc; font-weight: 600; }
+#history-alert { display: none; padding: 15px; border-radius: 10px; margin-bottom: 20px; font-size: 0.95rem; border: 1px solid #ccc; line-height: 1.5; }
+
+/* Soal Pilihan Ganda Style */
+.problem-card { background: #f8fbff; border: 2px solid #e1e8ed; padding: 20px; border-radius: 16px; text-align: center; margin-bottom: 20px; }
+.problem-text { font-size: 1.2rem; line-height: 1.5; color: #2c3e50; font-weight: 700; }
+
+.option-btn {
+    display: block; width: 100%; padding: 16px; margin-bottom: 12px;
+    background: white; border: 2px solid #d1d8e0; color: #444;
+    border-radius: 12px; font-size: 1rem; text-align: left;
+    transition: all 0.2s; cursor: pointer; font-weight: 500;
+}
+.option-btn:hover { border-color: #1e3c72; background: #f4f9ff; }
+.option-btn:active { transform: scale(0.98); background: #e6f0ff; border-color: #1e3c72; }
+
+/* Ticket & Fullscreen */
+.ticket { border: 2px dashed #1e3c72; padding: 20px; border-radius: 16px; background: #f8fbff; text-align: center; margin-top: 10px; }
+.ticket.fullscreen-mode { 
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 9999; 
+    background: #ffffff; border: 10px solid #27ae60; padding: 20px; 
+    display: flex; flex-direction: column; justify-content: center; align-items: center; 
+}
+.ticket.fullscreen-mode h2 { font-size: 2.5rem; margin-bottom: 20px; }
+.ticket.fullscreen-mode .student-name { font-size: 2.2rem; margin: 20px 0; border-top: 2px solid #ccc; border-bottom: 2px solid #ccc; padding: 15px 0; width: 100%; }
+.ticket.fullscreen-mode #qrcode img { width: 250px !important; height: 250px !important; }
+
+.student-name { font-weight: 800; font-size: 1.3rem; text-transform: uppercase; color: #333; padding: 10px 0; border-top: 1px solid #eee; border-bottom: 1px solid #eee; }
+
+#qrcode { display: flex; justify-content: center; margin: 15px auto; padding: 10px; background: white; border-radius: 8px; width: fit-content; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+
+#sending-overlay { display: none; position: absolute; top:0; left:0; width:100%; height:100%; background: rgba(255,255,255,0.98); z-index: 50; flex-direction: column; align-items: center; justify-content: center; border-radius: 24px; }
+.timer-badge { background: #1e3c72; color: white; padding: 8px 15px; border-radius: 50px; font-weight: bold; font-size: 0.9rem; display: inline-block; margin-bottom: 15px; }
+
+/* Loading Animation */
+.spinner { font-size: 3rem; margin-bottom: 15px; animation: spin 1s linear infinite; }
+@keyframes spin { 100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); } }

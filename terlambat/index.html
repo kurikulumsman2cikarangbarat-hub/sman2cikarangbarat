@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sistem Kedisiplinan Siswa</title>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>TIKET MASUK</h1>
+        <div class="subtitle">Sistem Kedisiplinan Online</div>
+    </header>
+
+    <div id="page-quote" class="page" style="display: block; text-align: center;">
+        <h3 style="color:#1e3c72; margin-bottom: 15px;">Selamat Datang</h3>
+        <p style="color:#555; margin-bottom: 20px;">Aplikasi ini terhubung dengan Database Sekolah untuk mencatat kedisiplinan dan literasi/numerasi.</p>
+        <button onclick="toNamePage()">MULAI</button>
+    </div>
+
+    <div id="page-name" class="page">
+        <label>Jenjang Kelas:</label>
+        <select id="sel-jenjang" onchange="updateKelasOptions()">
+            <option value="" disabled selected>-- Pilih Jenjang --</option>
+            <option value="X">Kelas X</option>
+            <option value="XI">Kelas XI</option>
+            <option value="XII">Kelas XII</option>
+        </select>
+
+        <label>Kelas:</label>
+        <select id="sel-kelas" disabled onchange="getStudentNames()">
+            <option value="" disabled selected>-- Pilih Kelas Dulu --</option>
+        </select>
+
+        <label>Nama Lengkap:</label>
+        <select id="sel-nama" disabled>
+            <option value="" disabled selected>-- Pilih Nama Siswa --</option>
+        </select>
+        
+        <div id="err-name" class="error-msg">⚠️ Mohon lengkapi data kelas dan nama.</div>
+        <div id="history-alert"></div>
+        <button id="btn-start" onclick="checkHistoryAndStart()">CEK DATA & AMBIL SOAL</button>
+    </div>
+
+    <div id="page-loading" class="page" style="text-align: center;">
+        <div class="spinner">🔄</div>
+        <h3 style="color:#1e3c72;">Mengambil Soal...</h3>
+        <p style="color:#7f8c8d;">Mohon tunggu, sedang menghubungi server.</p>
+    </div>
+
+    <div id="page-test" class="page">
+        <div style="text-align: center;">
+            <div class="timer-badge">⏱️ Sisa Waktu: <span id="timer">05:00</span></div>
+        </div>
+        <div id="question-area">
+            </div>
+    </div>
+
+    <div id="page-success" class="page">
+        <div id="sending-overlay">
+            <div style="font-size: 4rem; margin-bottom: 10px;">📡</div>
+            <h3>Menyimpan Data...</h3>
+        </div>
+        
+        <div id="ticket-area" class="ticket">
+            <h2 style="color: #27ae60; margin-bottom: 5px;">IZIN MASUK KELAS</h2>
+            <div style="font-size: 0.8rem; color: #7f8c8d; margin-bottom: 15px;">Tunjukkan layar ini ke Guru Piket</div>
+            <div id="final-name" class="student-name">SISWA</div>
+            <div id="qrcode"></div>
+            <div class="ticket-footer" style="font-size: 0.85rem; color: #555; text-align: left; margin-top: 10px;">
+                📅 Waktu: <strong id="final-time"></strong><br>
+                📊 Hasil: <strong id="attempt-info" style="color: #27ae60;"></strong><br>
+                ✅ Status: <strong id="sent-status" style="color: #f39c12;">Menunggu Server...</strong>
+            </div>
+            <button id="btn-exit-fs" onclick="exitFullScreen()" style="display:none; background: #c0392b; margin-top: 20px;">KEMBALI KE TAMPILAN KECIL</button>
+        </div>
+        
+        <button id="btn-fullscreen" onclick="triggerFullScreen()" style="margin-top: 20px; background: #2980b9;">TIKET LAYAR PENUH</button>
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
