@@ -1,7 +1,7 @@
 // ==========================================
 // KONFIGURASI DAN VARIABEL GLOBAL
 // ==========================================
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyf56H0Kgff5zjVAFoaJth2fWv9fo9hth16Jsn-NLtNBofSwNJMhfuwLuLzRzQWZapI1g/exec"; 
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx12yFWRUz0AsQSLdm5XKCxMC6evLHVVMC_WJWHP-NiTU-p3u3U5M2Fz5Krm_wUNAgzlQ/exec"; 
 
 let currentCorrectAnswer = "";
 let timerInt, isTestActive = false, cheatCount = 0;
@@ -279,3 +279,4 @@ document.addEventListener("visibilitychange", () => {
         fetchSoal(); 
     } 
 });
+
