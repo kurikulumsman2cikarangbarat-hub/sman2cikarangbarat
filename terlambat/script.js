@@ -241,7 +241,7 @@ function success() {
     .then(() => {
         setTimeout(() => {
             document.getElementById('sending-overlay').style.display = 'none';
-            document.getElementById('sent-status').innerText = "DATA TERSIMPAN DI SERVER ✅";
+            document.getElementById('sent-status').innerText = "DATA TERSIMPAN DI SERVER";
             document.getElementById('sent-status').style.color = "#27ae60";
         }, 1500);
     })
@@ -279,4 +279,5 @@ document.addEventListener("visibilitychange", () => {
         fetchSoal(); 
     } 
 });
+
 
