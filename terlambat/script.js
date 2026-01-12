@@ -194,12 +194,17 @@ function startTimer(s) {
     }, 1000);
 }
 
+// ==========================================
+// CEK JAWABAN & SUKSES
+// ==========================================
 function checkAnswer(selectedAnswer) {
     totalAttempts++;
-    if (selectedAnswer.toString().trim() === currentCorrectAnswer) {
-        success();
+    console.log("Jawaban Dipilih: " + selectedAnswer);
+    
+    if (selectedAnswer.toString().trim() === currentCorrectAnswer.toString().trim()) {
+        success(); // PANGGIL FUNGSI SUKSES
     } else {
-        fetchSoal(); 
+        fetchSoal(); // JIKA SALAH, GANTI SOAL
     }
 }
 
@@ -209,22 +214,39 @@ function success() {
     const tm = new Date().toLocaleString('id-ID', { hour12: false });
     const attemptText = `${totalAttempts} Percobaan`;
 
-    // Sembunyikan Container Utama (Form/Soal)
-    document.getElementById('main-container').style.display = 'none';
+    // 1. Sembunyikan Container Utama
+    const mainContainer = document.getElementById('main-container');
+    if (mainContainer) mainContainer.style.display = 'none';
     
-    // Tampilkan Halaman Sukses Fullscreen
+    // 2. Tampilkan Halaman Sukses Fullscreen
     const pageSuccess = document.getElementById('page-success');
-    pageSuccess.style.display = 'flex'; // Menggunakan flex agar centered
+    pageSuccess.style.display = 'flex'; // Pakai flex agar centered
     
     document.getElementById('final-name').innerText = nm;
     document.getElementById('final-time').innerText = tm;
     document.getElementById('attempt-info').innerText = attemptText;
     
+    // 3. Generate QR Code
     document.getElementById("qrcode").innerHTML = "";
     new QRCode(document.getElementById("qrcode"), { text: `TIKET VALID\n${nm}\n${tm}\n${attemptText}`, width: 250, height: 250 });
     
-    confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 } });
-    
+    // 4. Efek Confetti (Perayaan)
+    if (typeof confetti === "function") {
+        var duration = 3 * 1000;
+        var animationEnd = Date.now() + duration;
+        var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 99999 };
+        var randomInRange = function(min, max) { return Math.random() * (max - min) + min; };
+
+        var interval = setInterval(function() {
+            var timeLeft = animationEnd - Date.now();
+            if (timeLeft <= 0) return clearInterval(interval);
+            var particleCount = 50 * (timeLeft / duration);
+            confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
+            confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
+        }, 250);
+    }
+
+    // 5. Kirim Data ke Server
     document.getElementById('sending-overlay').style.display = 'flex';
 
     fetch(GOOGLE_SCRIPT_URL, {
@@ -248,7 +270,6 @@ function success() {
 // FUNGSI BARU: MENUJU YOUTUBE
 // ==========================================
 function goToYoutube() {
-    // Redirect ke Link YouTube
     window.location.href = "https://www.youtube.com/watch?v=pPI4LOBRT04";
 }
 
