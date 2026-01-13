@@ -169,205 +169,59 @@
 </div>
 
 <script>
-    // KONFIGURASI
-    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyW8-i4CSgrqIKoiyw-2hNHNqc0zX07ccyBlmEI0LGwB3xG7jDc7ebW1E_xRLYY6Ox1cg/exec";
+    const CLOUDFLARE_WORKER_URL = "https://disiplin-siswa.kurikulum-sman2cikarangbarat.workers.dev/";
 
-    // Set Tanggal Hari Ini secara otomatis
-    document.getElementById('tanggal').valueAsDate = new Date();
-
-    const dataKelas = {
-        "X": ["X - A", "X - B", "X - C", "X - D", "X - E", "X - F"],
-        "XI": ["XI - A", "XI - B", "XI - C", "XI - D", "XI - E", "XI - F", "XI - G"],
-        "XII": ["XII - A", "XII - B", "XII - C", "XII - D", "XII - E", "XII - F", "XII - G"] // Koreksi Typo XI-G ke XII-G
-    };
-
-    function updateKelasOptions() {
-        const jenjang = document.getElementById("sel-jenjang").value;
-        const selKelas = document.getElementById("sel-kelas");
-        
-        selKelas.innerHTML = '<option value="" disabled selected>-- Pilih Kelas --</option>';
-        selKelas.disabled = false;
-
-        if (dataKelas[jenjang]) {
-            dataKelas[jenjang].forEach(kelas => {
-                let opt = document.createElement("option");
-                opt.value = kelas;
-                opt.textContent = kelas;
-                selKelas.appendChild(opt);
-            });
-        }
-    }
-
-    // --- LOAD SISWA ---
+    // Fungsi Muat Siswa dari D1
     function loadStudents() {
-        const guru = document.getElementById('guru').value;
-        const tanggal = document.getElementById('tanggal').value;
         const kelas = document.getElementById('sel-kelas').value;
-
-        if (!guru || !tanggal || !kelas) {
-            alert("Mohon lengkapi Nama Guru, Tanggal, dan Kelas!");
-            return;
-        }
+        if (!kelas) return alert("Pilih kelas!");
 
         document.getElementById('loading').classList.remove('hidden');
-        document.getElementById('attendance-area').classList.add('hidden');
-        document.getElementById('action-bar').classList.add('hidden');
-        document.getElementById('btn-load').disabled = true;
-
-        fetch(GOOGLE_SCRIPT_URL, {
+        
+        fetch(CLOUDFLARE_WORKER_URL, {
             method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ action: "getNames", kelas: kelas })
         })
         .then(res => res.json())
         .then(data => {
             document.getElementById('loading').classList.add('hidden');
-            document.getElementById('btn-load').disabled = false;
-
-            if (data.result === "success") {
-                renderTable(data.names, kelas);
-            } else {
-                alert("Gagal memuat siswa: " + (data.message || "Unknown error"));
-            }
-        })
-        .catch(err => {
-            document.getElementById('loading').classList.add('hidden');
-            document.getElementById('btn-load').disabled = false;
-            alert("Error koneksi.");
+            if (data.result === "success") renderTable(data.names, kelas);
         });
     }
 
-    // --- RENDER TABEL ---
-    function renderTable(names, kelasName) {
-        const tbody = document.getElementById('tbody-siswa');
-        tbody.innerHTML = "";
-        document.getElementById('display-class').innerText = kelasName;
-
-        if (names.length === 0) {
-            tbody.innerHTML = "<tr><td colspan='5' style='text-align:center'>Tidak ada siswa di kelas ini.</td></tr>";
-            document.getElementById('attendance-area').classList.remove('hidden');
-            return;
-        }
-
-        names.forEach((name, index) => {
-            // Kita gunakan index untuk membuat grup radio button yang unik per siswa
-            // name="status-0", name="status-1", dst.
-            let row = `
-                <tr class="student-row" data-name="${name}">
-                    <td>${name}</td>
-                    <td>
-                        <div class="radio-group">
-                            <input type="radio" name="status-${index}" value="Alpha">
-                        </div>
-                    </td>
-                    <td>
-                        <div class="radio-group">
-                            <input type="radio" name="status-${index}" value="Ijin">
-                        </div>
-                    </td>
-                    <td>
-                        <div class="radio-group">
-                            <input type="radio" name="status-${index}" value="Sakit">
-                        </div>
-                    </td>
-                    <td>
-                        <div class="radio-group">
-                            <input type="radio" name="status-${index}" value="Hadir" checked>
-                        </div>
-                    </td>
-                </tr>
-            `;
-            tbody.innerHTML += row;
-        });
-
-        document.getElementById('attendance-area').classList.remove('hidden');
-        document.getElementById('action-bar').classList.remove('hidden');
-        
-        // Scroll ke bawah agar tabel terlihat
-        document.getElementById('attendance-area').scrollIntoView({ behavior: 'smooth' });
-    }
-
-    // --- SUBMIT DATA ---
+    // Fungsi Simpan Absensi ke D1
     function submitAttendance() {
         const guru = document.getElementById('guru').value;
         const tanggal = document.getElementById('tanggal').value;
-        const kelas = document.getElementById('sel-kelas').value;
         const rows = document.querySelectorAll('.student-row');
-        
         let absensiData = [];
 
-        // Loop setiap baris siswa
         rows.forEach(row => {
             const name = row.getAttribute('data-name');
-            // Cari radio button yang checked dalam baris ini
-            const checkedRadio = row.querySelector('input[type="radio"]:checked');
-            const status = checkedRadio ? checkedRadio.value : "Hadir";
-
-            // LOGIKA UTAMA: Hanya simpan jika TIDAK Hadir (Alpha, Ijin, Sakit)
+            const status = row.querySelector('input[type="radio"]:checked').value;
             if (status !== "Hadir") {
-                absensiData.push({
-                    tanggal: tanggal,
-                    nama: name,
-                    status: status,
-                    kelas: kelas,
-                    guru: guru
-                });
+                absensiData.push({ tanggal, nama: name, status, kelas: document.getElementById('sel-kelas').value, guru });
             }
         });
 
-        // Validasi: Jika semua hadir (array kosong), konfirmasi dulu
-        if (absensiData.length === 0) {
-            const confirmAllPresent = confirm("Tidak ada siswa yang Alpha/Ijin/Sakit.\nApakah Anda yakin SEMUA SISWA HADIR?");
-            if (!confirmAllPresent) return;
-            
-            // Jika yakin semua hadir, kita tetap bisa kirim data kosong atau reset saja.
-            // Sesuai permintaan: "jika radio button yang dipilih selain Hadir maka input..."
-            // Jadi kalau semua Hadir, tidak ada yang diinput ke sheet.
-            alert("Semua siswa tercatat HADIR. Tidak ada data yang disimpan ke sheet Kehadiran.");
-            resetMenu();
-            return;
-        }
+        if (absensiData.length === 0) return alert("Semua hadir, tidak ada data disimpan.");
 
-        // Kirim ke Backend
-        const btnSubmit = document.querySelector('.btn-submit');
-        btnSubmit.innerText = "Menyimpan...";
-        btnSubmit.disabled = true;
-
-        fetch(GOOGLE_SCRIPT_URL, {
+        fetch(CLOUDFLARE_WORKER_URL, {
             method: 'POST',
-            body: JSON.stringify({ 
-                action: "submitAttendance", 
-                records: absensiData 
-            })
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: "submitAttendance", records: absensiData })
         })
         .then(res => res.json())
         .then(data => {
             if (data.result === "success") {
-                alert(`Berhasil menyimpan ${data.count} siswa yang tidak hadir.`);
-                resetMenu();
-            } else {
-                alert("Gagal menyimpan data.");
+                alert(`Tersimpan! ${data.count} siswa tercatat tidak hadir.`);
+                location.reload();
             }
-            btnSubmit.innerText = "SIMPAN KEHADIRAN";
-            btnSubmit.disabled = false;
-        })
-        .catch(err => {
-            alert("Error koneksi.");
-            btnSubmit.innerText = "SIMPAN KEHADIRAN";
-            btnSubmit.disabled = false;
         });
-    }
-
-    function resetMenu() {
-        document.getElementById('attendance-area').classList.add('hidden');
-        document.getElementById('action-bar').classList.add('hidden');
-        document.getElementById('sel-jenjang').value = "";
-        document.getElementById('sel-kelas').innerHTML = '<option value="" disabled selected>-- Pilih Jenjang Dulu --</option>';
-        document.getElementById('sel-kelas').disabled = true;
-        
-        // Scroll kembali ke atas
-        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 </script>
 
 </body>
+
 </html>
