@@ -278,154 +278,90 @@
 </div>
 
 <script>
-    // ==========================================
-    // KONFIGURASI (JANGAN LUPA GANTI URL INI)
-    // ==========================================
-    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyW8-i4CSgrqIKoiyw-2hNHNqc0zX07ccyBlmEI0LGwB3xG7jDc7ebW1E_xRLYY6Ox1cg/exec"; 
+<script>
+    const CLOUDFLARE_WORKER_URL = "https://disiplin-siswa.kurikulum-sman2cikarangbarat.workers.dev/";
 
-    const dataKelas = {
-        "X": ["X - A", "X - B", "X - C", "X - D", "X - E", "X - F"],
-        "XI": ["XI - A", "XI - B", "XI - C", "XI - D", "XI - E", "XI - F", "XI - G"],
-        "XII": ["XII - A", "XII - B", "XII - C", "XII - D", "XII - E", "XII - F", "XII - G"] 
-    };
+    // 1. Fungsi Mengambil Data Utama (Tabel) saat Halaman Dimuat
+    async function loadMonitorData() {
+        const tbody = document.querySelector("#table-monitor tbody");
+        tbody.innerHTML = "<tr><td colspan='6' style='text-align:center; padding:20px;'>Memuat data terbaru...</td></tr>";
 
-    let currentMode = "all";
-
-    function setMode(mode) {
-        currentMode = mode;
-        
-        // Update UI Button Active State
-        document.getElementById('btn-all').className = mode === 'all' ? 'mode-btn active' : 'mode-btn';
-        document.getElementById('btn-class').className = mode === 'class' ? 'mode-btn active' : 'mode-btn';
-        
-        const classInputs = document.getElementById('class-inputs');
-        const controlsBox = document.getElementById('controls-box');
-
-        if (mode === 'class') {
-            classInputs.classList.remove('hidden'); // Hilangkan class hidden bawaan CSS
-            classInputs.style.display = 'contents'; // Agar anak elemennya (form-group) ikut aturan flex parent
-            controlsBox.classList.add('filter-active'); // Trigger layout horizontal di desktop
-        } else {
-            classInputs.style.display = 'none';
-            controlsBox.classList.remove('filter-active');
-        }
-        
-        document.getElementById('result-container').classList.add('hidden');
-    }
-
-    function updateKelasOptions() {
-        const jenjang = document.getElementById("sel-jenjang").value;
-        const selKelas = document.getElementById("sel-kelas");
-        
-        selKelas.innerHTML = '<option value="" disabled selected>Pilih Kelas...</option>';
-        selKelas.disabled = false;
-
-        if (dataKelas[jenjang]) {
-            dataKelas[jenjang].forEach(kelas => {
-                let opt = document.createElement("option");
-                opt.value = kelas;
-                opt.textContent = kelas;
-                selKelas.appendChild(opt);
+        try {
+            const response = await fetch(CLOUDFLARE_WORKER_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: "getMonitorData" })
             });
-        }
-    }
+            const res = await response.json();
 
-    function fetchData() {
-        const loading = document.getElementById('loading');
-        const resultContainer = document.getElementById('result-container');
-        const tbody = document.getElementById('table-body');
-        const totalStudents = document.getElementById('total-students');
-        
-        let payload = { action: "getLateReport", mode: currentMode };
+            if (res.result === "success") {
+                if (res.data.length === 0) {
+                    tbody.innerHTML = "<tr><td colspan='6' style='text-align:center; padding:20px;'>Belum ada data siswa.</td></tr>";
+                    return;
+                }
 
-        if (currentMode === 'class') {
-            const kelasDipilih = document.getElementById('sel-kelas').value;
-            if (!kelasDipilih) { alert("Harap pilih Kelas terlebih dahulu."); return; }
-            payload.kelas = kelasDipilih;
-        }
-
-        loading.style.display = 'block';
-        resultContainer.classList.add('hidden');
-        tbody.innerHTML = "";
-
-        fetch(GOOGLE_SCRIPT_URL, {
-            method: 'POST', body: JSON.stringify(payload)
-        })
-        .then(res => res.json())
-        .then(data => {
-            loading.style.display = 'none';
-            if (data.result === "success") {
-                const siswaList = data.data;
-                if (siswaList.length === 0) { alert("Tidak ada data keterlambatan."); return; }
-
-                resultContainer.classList.remove('hidden');
-                totalStudents.innerText = siswaList.length;
-
-                let no = 1;
-                siswaList.forEach(siswa => {
-                    let row = `
-                        <tr>
-                            <td>${no++}</td>
-                            <td>
-                                <div style="font-weight:bold;">${siswa.nama}</div>
-                                <div style="font-size:0.8rem; color:#888; display:none;" class="mobile-class-info">${siswa.kelas}</div> 
-                            </td>
-                            <td>${siswa.kelas}</td>
-                            <td style="text-align: center;"><span class="badge-count">${siswa.poin}</span></td>
-                            <td style="text-align: center;">
-                                <button class="btn-detail" onclick="viewDetail('${siswa.nama}')">
-                                    <span style="font-size:1.2rem; line-height:0;">👁️</span>
-                                </button>
-                            </td>
-                        </tr>
+                tbody.innerHTML = "";
+                res.data.forEach(siswa => {
+                    const row = document.createElement("tr");
+                    row.onclick = () => showDetail(siswa.nama);
+                    row.innerHTML = `
+                        <td>${siswa.nama}</td>
+                        <td style="text-align:center;">${siswa.kelas}</td>
+                        <td style="text-align:center; font-weight:bold; color:var(--accent-color);">${siswa.poin_terlambat}</td>
+                        <td style="text-align:center;">${siswa.alpha || 0}</td>
+                        <td style="text-align:center;">${siswa.ijin || 0}</td>
+                        <td style="text-align:center;">${siswa.sakit || 0}</td>
                     `;
-                    tbody.innerHTML += row;
+                    tbody.appendChild(row);
                 });
             } else {
-                alert("Gagal: " + (data.message || "Unknown Error"));
+                tbody.innerHTML = "<tr><td colspan='6' style='text-align:center; color:red; padding:20px;'>Gagal memuat data dari database.</td></tr>";
             }
-        })
-        .catch(err => {
-            loading.style.display = 'none';
-            alert("Gagal terhubung ke server.");
-        });
+        } catch (err) {
+            console.error(err);
+            tbody.innerHTML = "<tr><td colspan='6' style='text-align:center; color:red; padding:20px;'>Error: Gagal terhubung ke server.</td></tr>";
+        }
     }
 
-    // --- DETAIL MODAL LOGIC ---
-    function viewDetail(namaSiswa) {
+    // 2. Fungsi Menampilkan Modal Detail Riwayat Siswa
+    function showDetail(nama) {
         const modal = document.getElementById('modalDetail');
-        const list = document.getElementById('modal-list');
-        const loading = document.getElementById('modal-loading');
-        const title = document.getElementById('modal-title');
+        const modalTitle = document.getElementById('modalTitle');
+        const list = document.getElementById('detailList');
+        const loading = document.getElementById('loadingDetail');
 
         modal.style.display = 'flex';
-        title.innerText = namaSiswa;
+        modalTitle.innerText = nama;
         list.innerHTML = "";
         loading.style.display = 'block';
 
-        fetch(GOOGLE_SCRIPT_URL, {
+        fetch(CLOUDFLARE_WORKER_URL, {
             method: 'POST',
-            body: JSON.stringify({ action: "getStudentDetail", nama: namaSiswa })
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                action: "getDetailSiswa", 
+                nama: nama 
+            })
         })
         .then(res => res.json())
         .then(data => {
             loading.style.display = 'none';
             if (data.result === "success") {
-                if (data.details.length === 0) {
-                    list.innerHTML = "<div style='text-align:center; padding:10px; color:#888;'>Belum ada riwayat detail.</div>";
+                if (data.data.length === 0) {
+                    list.innerHTML = "<div style='text-align:center; padding:20px; color:#999;'>Belum ada riwayat tiket keterlambatan.</div>";
                 } else {
-                    data.details.forEach(item => {
-                        let dateObj = new Date(item.waktu);
-                        let dateStr = dateObj.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
-                        let timeStr = dateObj.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+                    data.data.forEach(item => {
+                        const dateObj = new Date(item.waktu);
+                        const dateStr = dateObj.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+                        const timeStr = dateObj.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
 
                         list.innerHTML += `
-                            <div class="detail-item">
+                            <div class="detail-item" style="display:flex; justify-content:space-between; padding:12px; border-bottom:1px solid #eee;">
                                 <div>
                                     <div style="font-weight:bold; color:#333;">${dateStr}</div>
                                     <div style="font-size:0.85rem; color:#666;">Pukul ${timeStr} WIB</div>
                                 </div>
-                                <div style="font-size:0.85rem; font-weight:bold; color:#1e3c72; align-self:center;">
+                                <div style="font-size:0.85rem; font-weight:bold; color:var(--primary-color); align-self:center;">
                                     ${item.info || "Terlambat"}
                                 </div>
                             </div>
@@ -433,26 +369,32 @@
                     });
                 }
             } else {
-                list.innerHTML = "<div style='color:red; text-align:center;'>Gagal memuat data.</div>";
+                list.innerHTML = "<div style='color:red; text-align:center; padding:20px;'>Gagal memuat riwayat.</div>";
             }
         })
         .catch(err => {
             loading.style.display = 'none';
-            list.innerHTML = "<div style='color:red; text-align:center;'>Error koneksi internet.</div>";
+            list.innerHTML = "<div style='color:red; text-align:center; padding:20px;'>Error koneksi server.</div>";
         });
     }
 
+    // 3. Fungsi Menutup Modal
     function closeModal() {
         document.getElementById('modalDetail').style.display = 'none';
     }
-    
-    // Animasi Loading CSS
-    const styleSheet = document.createElement("style");
-    styleSheet.innerText = `@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`;
-    document.head.appendChild(styleSheet);
 
+    // Jalankan load data saat halaman siap
+    document.addEventListener('DOMContentLoaded', loadMonitorData);
+
+    // Animasi Loading CSS untuk Detail (Tambahan jika belum ada)
+    if (!document.getElementById('spin-style')) {
+        const styleSheet = document.createElement("style");
+        styleSheet.id = 'spin-style';
+        styleSheet.innerText = `@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`;
+        document.head.appendChild(styleSheet);
+    }
 </script>
-
 </body>
 
 </html>
+
