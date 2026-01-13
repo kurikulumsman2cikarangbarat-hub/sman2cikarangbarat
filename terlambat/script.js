@@ -1,8 +1,7 @@
 // ==========================================
 // KONFIGURASI DAN VARIABEL GLOBAL
 // ==========================================
-// GANTI URL DI BAWAH INI DENGAN URL WORKER CLOUDFLARE ANDA
-const CLOUDFLARE_WORKER_URL = "disiplin-siswa.kurikulum-sman2cikarangbarat.workers.dev"; 
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyW8-i4CSgrqIKoiyw-2hNHNqc0zX07ccyBlmEI0LGwB3xG7jDc7ebW1E_xRLYY6Ox1cg/exec"; 
 
 let currentCorrectAnswer = "";
 let timerInt, isTestActive = false, cheatCount = 0;
@@ -49,10 +48,8 @@ function getStudentNames() {
     selNama.disabled = true;
     btnStart.disabled = true;
 
-    // INTEGRASI D1: Menggunakan header application/json
-    fetch(CLOUDFLARE_WORKER_URL, {
+    fetch(GOOGLE_SCRIPT_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: "getNames", kelas: kelasDipilih })
     })
     .then(res => res.json())
@@ -101,11 +98,8 @@ function checkHistoryAndStart() {
     btn.disabled = true; btn.innerHTML = "Mengecek Database...";
     alertBox.style.display = 'none';
 
-    // INTEGRASI D1: Menggunakan header application/json
-    fetch(CLOUDFLARE_WORKER_URL, {
-        method: 'POST', 
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: "check", nama: name })
+    fetch(GOOGLE_SCRIPT_URL, {
+        method: 'POST', body: JSON.stringify({ action: "check", nama: name })
     })
     .then(res => res.json())
     .then(data => {
@@ -134,18 +128,15 @@ function fetchSoal() {
     document.getElementById('page-test').style.display = 'none';
     document.getElementById('page-loading').style.display = 'block';
 
-    // INTEGRASI D1: Menggunakan header application/json
-    fetch(CLOUDFLARE_WORKER_URL, {
-        method: 'POST', 
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: "getSoal" }) 
+    fetch(GOOGLE_SCRIPT_URL, {
+        method: 'POST', body: JSON.stringify({ action: "getSoal" }) 
     })
     .then(res => res.json())
     .then(data => {
         if (data.result === "success") {
             setupQuestion(data.data);
         } else {
-            alert("GAGAL MENGAMBIL SOAL.\nPastikan tabel 'bank_soal' sudah diisi.");
+            alert("GAGAL MENGAMBIL SOAL.\nPastikan Sheet 'BankSoal' ada isinya.");
             location.reload();
         }
     })
@@ -221,69 +212,73 @@ function success() {
     const tm = new Date().toLocaleString('id-ID', { hour12: false });
     const attemptText = `${totalAttempts} Percobaan`;
 
+    // 1. Sembunyikan semua halaman lain
     document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
+    
+    // 2. Tampilkan Halaman Sukses di dalam container
     document.getElementById('page-success').style.display = 'block';
     
     document.getElementById('final-name').innerText = nm;
     document.getElementById('final-time').innerText = tm;
     document.getElementById('attempt-info').innerText = attemptText;
     
+    // 3. Generate QR Code (Ukuran disesuaikan CSS)
     document.getElementById("qrcode").innerHTML = "";
     new QRCode(document.getElementById("qrcode"), { text: `TIKET VALID\n${nm}\n${tm}\n${attemptText}`, width: 200, height: 200 });
     
+    // 4. Efek Confetti (Perayaan) - Akan terlihat karena dalam container
     if (typeof confetti === "function") {
         confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 }, zIndex: 999 });
     }
 
+    // 5. Kirim Data ke Server
     document.getElementById('sending-overlay').style.display = 'flex';
 
-    // INTEGRASI D1: MENGHAPUS no-cors AGAR BISA MEMBACA RESPON SUKSES
-    fetch(CLOUDFLARE_WORKER_URL, {
-        method: 'POST', 
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-            action: "submit", 
-            nama: nm, 
-            status: attemptText, 
-            info: `Selesai. Curang: ${cheatCount}x` 
-        })
+    fetch(GOOGLE_SCRIPT_URL, {
+        method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: "submit", nama: nm, status: attemptText, info: `Selesai. Curang: ${cheatCount}x` })
     })
-    .then(res => res.json())
-    .then(data => {
-        if(data.result === "success") {
+    .then(() => {
+        setTimeout(() => {
             document.getElementById('sending-overlay').style.display = 'none';
-            document.getElementById('sent-status').innerText = "DATA TERSIMPAN DI DATABASE";
+            document.getElementById('sent-status').innerText = "DATA TERSIMPAN DI SERVER";
             document.getElementById('sent-status').style.color = "#27ae60";
-        } else {
-            throw new Error(data.error);
-        }
+        }, 1500);
     })
     .catch(err => {
         document.getElementById('sending-overlay').style.display = 'none';
-        document.getElementById('sent-status').innerText = "DATA GAGAL TERKIRIM (LAPORKAN GURU)";
-        document.getElementById('sent-status').style.color = "#c0392b";
-        console.error(err);
+        document.getElementById('sent-status').innerText = "DATA OFFLINE (TUNJUKKAN HP KE GURU)";
     });
 }
 
+// ==========================================
+// FUNGSI BARU: MENUJU YOUTUBE
+// ==========================================
 function goToYoutube() {
     window.location.href = "https://www.youtube.com/watch?v=pPI4LOBRT04";
 }
 
-// ANTI CURANG
+// ==========================================
+// FITUR ANTI CURANG
+// ==========================================
 document.addEventListener('contextmenu', event => event.preventDefault());
+
 document.onkeydown = function(e) {
     if (e.keyCode == 123) return false;
     if (e.ctrlKey && e.shiftKey && (e.keyCode == 'I'.charCodeAt(0) || e.keyCode == 'C'.charCodeAt(0) || e.keyCode == 'J'.charCodeAt(0))) return false;
     if (e.ctrlKey && (e.keyCode == 'U'.charCodeAt(0) || e.keyCode == 'P'.charCodeAt(0) || e.keyCode == 'S'.charCodeAt(0))) return false;
 };
+
 document.addEventListener("cut", (e) => e.preventDefault());
 document.addEventListener("copy", (e) => e.preventDefault());
 document.addEventListener("paste", (e) => e.preventDefault());
+
 document.addEventListener("visibilitychange", () => {
     if(document.hidden && isTestActive) {
         cheatCount++; 
         fetchSoal(); 
     } 
 });
+
+
 
