@@ -3,86 +3,119 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Input Kehadiran Siswa - SMAN 2 Cikarang Barat</title>
+    <title>Input Kehadiran Siswa</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
+        /* CSS STYLE MODERN */
         :root {
             --primary: #1e3c72;
             --bg: #f4f6f8;
             --white: #ffffff;
             --border: #ddd;
             --text: #333;
-            --accent: #27ae60;
-            --danger: #c0392b;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
         body { background: var(--bg); padding: 20px; color: var(--text); }
+        
         .container { max-width: 800px; margin: 0 auto; }
-        h1 { text-align: center; color: var(--primary); margin-bottom: 20px; font-size: 1.5rem; font-weight: 700; }
+        
+        h1 { text-align: center; color: var(--primary); margin-bottom: 20px; font-size: 1.5rem; }
 
+        /* CARD STYLE */
         .card {
             background: var(--white);
-            padding: 25px;
-            border-radius: 16px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
             margin-bottom: 20px;
+            border: 1px solid #eee;
         }
 
         .form-group { margin-bottom: 15px; }
-        label { display: block; font-weight: 600; margin-bottom: 8px; font-size: 0.9rem; color: #555; }
-        input, select {
+        label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 0.9rem; color: #555; }
+        
+        input[type="text"], input[type="date"], select {
             width: 100%; padding: 12px; border: 1px solid var(--border);
-            border-radius: 10px; font-size: 1rem; outline: none; transition: 0.3s;
+            border-radius: 8px; font-size: 1rem; outline: none; transition: 0.2s;
         }
-        input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(30, 60, 114, 0.1); }
+        input:focus, select:focus { border-color: var(--primary); }
 
         .btn-load {
-            width: 100%; padding: 14px; background: var(--primary);
-            color: white; border: none; border-radius: 10px;
-            font-weight: 700; cursor: pointer; transition: 0.3s; margin-top: 10px;
+            width: 100%; background: var(--primary); color: white; border: none;
+            padding: 12px; border-radius: 8px; font-weight: 600; cursor: pointer;
+            margin-top: 10px;
         }
-        .btn-load:hover { opacity: 0.9; }
+        .btn-load:hover { background: #2a5298; }
+        .btn-load:disabled { background: #ccc; cursor: not-allowed; }
 
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th, td { padding: 15px; text-align: left; border-bottom: 1px solid #eee; }
-        th { background: #f8f9fa; color: var(--primary); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; }
-
-        .radio-group { display: flex; gap: 10px; justify-content: center; }
-        .hidden { display: none; }
+        /* TABEL ABSENSI */
+        .table-container { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; min-width: 600px; }
         
-        #action-bar {
-            position: sticky; bottom: 20px; background: white;
-            padding: 20px; border-radius: 16px; box-shadow: 0 -10px 30px rgba(0,0,0,0.1);
-            margin-top: 20px; display: flex; justify-content: space-between; align-items: center;
-            border: 1px solid #eee; z-index: 10;
+        th { 
+            background: #f8f9fa; color: #444; padding: 12px; text-align: center; 
+            border-bottom: 2px solid var(--border); font-size: 0.85rem; text-transform: uppercase;
+        }
+        td { padding: 12px; border-bottom: 1px solid #eee; vertical-align: middle; }
+        
+        /* Kolom Nama Rata Kiri, Sisanya Tengah */
+        td:first-child { text-align: left; font-weight: 500; }
+        td:not(:first-child) { text-align: center; }
+
+        tr:hover { background: #f0f7ff; }
+
+        /* RADIO BUTTON STYLE */
+        .radio-group { display: flex; justify-content: center; align-items: center; }
+        input[type="radio"] {
+            transform: scale(1.3); cursor: pointer; accent-color: var(--primary);
         }
 
+        /* HEADER WARNA KHUSUS */
+        .th-alpha { color: #c0392b; border-bottom-color: #c0392b; }
+        .th-ijin { color: #f39c12; border-bottom-color: #f39c12; }
+        .th-sakit { color: #2980b9; border-bottom-color: #2980b9; }
+        .th-hadir { color: #27ae60; border-bottom-color: #27ae60; }
+
+        /* FOOTER ACTION */
+        .action-bar {
+            position: sticky; bottom: 20px;
+            background: white; padding: 15px; border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+            display: flex; justify-content: space-between; align-items: center;
+            border: 1px solid var(--primary);
+        }
+        
+        .summary-text { font-size: 0.9rem; color: #555; }
         .btn-submit {
-            background: var(--accent); color: white; padding: 12px 30px;
-            border: none; border-radius: 10px; font-weight: 700; cursor: pointer;
-            transition: 0.3s;
+            background: #27ae60; color: white; border: none;
+            padding: 12px 30px; border-radius: 8px; font-weight: 700; cursor: pointer;
+            font-size: 1rem;
         }
-        .btn-submit:disabled { background: #bdc3c7; }
+        .btn-submit:hover { background: #219150; }
 
-        #loading { text-align: center; padding: 30px; font-weight: 600; color: var(--primary); }
+        .hidden { display: none; }
+        .spinner { text-align: center; padding: 20px; color: var(--primary); }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>PANEL GURU PIKET</h1>
+    <h1>📝 Input Kehadiran Siswa</h1>
 
-    <div class="card">
+    <div class="card" id="step-1">
         <div class="form-group">
-            <label>Nama Guru / Petugas:</label>
+            <label>Nama Guru Piket:</label>
             <input type="text" id="guru" placeholder="Masukkan nama Anda...">
         </div>
         <div class="form-group">
-            <label>Tanggal Absensi:</label>
+            <label>Tanggal:</label>
             <input type="date" id="tanggal">
         </div>
+    </div>
+
+    <div class="card" id="step-2">
         <div class="form-group">
             <label>Jenjang Kelas:</label>
             <select id="sel-jenjang" onchange="updateKelasOptions()">
@@ -93,58 +126,68 @@
             </select>
         </div>
         <div class="form-group">
-            <label>Pilih Kelas:</label>
+            <label>Kelas:</label>
             <select id="sel-kelas" disabled>
                 <option value="" disabled selected>-- Pilih Jenjang Dulu --</option>
             </select>
         </div>
-        <button class="btn-load" id="btn-load" onclick="loadStudents()">TAMPILKAN DAFTAR SISWA</button>
+        <button class="btn-load" id="btn-load" onclick="loadStudents()">MUAT DAFTAR SISWA</button>
     </div>
 
-    <div id="loading" class="hidden">🔄 Menghubungkan ke Database D1...</div>
+    <div id="loading" class="spinner hidden">
+        ⏳ Mengambil Data Siswa...
+    </div>
 
     <div id="attendance-area" class="card hidden">
-        <h3 id="display-class" style="margin-bottom: 15px; color: var(--primary); border-bottom: 2px solid #eee; padding-bottom: 10px;"></h3>
-        <div style="overflow-x: auto;">
-            <table>
+        <h3 style="margin-bottom:15px; text-align:center;">
+            Daftar Siswa: <span id="display-class" style="color:var(--primary)"></span>
+        </h3>
+        
+        <div class="table-container">
+            <table id="table-absen">
                 <thead>
                     <tr>
-                        <th>Nama Siswa</th>
-                        <th style="text-align:center">A</th>
-                        <th style="text-align:center">I</th>
-                        <th style="text-align:center">S</th>
-                        <th style="text-align:center">H</th>
+                        <th style="width: 40%;">Nama Siswa</th>
+                        <th class="th-alpha">Alpha</th>
+                        <th class="th-ijin">Ijin</th>
+                        <th class="th-sakit">Sakit</th>
+                        <th class="th-hadir">Hadir</th>
                     </tr>
                 </thead>
-                <tbody id="tbody-siswa"></tbody>
+                <tbody id="tbody-siswa">
+                    </tbody>
             </table>
         </div>
     </div>
 
-    <div id="action-bar" class="hidden">
-        <div style="font-size: 0.85rem; color: #666;">Keterangan: <b>A</b> (Alpha), <b>I</b> (Izin), <b>S</b> (Sakit), <b>H</b> (Hadir)</div>
-        <button class="btn-submit" id="btn-submit" onclick="submitAttendance()">SIMPAN KEHADIRAN</button>
+    <div id="action-bar" class="action-bar hidden">
+        <div class="summary-text">
+            Pastikan data sudah benar sebelum simpan.
+        </div>
+        <button class="btn-submit" onclick="submitAttendance()">SIMPAN KEHADIRAN</button>
     </div>
 </div>
 
 <script>
-    // URL CLOUDFLARE WORKER
-    const CLOUDFLARE_WORKER_URL = "https://disiplin-siswa.kurikulum-sman2cikarangbarat.workers.dev/";
+    // KONFIGURASI
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyW8-i4CSgrqIKoiyw-2hNHNqc0zX07ccyBlmEI0LGwB3xG7jDc7ebW1E_xRLYY6Ox1cg/exec";
 
-    // Set tanggal hari ini secara otomatis
+    // Set Tanggal Hari Ini secara otomatis
     document.getElementById('tanggal').valueAsDate = new Date();
 
     const dataKelas = {
         "X": ["X - A", "X - B", "X - C", "X - D", "X - E", "X - F"],
         "XI": ["XI - A", "XI - B", "XI - C", "XI - D", "XI - E", "XI - F", "XI - G"],
-        "XII": ["XII - A", "XII - B", "XII - C", "XII - D", "XII - E", "XII - F", "XII - G"]
+        "XII": ["XII - A", "XII - B", "XII - C", "XII - D", "XII - E", "XII - F", "XII - G"] // Koreksi Typo XI-G ke XII-G
     };
 
     function updateKelasOptions() {
         const jenjang = document.getElementById("sel-jenjang").value;
         const selKelas = document.getElementById("sel-kelas");
+        
         selKelas.innerHTML = '<option value="" disabled selected>-- Pilih Kelas --</option>';
         selKelas.disabled = false;
+
         if (dataKelas[jenjang]) {
             dataKelas[jenjang].forEach(kelas => {
                 let opt = document.createElement("option");
@@ -155,12 +198,14 @@
         }
     }
 
+    // --- LOAD SISWA ---
     function loadStudents() {
         const guru = document.getElementById('guru').value;
+        const tanggal = document.getElementById('tanggal').value;
         const kelas = document.getElementById('sel-kelas').value;
 
-        if (!guru || !kelas) {
-            alert("Mohon isi Nama Guru dan pilih Kelas!");
+        if (!guru || !tanggal || !kelas) {
+            alert("Mohon lengkapi Nama Guru, Tanggal, dan Kelas!");
             return;
         }
 
@@ -169,61 +214,95 @@
         document.getElementById('action-bar').classList.add('hidden');
         document.getElementById('btn-load').disabled = true;
 
-        // Ambil Nama Siswa dari Worker (D1)
-        fetch(CLOUDFLARE_WORKER_URL, {
+        fetch(GOOGLE_SCRIPT_URL, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ action: "getNames", kelas: kelas })
         })
         .then(res => res.json())
         .then(data => {
             document.getElementById('loading').classList.add('hidden');
             document.getElementById('btn-load').disabled = false;
+
             if (data.result === "success") {
                 renderTable(data.names, kelas);
             } else {
-                alert("Gagal mengambil data: " + data.message);
+                alert("Gagal memuat siswa: " + (data.message || "Unknown error"));
             }
         })
         .catch(err => {
             document.getElementById('loading').classList.add('hidden');
             document.getElementById('btn-load').disabled = false;
-            alert("Error koneksi ke database D1.");
-            console.error(err);
+            alert("Error koneksi.");
         });
     }
 
+    // --- RENDER TABEL ---
     function renderTable(names, kelasName) {
         const tbody = document.getElementById('tbody-siswa');
         tbody.innerHTML = "";
-        document.getElementById('display-class').innerText = "KELAS " + kelasName;
+        document.getElementById('display-class').innerText = kelasName;
+
+        if (names.length === 0) {
+            tbody.innerHTML = "<tr><td colspan='5' style='text-align:center'>Tidak ada siswa di kelas ini.</td></tr>";
+            document.getElementById('attendance-area').classList.remove('hidden');
+            return;
+        }
 
         names.forEach((name, index) => {
+            // Kita gunakan index untuk membuat grup radio button yang unik per siswa
+            // name="status-0", name="status-1", dst.
             let row = `
                 <tr class="student-row" data-name="${name}">
-                    <td><div style="font-weight:600; font-size:0.95rem;">${name}</div></td>
-                    <td><div class="radio-group"><input type="radio" name="st-${index}" value="Alpha"></div></td>
-                    <td><div class="radio-group"><input type="radio" name="st-${index}" value="Ijin"></div></td>
-                    <td><div class="radio-group"><input type="radio" name="st-${index}" value="Sakit"></div></td>
-                    <td><div class="radio-group"><input type="radio" name="st-${index}" value="Hadir" checked></div></td>
-                </tr>`;
+                    <td>${name}</td>
+                    <td>
+                        <div class="radio-group">
+                            <input type="radio" name="status-${index}" value="Alpha">
+                        </div>
+                    </td>
+                    <td>
+                        <div class="radio-group">
+                            <input type="radio" name="status-${index}" value="Ijin">
+                        </div>
+                    </td>
+                    <td>
+                        <div class="radio-group">
+                            <input type="radio" name="status-${index}" value="Sakit">
+                        </div>
+                    </td>
+                    <td>
+                        <div class="radio-group">
+                            <input type="radio" name="status-${index}" value="Hadir" checked>
+                        </div>
+                    </td>
+                </tr>
+            `;
             tbody.innerHTML += row;
         });
+
         document.getElementById('attendance-area').classList.remove('hidden');
         document.getElementById('action-bar').classList.remove('hidden');
+        
+        // Scroll ke bawah agar tabel terlihat
+        document.getElementById('attendance-area').scrollIntoView({ behavior: 'smooth' });
     }
 
+    // --- SUBMIT DATA ---
     function submitAttendance() {
         const guru = document.getElementById('guru').value;
         const tanggal = document.getElementById('tanggal').value;
         const kelas = document.getElementById('sel-kelas').value;
         const rows = document.querySelectorAll('.student-row');
+        
         let absensiData = [];
 
+        // Loop setiap baris siswa
         rows.forEach(row => {
             const name = row.getAttribute('data-name');
-            const status = row.querySelector('input[type="radio"]:checked').value;
-            // Hanya kirim yang statusnya BUKAN Hadir (Alpha, Ijin, Sakit)
+            // Cari radio button yang checked dalam baris ini
+            const checkedRadio = row.querySelector('input[type="radio"]:checked');
+            const status = checkedRadio ? checkedRadio.value : "Hadir";
+
+            // LOGIKA UTAMA: Hanya simpan jika TIDAK Hadir (Alpha, Ijin, Sakit)
             if (status !== "Hadir") {
                 absensiData.push({
                     tanggal: tanggal,
@@ -235,19 +314,26 @@
             }
         });
 
+        // Validasi: Jika semua hadir (array kosong), konfirmasi dulu
         if (absensiData.length === 0) {
-            alert("Semua siswa terpilih Hadir. Tidak ada data ketidakhadiran yang perlu disimpan.");
+            const confirmAllPresent = confirm("Tidak ada siswa yang Alpha/Ijin/Sakit.\nApakah Anda yakin SEMUA SISWA HADIR?");
+            if (!confirmAllPresent) return;
+            
+            // Jika yakin semua hadir, kita tetap bisa kirim data kosong atau reset saja.
+            // Sesuai permintaan: "jika radio button yang dipilih selain Hadir maka input..."
+            // Jadi kalau semua Hadir, tidak ada yang diinput ke sheet.
+            alert("Semua siswa tercatat HADIR. Tidak ada data yang disimpan ke sheet Kehadiran.");
+            resetMenu();
             return;
         }
 
-        const btnSubmit = document.getElementById('btn-submit');
-        btnSubmit.innerText = "⏳ Menyimpan...";
+        // Kirim ke Backend
+        const btnSubmit = document.querySelector('.btn-submit');
+        btnSubmit.innerText = "Menyimpan...";
         btnSubmit.disabled = true;
 
-        // KIRIM KE WORKER
-        fetch(CLOUDFLARE_WORKER_URL, {
+        fetch(GOOGLE_SCRIPT_URL, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ 
                 action: "submitAttendance", 
                 records: absensiData 
@@ -256,20 +342,30 @@
         .then(res => res.json())
         .then(data => {
             if (data.result === "success") {
-                alert(`✅ BERHASIL!\n${data.count} data ketidakhadiran telah disimpan di database.`);
-                location.reload();
+                alert(`Berhasil menyimpan ${data.count} siswa yang tidak hadir.`);
+                resetMenu();
             } else {
-                alert("❌ ERROR: " + (data.error || "Gagal menyimpan"));
+                alert("Gagal menyimpan data.");
             }
+            btnSubmit.innerText = "SIMPAN KEHADIRAN";
+            btnSubmit.disabled = false;
         })
         .catch(err => {
-            alert("❌ Gagal terhubung ke server.");
-            console.error(err);
-        })
-        .finally(() => {
+            alert("Error koneksi.");
             btnSubmit.innerText = "SIMPAN KEHADIRAN";
             btnSubmit.disabled = false;
         });
+    }
+
+    function resetMenu() {
+        document.getElementById('attendance-area').classList.add('hidden');
+        document.getElementById('action-bar').classList.add('hidden');
+        document.getElementById('sel-jenjang').value = "";
+        document.getElementById('sel-kelas').innerHTML = '<option value="" disabled selected>-- Pilih Jenjang Dulu --</option>';
+        document.getElementById('sel-kelas').disabled = true;
+        
+        // Scroll kembali ke atas
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 </script>
 
