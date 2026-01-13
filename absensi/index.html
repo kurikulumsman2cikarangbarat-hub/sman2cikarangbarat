@@ -14,59 +14,53 @@
             --border: #ddd;
             --text: #333;
             --accent: #27ae60;
-            --danger: #c0392b;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
         body { background: var(--bg); padding: 20px; color: var(--text); }
         .container { max-width: 800px; margin: 0 auto; }
-        h1 { text-align: center; color: var(--primary); margin-bottom: 20px; font-size: 1.5rem; font-weight: 700; }
+        h1 { text-align: center; color: var(--primary); margin-bottom: 20px; font-size: 1.5rem; }
 
         .card {
             background: var(--white);
-            padding: 25px;
-            border-radius: 16px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
             margin-bottom: 20px;
         }
 
         .form-group { margin-bottom: 15px; }
-        label { display: block; font-weight: 600; margin-bottom: 8px; font-size: 0.9rem; color: #555; }
+        label { display: block; font-weight: 600; margin-bottom: 5px; font-size: 0.9rem; }
         input, select {
             width: 100%; padding: 12px; border: 1px solid var(--border);
-            border-radius: 10px; font-size: 1rem; outline: none; transition: 0.3s;
+            border-radius: 8px; font-size: 1rem; outline: none;
         }
-        input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(30, 60, 114, 0.1); }
 
         .btn-load {
-            width: 100%; padding: 14px; background: var(--primary);
-            color: white; border: none; border-radius: 10px;
-            font-weight: 700; cursor: pointer; transition: 0.3s; margin-top: 10px;
+            width: 100%; padding: 12px; background: var(--primary);
+            color: white; border: none; border-radius: 8px;
+            font-weight: 700; cursor: pointer; transition: 0.3s;
         }
-        .btn-load:hover { opacity: 0.9; }
 
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th, td { padding: 15px; text-align: left; border-bottom: 1px solid #eee; }
-        th { background: #f8f9fa; color: var(--primary); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; background: white; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
+        th { background: #f8f9fa; color: var(--primary); }
 
         .radio-group { display: flex; gap: 10px; justify-content: center; }
         .hidden { display: none; }
         
         #action-bar {
             position: sticky; bottom: 20px; background: white;
-            padding: 20px; border-radius: 16px; box-shadow: 0 -10px 30px rgba(0,0,0,0.1);
+            padding: 15px; border-radius: 12px; box-shadow: 0 -5px 20px rgba(0,0,0,0.1);
             margin-top: 20px; display: flex; justify-content: space-between; align-items: center;
-            border: 1px solid #eee; z-index: 10;
         }
 
         .btn-submit {
-            background: var(--accent); color: white; padding: 12px 30px;
-            border: none; border-radius: 10px; font-weight: 700; cursor: pointer;
-            transition: 0.3s;
+            background: var(--accent); color: white; padding: 12px 25px;
+            border: none; border-radius: 8px; font-weight: 700; cursor: pointer;
         }
-        .btn-submit:disabled { background: #bdc3c7; }
-
-        #loading { text-align: center; padding: 30px; font-weight: 600; color: var(--primary); }
+        
+        #loading { text-align: center; padding: 20px; font-weight: bold; color: var(--primary); }
     </style>
 </head>
 <body>
@@ -80,11 +74,11 @@
             <input type="text" id="guru" placeholder="Masukkan nama Anda...">
         </div>
         <div class="form-group">
-            <label>Tanggal Absensi:</label>
+            <label>Tanggal:</label>
             <input type="date" id="tanggal">
         </div>
         <div class="form-group">
-            <label>Jenjang Kelas:</label>
+            <label>Jenjang:</label>
             <select id="sel-jenjang" onchange="updateKelasOptions()">
                 <option value="" disabled selected>-- Pilih Jenjang --</option>
                 <option value="X">Kelas X</option>
@@ -93,7 +87,7 @@
             </select>
         </div>
         <div class="form-group">
-            <label>Pilih Kelas:</label>
+            <label>Kelas:</label>
             <select id="sel-kelas" disabled>
                 <option value="" disabled selected>-- Pilih Jenjang Dulu --</option>
             </select>
@@ -101,37 +95,34 @@
         <button class="btn-load" id="btn-load" onclick="loadStudents()">TAMPILKAN DAFTAR SISWA</button>
     </div>
 
-    <div id="loading" class="hidden">🔄 Menghubungkan ke Database D1...</div>
+    <div id="loading" class="hidden">🔄 Mengambil data dari Database D1...</div>
 
     <div id="attendance-area" class="card hidden">
-        <h3 id="display-class" style="margin-bottom: 15px; color: var(--primary); border-bottom: 2px solid #eee; padding-bottom: 10px;"></h3>
-        <div style="overflow-x: auto;">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Nama Siswa</th>
-                        <th style="text-align:center">A</th>
-                        <th style="text-align:center">I</th>
-                        <th style="text-align:center">S</th>
-                        <th style="text-align:center">H</th>
-                    </tr>
-                </thead>
-                <tbody id="tbody-siswa"></tbody>
-            </table>
-        </div>
+        <h3 id="display-class" style="margin-bottom: 15px; color: var(--primary);"></h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Nama Siswa</th>
+                    <th style="text-align:center">A</th>
+                    <th style="text-align:center">I</th>
+                    <th style="text-align:center">S</th>
+                    <th style="text-align:center">H</th>
+                </tr>
+            </thead>
+            <tbody id="tbody-siswa"></tbody>
+        </table>
     </div>
 
     <div id="action-bar" class="hidden">
-        <div style="font-size: 0.85rem; color: #666;">Keterangan: <b>A</b> (Alpha), <b>I</b> (Izin), <b>S</b> (Sakit), <b>H</b> (Hadir)</div>
-        <button class="btn-submit" id="btn-submit" onclick="submitAttendance()">SIMPAN KEHADIRAN</button>
+        <span>Pastikan data sudah benar.</span>
+        <button class="btn-submit" onclick="submitAttendance()">SIMPAN KEHADIRAN</button>
     </div>
 </div>
 
 <script>
-    // URL CLOUDFLARE WORKER
+    // URL WORKER ANDA
     const CLOUDFLARE_WORKER_URL = "https://disiplin-siswa.kurikulum-sman2cikarangbarat.workers.dev/";
 
-    // Set tanggal hari ini secara otomatis
     document.getElementById('tanggal').valueAsDate = new Date();
 
     const dataKelas = {
@@ -145,31 +136,24 @@
         const selKelas = document.getElementById("sel-kelas");
         selKelas.innerHTML = '<option value="" disabled selected>-- Pilih Kelas --</option>';
         selKelas.disabled = false;
-        if (dataKelas[jenjang]) {
-            dataKelas[jenjang].forEach(kelas => {
-                let opt = document.createElement("option");
-                opt.value = kelas;
-                opt.textContent = kelas;
-                selKelas.appendChild(opt);
-            });
-        }
+        dataKelas[jenjang].forEach(kelas => {
+            let opt = document.createElement("option");
+            opt.value = kelas; opt.textContent = kelas;
+            selKelas.appendChild(opt);
+        });
     }
 
     function loadStudents() {
         const guru = document.getElementById('guru').value;
         const kelas = document.getElementById('sel-kelas').value;
 
-        if (!guru || !kelas) {
-            alert("Mohon isi Nama Guru dan pilih Kelas!");
-            return;
-        }
+        if (!guru || !kelas) return alert("Lengkapi Nama Guru dan Kelas!");
 
         document.getElementById('loading').classList.remove('hidden');
         document.getElementById('attendance-area').classList.add('hidden');
         document.getElementById('action-bar').classList.add('hidden');
-        document.getElementById('btn-load').disabled = true;
 
-        // Ambil Nama Siswa dari Worker (D1)
+        // AMBIL NAMA DARI D1
         fetch(CLOUDFLARE_WORKER_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -178,30 +162,24 @@
         .then(res => res.json())
         .then(data => {
             document.getElementById('loading').classList.add('hidden');
-            document.getElementById('btn-load').disabled = false;
             if (data.result === "success") {
                 renderTable(data.names, kelas);
             } else {
-                alert("Gagal mengambil data: " + data.message);
+                alert("Gagal memuat siswa: " + data.message);
             }
         })
-        .catch(err => {
-            document.getElementById('loading').classList.add('hidden');
-            document.getElementById('btn-load').disabled = false;
-            alert("Error koneksi ke database D1.");
-            console.error(err);
-        });
+        .catch(() => alert("Error koneksi ke Worker."));
     }
 
     function renderTable(names, kelasName) {
         const tbody = document.getElementById('tbody-siswa');
         tbody.innerHTML = "";
-        document.getElementById('display-class').innerText = "KELAS " + kelasName;
+        document.getElementById('display-class').innerText = "Kelas: " + kelasName;
 
         names.forEach((name, index) => {
             let row = `
                 <tr class="student-row" data-name="${name}">
-                    <td><div style="font-weight:600; font-size:0.95rem;">${name}</div></td>
+                    <td>${name}</td>
                     <td><div class="radio-group"><input type="radio" name="st-${index}" value="Alpha"></div></td>
                     <td><div class="radio-group"><input type="radio" name="st-${index}" value="Ijin"></div></td>
                     <td><div class="radio-group"><input type="radio" name="st-${index}" value="Sakit"></div></td>
@@ -216,62 +194,53 @@
     function submitAttendance() {
         const guru = document.getElementById('guru').value;
         const tanggal = document.getElementById('tanggal').value;
-        const kelas = document.getElementById('sel-kelas').value;
         const rows = document.querySelectorAll('.student-row');
-        let absensiData = [];
+        let records = [];
 
         rows.forEach(row => {
-            const name = row.getAttribute('data-name');
+            const nama = row.getAttribute('data-name');
             const status = row.querySelector('input[type="radio"]:checked').value;
-            // Hanya kirim yang statusnya BUKAN Hadir (Alpha, Ijin, Sakit)
+            
+            // Hanya kirim yang tidak hadir (Alpha/Ijin/Sakit) untuk hemat resource D1
             if (status !== "Hadir") {
-                absensiData.push({
+                records.push({
                     tanggal: tanggal,
-                    nama: name,
-                    status: status,
-                    kelas: kelas,
+                    nama: nama,
+                    status: status, // Akan jadi lowercase di worker (alpha, ijin, sakit)
+                    kelas: document.getElementById('sel-kelas').value,
                     guru: guru
                 });
             }
         });
 
-        if (absensiData.length === 0) {
-            alert("Semua siswa terpilih Hadir. Tidak ada data ketidakhadiran yang perlu disimpan.");
+        if (records.length === 0) {
+            alert("Semua siswa hadir. Tidak ada data yang perlu disimpan.");
             return;
         }
 
-        const btnSubmit = document.getElementById('btn-submit');
-        btnSubmit.innerText = "⏳ Menyimpan...";
-        btnSubmit.disabled = true;
+        const btn = document.querySelector('.btn-submit');
+        btn.disabled = true; btn.innerText = "Menyimpan...";
 
-        // KIRIM KE WORKER
+        // KIRIM KE WORKER (Action: submitAttendance)
         fetch(CLOUDFLARE_WORKER_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-                action: "submitAttendance", 
-                records: absensiData 
-            })
+            body: JSON.stringify({ action: "submitAttendance", records: records })
         })
         .then(res => res.json())
         .then(data => {
             if (data.result === "success") {
-                alert(`✅ BERHASIL!\n${data.count} data ketidakhadiran telah disimpan di database.`);
+                alert("Berhasil menyimpan " + data.count + " data ketidakhadirkan.");
                 location.reload();
             } else {
-                alert("❌ ERROR: " + (data.error || "Gagal menyimpan"));
+                alert("Error: " + data.error);
             }
         })
-        .catch(err => {
-            alert("❌ Gagal terhubung ke server.");
-            console.error(err);
-        })
+        .catch(() => alert("Gagal menghubungi server."))
         .finally(() => {
-            btnSubmit.innerText = "SIMPAN KEHADIRAN";
-            btnSubmit.disabled = false;
+            btn.disabled = false; btn.innerText = "SIMPAN KEHADIRAN";
         });
     }
 </script>
-
 </body>
 </html>
