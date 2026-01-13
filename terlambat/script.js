@@ -1,52 +1,97 @@
 const CLOUDFLARE_WORKER_URL = "https://disiplin-siswa.kurikulum-sman2cikarangbarat.workers.dev/";
+let currentQuestion, totalAttempts = 1, cheatCount = 0, timerInt, isTestActive = false;
 
-// Bagian fungsi success() yang diperbarui untuk integrasi D1
+function toNamePage() {
+    document.getElementById('page-quote').style.display = 'none';
+    document.getElementById('page-name').style.display = 'block';
+}
+
+function updateKelasOptions() {
+    const jenjang = document.getElementById('sel-jenjang').value;
+    const selKelas = document.getElementById('sel-kelas');
+    selKelas.innerHTML = '<option value="" disabled selected>-- Pilih Kelas --</option>';
+    const list = (jenjang === "X") ? ["E1", "E2", "E3", "E4"] : ["MIPA 1", "MIPA 2", "IPS 1"];
+    list.forEach(k => {
+        let opt = document.createElement('option');
+        opt.value = `${jenjang} ${k}`; opt.innerText = `${jenjang} ${k}`;
+        selKelas.appendChild(opt);
+    });
+    selKelas.disabled = false;
+}
+
+async function getStudentNames() {
+    const kelas = document.getElementById('sel-kelas').value;
+    const selNama = document.getElementById('sel-nama');
+    selNama.innerHTML = '<option disabled selected>Loading...</option>';
+    const res = await fetch(CLOUDFLARE_WORKER_URL, {
+        method: 'POST',
+        body: JSON.stringify({ action: "getNames", kelas: kelas })
+    });
+    const data = await res.json();
+    selNama.innerHTML = '<option value="" disabled selected>-- Pilih Nama --</option>';
+    data.names.forEach(n => {
+        let opt = document.createElement('option');
+        opt.value = n; opt.innerText = n;
+        selNama.appendChild(opt);
+    });
+    selNama.disabled = false;
+}
+
+async function checkHistoryAndStart() {
+    const nm = document.getElementById('sel-nama').value;
+    if(!nm) return alert("Pilih nama!");
+    document.getElementById('page-name').style.display = 'none';
+    document.getElementById('page-loading').style.display = 'block';
+    const res = await fetch(CLOUDFLARE_WORKER_URL, { method: 'POST', body: JSON.stringify({ action: "getSoal" }) });
+    const data = await res.json();
+    if(data.result === "success") {
+        renderQuestion(data.data);
+        startTimer();
+    }
+}
+
+function renderQuestion(soal) {
+    currentQuestion = soal; isTestActive = true;
+    document.getElementById('page-loading').style.display = 'none';
+    document.getElementById('page-test').style.display = 'block';
+    const area = document.getElementById('question-area');
+    let opts = [soal.correct, ...soal.wrongs].sort(() => Math.random() - 0.5);
+    area.innerHTML = `<div class="problem-card"><p class="problem-text">${soal.question}</p></div>` +
+        opts.map(o => `<button class="option-btn" onclick="checkAnswer('${o}')">${o}</button>`).join('');
+}
+
+function checkAnswer(ans) {
+    if(ans === currentQuestion.correct) success();
+    else { totalAttempts++; alert("Salah! Soal diacak kembali."); checkHistoryAndStart(); }
+}
+
+function startTimer() {
+    let timeLeft = 300;
+    clearInterval(timerInt);
+    timerInt = setInterval(() => {
+        let m = Math.floor(timeLeft / 60), s = timeLeft % 60;
+        document.getElementById('timer').innerText = `${m}:${s < 10 ? '0'+s : s}`;
+        if(timeLeft-- <= 0) location.reload();
+    }, 1000);
+}
+
 function success() {
     isTestActive = false; clearInterval(timerInt);
     const nm = document.getElementById('sel-nama').value;
-    const tm = new Date().toLocaleString('id-ID', { hour12: false });
-    const attemptText = `${totalAttempts} Percobaan`;
-
+    const tm = new Date().toLocaleString('id-ID');
     document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
     document.getElementById('page-success').style.display = 'block';
-    
     document.getElementById('final-name').innerText = nm;
     document.getElementById('final-time').innerText = tm;
-    document.getElementById('attempt-info').innerText = attemptText;
+    document.getElementById('attempt-info').innerText = `${totalAttempts} Percobaan`;
     
-    // Generate QR
-    document.getElementById("qrcode").innerHTML = "";
-    new QRCode(document.getElementById("qrcode"), { 
-        text: `TIKET VALID\n${nm}\n${tm}\n${attemptText}`, 
-        width: 200, height: 200 
-    });
-    
-    confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
-
-    // Kirim ke D1
-    document.getElementById('sending-overlay').style.display = 'flex';
+    new QRCode(document.getElementById("qrcode"), { text: `VALID|${nm}|${tm}`, width: 180, height: 180 });
+    confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
 
     fetch(CLOUDFLARE_WORKER_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-            action: "submit", 
-            nama: nm, 
-            status: attemptText, 
-            info: `Selesai. Curang: ${cheatCount}x` 
-        })
-    })
-    .then(res => res.json())
-    .then(data => {
-        document.getElementById('sending-overlay').style.display = 'none';
-        if(data.result === "success") {
-            document.getElementById('sent-status').innerText = "DATA TERSIMPAN DI DATABASE D1";
-            document.getElementById('sent-status').style.color = "#27ae60";
-        }
-    })
-    .catch(err => {
-        document.getElementById('sending-overlay').style.display = 'none';
-        document.getElementById('sent-status').innerText = "ERROR: HUBUNGI GURU PIKET";
-        document.getElementById('sent-status').style.color = "#c0392b";
-    });
+        body: JSON.stringify({ action: "submit", nama: nm, status: `${totalAttempts} Percobaan`, info: `Selesai (Curang: ${cheatCount}x)` })
+    }).then(() => document.getElementById('sending-overlay').style.display = 'none');
 }
+
+window.onblur = () => { if(isTestActive) { cheatCount++; alert("Jangan berpindah aplikasi!"); } };
