@@ -1,5 +1,5 @@
 const CLOUDFLARE_WORKER_URL = "https://disiplin-siswa.kurikulum-sman2cikarangbarat.workers.dev/";
-let currentQuestion, totalAttempts = 1, cheatCount = 0, timerInt, isTestActive = false;
+let currentQuestion = null, totalAttempts = 1, cheatCount = 0, timerInt, isTestActive = false;
 
 function toNamePage() {
     document.getElementById('page-quote').style.display = 'none';
@@ -10,7 +10,7 @@ function updateKelasOptions() {
     const jenjang = document.getElementById('sel-jenjang').value;
     const selKelas = document.getElementById('sel-kelas');
     selKelas.innerHTML = '<option value="" disabled selected>-- Pilih Kelas --</option>';
-    const list = (jenjang === "X") ? ["E1", "E2", "E3", "E4"] : ["MIPA 1", "MIPA 2", "IPS 1"];
+    const list = (jenjang === "X") ? ["E1", "E2", "E3", "E4", "E5"] : ["MIPA 1", "MIPA 2", "IPS 1", "IPS 2"];
     list.forEach(k => {
         let opt = document.createElement('option');
         opt.value = `${jenjang} ${k}`; opt.innerText = `${jenjang} ${k}`;
@@ -23,10 +23,7 @@ async function getStudentNames() {
     const kelas = document.getElementById('sel-kelas').value;
     const selNama = document.getElementById('sel-nama');
     selNama.innerHTML = '<option disabled selected>Loading...</option>';
-    const res = await fetch(CLOUDFLARE_WORKER_URL, {
-        method: 'POST',
-        body: JSON.stringify({ action: "getNames", kelas: kelas })
-    });
+    const res = await fetch(CLOUDFLARE_WORKER_URL, { method: 'POST', body: JSON.stringify({ action: "getNames", kelas: kelas }) });
     const data = await res.json();
     selNama.innerHTML = '<option value="" disabled selected>-- Pilih Nama --</option>';
     data.names.forEach(n => {
@@ -44,10 +41,7 @@ async function checkHistoryAndStart() {
     document.getElementById('page-loading').style.display = 'block';
     const res = await fetch(CLOUDFLARE_WORKER_URL, { method: 'POST', body: JSON.stringify({ action: "getSoal" }) });
     const data = await res.json();
-    if(data.result === "success") {
-        renderQuestion(data.data);
-        startTimer();
-    }
+    if(data.result === "success") { renderQuestion(data.data); startTimer(); }
 }
 
 function renderQuestion(soal) {
@@ -88,10 +82,11 @@ function success() {
     new QRCode(document.getElementById("qrcode"), { text: `VALID|${nm}|${tm}`, width: 180, height: 180 });
     confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
 
+    document.getElementById('sending-overlay').style.display = 'flex';
     fetch(CLOUDFLARE_WORKER_URL, {
         method: 'POST',
-        body: JSON.stringify({ action: "submit", nama: nm, status: `${totalAttempts} Percobaan`, info: `Selesai (Curang: ${cheatCount}x)` })
+        body: JSON.stringify({ action: "submit", nama: nm, status: `${totalAttempts} Percobaan`, info: `Curang: ${cheatCount}x` })
     }).then(() => document.getElementById('sending-overlay').style.display = 'none');
 }
 
-window.onblur = () => { if(isTestActive) { cheatCount++; alert("Jangan berpindah aplikasi!"); } };
+window.onblur = () => { if(isTestActive) { cheatCount++; alert("Jangan pindah tab!"); } };
