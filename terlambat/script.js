@@ -2,8 +2,7 @@
 // KONFIGURASI DAN VARIABEL GLOBAL
 // ==========================================
 // GANTI URL DI BAWAH INI DENGAN URL WORKER CLOUDFLARE ANDA
-const CLOUDFLARE_WORKER_URL = "https://nama-worker-anda.username.workers.dev"; 
-
+const CLOUDFLARE_WORKER_URL = "https://disiplin-siswa.kurikulum-sman2cikarangbarat.workers.dev/";
 let currentCorrectAnswer = "";
 let timerInt, isTestActive = false, cheatCount = 0;
 let isDataChecked = false;
@@ -286,3 +285,4 @@ document.addEventListener("visibilitychange", () => {
         fetchSoal(); 
     } 
 });
+
