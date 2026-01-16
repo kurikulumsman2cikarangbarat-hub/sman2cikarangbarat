@@ -313,7 +313,8 @@ function exitFullScreen() {
 function goToYoutube() {
     // Fungsi untuk tombol Keluar
     window.location.href = "index.html";
-    window.location.href = "https://www.youtube.com/watch?v=Ef9IGVy3flg"; 
+    window.location.href = "https://www.youtube.com/watch?v=Ef9IGVy3flg";
+    window.location.href = "about:blank";
 }
 
 // ==========================================
@@ -347,6 +348,7 @@ document.addEventListener("visibilitychange", () => {
         fetchSoal(); 
     } 
 });
+
 
 
 
