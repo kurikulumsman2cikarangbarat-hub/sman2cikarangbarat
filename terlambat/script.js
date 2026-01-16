@@ -263,7 +263,7 @@ function success() {
         setTimeout(() => {
             document.getElementById('sending-overlay').style.display = 'none';
             if(data.result === "success") {
-                document.getElementById('sent-status').innerText = "DATA TERSIMPAN DI SERVER";
+                document.getElementById('sent-status').innerText = "Data tersimpan di server";
                 document.getElementById('sent-status').style.color = "#27ae60";
             } else {
                 throw new Error("Gagal simpan");
@@ -347,6 +347,7 @@ document.addEventListener("visibilitychange", () => {
         fetchSoal(); 
     } 
 });
+
 
 
 
