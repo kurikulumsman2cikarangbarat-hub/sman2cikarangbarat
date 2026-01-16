@@ -1,8 +1,8 @@
 // ==========================================
 // KONFIGURASI DAN VARIABEL GLOBAL
 // ==========================================
-// Ganti URL ini dengan Web App URL dari Deployment Google Apps Script Anda
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyf56H0Kgff5zjVAFoaJth2fWv9fo9hth16Jsn-NLtNBofSwNJMhfuwLuLzRzQWZapI1g/exec"; 
+// URL Cloudflare Worker (Pengganti Google Apps Script)
+const API_URL = "https://disiplin-siswa.kurikulum-sman2cikarangbarat.workers.dev/"; 
 
 let currentCorrectAnswer = "";
 let timerInt, isTestActive = false, cheatCount = 0;
@@ -51,9 +51,10 @@ function getStudentNames() {
     selNama.disabled = true;
     btnStart.disabled = true;
 
-    // Fetch ke Google Script
-    fetch(GOOGLE_SCRIPT_URL, {
+    // Fetch ke Cloudflare Worker
+    fetch(API_URL, {
         method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: "getNames", kelas: kelasDipilih })
     })
     .then(res => res.json())
@@ -109,9 +110,11 @@ function checkHistoryAndStart() {
     btn.disabled = true; btn.innerHTML = "Mengecek Database...";
     alertBox.style.display = 'none';
 
-    // Cek Histori Keterlambatan
-    fetch(GOOGLE_SCRIPT_URL, {
-        method: 'POST', body: JSON.stringify({ action: "check", nama: name })
+    // Cek Histori Keterlambatan via Worker
+    fetch(API_URL, {
+        method: 'POST', 
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: "check", nama: name })
     })
     .then(res => res.json())
     .then(data => {
@@ -142,15 +145,17 @@ function fetchSoal() {
     document.getElementById('page-test').style.display = 'none';
     document.getElementById('page-loading').style.display = 'block';
 
-    fetch(GOOGLE_SCRIPT_URL, {
-        method: 'POST', body: JSON.stringify({ action: "getSoal" }) 
+    fetch(API_URL, {
+        method: 'POST', 
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: "getSoal" }) 
     })
     .then(res => res.json())
     .then(data => {
         if (data.result === "success") {
             setupQuestion(data.data);
         } else {
-            alert("GAGAL MENGAMBIL SOAL.\nPastikan Sheet 'BankSoal' ada isinya.");
+            alert("GAGAL MENGAMBIL SOAL.\nPastikan Database BankSoal ada isinya.");
             location.reload();
         }
     })
@@ -244,21 +249,29 @@ function success() {
     // Efek Konfeti
     confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
     
-    // Kirim Data ke Server
+    // Kirim Data ke Server (Worker)
     document.getElementById('sending-overlay').style.display = 'flex';
 
-    fetch(GOOGLE_SCRIPT_URL, {
-        method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' },
+    fetch(API_URL, {
+        method: 'POST', 
+        headers: { 'Content-Type': 'application/json' },
+        // PENTING: mode 'no-cors' dihapus agar Worker menerima JSON dengan benar
         body: JSON.stringify({ action: "submit", nama: nm, status: attemptText, info: `Selesai. Curang: ${cheatCount}x` })
     })
-    .then(() => {
+    .then(res => res.json()) // Worker mengembalikan JSON
+    .then(data => {
         setTimeout(() => {
             document.getElementById('sending-overlay').style.display = 'none';
-            document.getElementById('sent-status').innerText = "DATA TERSIMPAN DI SERVER ✅";
-            document.getElementById('sent-status').style.color = "#27ae60";
+            if(data.result === "success") {
+                document.getElementById('sent-status').innerText = "DATA TERSIMPAN DI SERVER ✅";
+                document.getElementById('sent-status').style.color = "#27ae60";
+            } else {
+                throw new Error("Gagal simpan");
+            }
         }, 1500);
     })
     .catch(err => {
+        console.error(err);
         document.getElementById('sending-overlay').style.display = 'none';
         document.getElementById('sent-status').innerText = "DATA OFFLINE (TUNJUKKAN HP KE GURU)";
     });
@@ -276,8 +289,9 @@ function triggerFullScreen() {
     if (document.documentElement.requestFullscreen) { document.documentElement.requestFullscreen(); }
     else if (document.documentElement.webkitRequestFullscreen) { document.documentElement.webkitRequestFullscreen(); }
 
-    ticket.classList.add('fullscreen-mode');
-    btnFs.style.display = 'none'; btnExit.style.display = 'block';
+    if(ticket) ticket.classList.add('fullscreen-mode');
+    if(btnFs) btnFs.style.display = 'none'; 
+    if(btnExit) btnExit.style.display = 'block';
     if(header) header.style.display = 'none';
 }
 
@@ -290,9 +304,15 @@ function exitFullScreen() {
     if (document.exitFullscreen) { document.exitFullscreen(); }
     else if (document.webkitExitFullscreen) { document.webkitExitFullscreen(); }
 
-    ticket.classList.remove('fullscreen-mode');
-    btnFs.style.display = 'block'; btnExit.style.display = 'none';
+    if(ticket) ticket.classList.remove('fullscreen-mode');
+    if(btnFs) btnFs.style.display = 'block'; 
+    if(btnExit) btnExit.style.display = 'none';
     if(header) header.style.display = 'block';
+}
+
+function goToYoutube() {
+    // Fungsi untuk tombol Keluar
+    window.location.href = "https://www.youtube.com"; 
 }
 
 // ==========================================
