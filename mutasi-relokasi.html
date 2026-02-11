@@ -1,45 +1,3 @@
-function doPost(e) {
-  var lock = LockService.getScriptLock();
-  lock.tryLock(10000); // Menghindari bentrokan data masuk bersamaan
-
-  try {
-    // Pastikan nama sheet sesuai: "Sheet1"
-    var doc = SpreadsheetApp.getActiveSpreadsheet();
-    var sheet = doc.getSheetByName("Sheet1") || doc.getSheets()[0];
-    
-    var jsonData = JSON.parse(e.postData.contents);
-    
-    // Menyusun baris sesuai urutan kolom
-    sheet.appendRow([
-      jsonData.nama,
-      "'" + jsonData.nip,
-      jsonData.mapel,
-      jsonData.sertifikat,
-      "'" + jsonData.wa // Kolom 5: Nomor WA
-    ]);
-
-    return ContentService
-          .createTextOutput(JSON.stringify({ "result": "success" }))
-          .setMimeType(ContentService.MimeType.JSON);
-  } catch (f) {
-    return ContentService
-          .createTextOutput(JSON.stringify({ "result": "error", "error": f }))
-          .setMimeType(ContentService.MimeType.JSON);
-  } finally {
-    lock.releaseLock();
-  }
-}
-
-// Tetap sertakan doGet agar URL bisa diakses via browser jika perlu
-function doGet(e) {
-  return HtmlService.createHtmlOutput("Backend Berjalan. Silakan gunakan Form HTML.");
-}
-Penting: Setelah ganti kode, klik Deploy > New Deployment lagi agar perubahan tersimpan.
-
-2. Kode Frontend (HTML)
-Gunakan kode ini. Saya telah menambahkan input Nomor WA dan logika untuk otomatis membuka WhatsApp setelah data tersimpan di Google Sheets.
-
-HTML
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -47,15 +5,16 @@ HTML
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Form Pengajuan Mutasi Guru</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background-color: #eef2f7; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-        .container { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); width: 100%; max-width: 450px; }
-        h2 { text-align: center; color: #2c3e50; margin-bottom: 20px; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f9; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 15px; }
+        .container { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 450px; }
+        h2 { text-align: center; color: #1a73e8; margin-bottom: 20px; font-size: 22px; }
         .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; color: #34495e; }
-        input, select { width: 100%; padding: 10px; border: 1px solid #ced4da; border-radius: 6px; box-sizing: border-box; }
-        button { width: 100%; padding: 12px; background-color: #007bff; color: white; border: none; border-radius: 6px; font-size: 16px; cursor: pointer; font-weight: bold; }
-        button:hover { background-color: #0056b3; }
-        #status { text-align: center; margin-top: 15px; font-weight: bold; }
+        label { display: block; margin-bottom: 5px; font-weight: 600; color: #333; }
+        input, select { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; font-size: 16px; /* Font size 16px mencegah auto-zoom di iPhone */ }
+        button { width: 100%; padding: 14px; background-color: #1a73e8; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 10px; }
+        button:hover { background-color: #1557b0; }
+        button:disabled { background-color: #ccc; cursor: not-allowed; }
+        #status { text-align: center; margin-top: 15px; font-weight: bold; font-size: 14px; }
     </style>
 </head>
 <body>
@@ -65,87 +24,95 @@ HTML
     <form id="mutasiForm">
         <div class="form-group">
             <label>Nama Lengkap</label>
-            <input type="text" name="nama" placeholder="Nama Lengkap & Gelar" required>
+            <input type="text" name="nama" placeholder="Nama & Gelar" required>
         </div>
+
         <div class="form-group">
             <label>NIP</label>
-            <input type="number" name="nip" placeholder="18 digit NIP" required>
+            <input type="number" name="nip" placeholder="18 Digit NIP" required>
         </div>
+
         <div class="form-group">
             <label>Mata Pelajaran</label>
             <select name="mapel" required>
-                <option value="">-- Pilih --</option>
+                <option value="" disabled selected>Pilih Mapel</option>
                 <option value="Sejarah">Sejarah</option>
                 <option value="Matematika">Matematika</option>
                 <option value="Bahasa Sunda">Bahasa Sunda</option>
                 <option value="PJOK">PJOK</option>
             </select>
         </div>
+
         <div class="form-group">
             <label>Sertifikat Guru Profesional?</label>
             <select name="sertifikat" required>
-                <option value="">-- Pilih --</option>
+                <option value="" disabled selected>Pilih Status</option>
                 <option value="Sudah">Sudah</option>
                 <option value="Belum">Belum</option>
             </select>
         </div>
+
         <div class="form-group">
-            <label>Nomor WA Anda</label>
-            <input type="tel" name="wa" placeholder="08xxxxxxx" required>
+            <label>Nomor WhatsApp</label>
+            <input type="tel" name="wa" placeholder="Contoh: 08123456789" required>
         </div>
 
         <button type="submit" id="btnSubmit">Simpan & Kirim Pesan</button>
     </form>
     <div id="status"></div>
 </div>
-    <script>
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbzthUfoVELG3z_VTY1ClyxKnSV76BN9FtGha6sSyMOnKHQ93qPV0gFMhQ3Qtz_G0U2u/exec';
+
+<script>
+    // GANTI URL DI BAWAH INI DENGAN URL DEPLOYMENT ANDA
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbzbS-M-WrWX1UlNJApaJdPV3tqXK010WAMNTTPqfcKhgsMqN379BkZYCfFeQlFsispj/exec';
     const form = document.getElementById('mutasiForm');
+    const btn = document.getElementById('btnSubmit');
+    const status = document.getElementById('status');
 
     form.addEventListener('submit', e => {
         e.preventDefault();
-        const btn = document.getElementById('btnSubmit');
-        const status = document.getElementById('status');
-        
         btn.disabled = true;
-        btn.innerText = 'Sedang Mengirim...';
+        btn.innerText = 'Memproses Data...';
+        status.innerHTML = "Sedang menyimpan ke sistem...";
+        status.style.color = "#666";
 
-        // Ambil data
         const formData = new FormData(form);
-        const dataObject = Object.fromEntries(formData.entries());
+        
+        // Gunakan URLSearchParams: Metode paling stabil untuk Mobile
+        const params = new URLSearchParams();
+        formData.forEach((value, key) => {
+            params.append(key, value);
+        });
 
-        // Gunakan Fetch dengan format JSON (Lebih stabil di Mobile modern)
         fetch(scriptURL, {
             method: 'POST',
-            mode: 'no-cors', // Tetap gunakan no-cors untuk menghindari preflight error
-            body: JSON.stringify(dataObject),
-            headers: {
-                'Content-Type': 'text/plain;charset=utf-8' // Trik agar tidak memicu CORS
-            }
+            mode: 'no-cors', // Menghindari isu CORS di browser HP
+            body: params
         })
         .then(() => {
-            // Logika Pesan WhatsApp
+            // Persiapan Pesan WhatsApp
+            const data = Object.fromEntries(formData.entries());
             const noTujuan = "6285899888006";
-            const teksSertifikat = dataObject.sertifikat.toLowerCase();
-            const pesan = `Assalamu 'alaykum Warahmatullah, Perkenalkan Saya ${dataObject.nama} (${dataObject.nip}), guru mata pelajaran ${dataObject.mapel}, bermaksud mengajukan mutasi/relokasi ke SMAN 2 Cikarang Barat, saat ini Saya ${teksSertifikat} memiliki Sertifikat Guru Profesional.`;
-            const waLink = `https://wa.me/${noTujuan}?text=${encodeURIComponent(pesan)}`;
-
-            status.innerHTML = "✅ Data Berhasil Disimpan!";
+            const teksSerti = data.sertifikat.toLowerCase();
+            const pesanWA = `Assalamu 'alaykum Warahmatullah, Perkenalkan Saya ${data.nama} (${data.nip}), guru mata pelajaran ${data.mapel}, bermaksud mengajukan mutasi/relokasi ke SMAN 2 Cikarang Barat, saat ini Saya ${teksSerti} memiliki Sertifikat Guru Profesional.`;
+            
+            status.innerHTML = "✅ Data Berhasil Disimpan! Membuka WhatsApp...";
             status.style.color = "green";
 
-            // Redirect ke WA
+            // Redirect ke WA setelah 1.5 detik
             setTimeout(() => {
-                window.location.href = waLink;
-            }, 800);
+                window.location.href = `https://wa.me/${noTujuan}?text=${encodeURIComponent(pesanWA)}`;
+            }, 1500);
         })
         .catch(error => {
-            console.error('Error:', error);
-            status.innerHTML = "❌ Gagal. Pastikan internet stabil.";
+            status.innerHTML = "❌ Gagal Terhubung. Coba lagi.";
             status.style.color = "red";
             btn.disabled = false;
             btn.innerText = 'Kirim Ulang';
+            console.error('Error!', error.message);
         });
     });
-    </script>
+</script>
+
 </body>
 </html>
