@@ -1,64 +1,5 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Form Pengajuan Mutasi Guru</title>
-    <style>
-        body { font-family: 'Segoe UI', sans-serif; background-color: #eef2f7; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-        .container { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); width: 100%; max-width: 450px; }
-        h2 { text-align: center; color: #2c3e50; margin-bottom: 20px; }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; color: #34495e; }
-        input, select { width: 100%; padding: 10px; border: 1px solid #ced4da; border-radius: 6px; box-sizing: border-box; }
-        button { width: 100%; padding: 12px; background-color: #007bff; color: white; border: none; border-radius: 6px; font-size: 16px; cursor: pointer; font-weight: bold; }
-        button:hover { background-color: #0056b3; }
-        #status { text-align: center; margin-top: 15px; font-weight: bold; }
-    </style>
-</head>
-<body>
-
-<div class="container">
-    <h2>Form Pendataan Guru</h2>
-    <form id="mutasiForm">
-        <div class="form-group">
-            <label>Nama Lengkap</label>
-            <input type="text" name="nama" placeholder="Nama Lengkap & Gelar" required>
-        </div>
-        <div class="form-group">
-            <label>NIP</label>
-            <input type="number" name="nip" placeholder="18 digit NIP" required>
-        </div>
-        <div class="form-group">
-            <label>Mata Pelajaran</label>
-            <select name="mapel" required>
-                <option value="">-- Pilih --</option>
-                <option value="Sejarah">Sejarah</option>
-                <option value="Matematika">Matematika</option>
-                <option value="Bahasa Sunda">Bahasa Sunda</option>
-                <option value="PJOK">PJOK</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label>Sertifikat Guru Profesional?</label>
-            <select name="sertifikat" required>
-                <option value="">-- Pilih --</option>
-                <option value="Sudah">Sudah</option>
-                <option value="Belum">Belum</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label>Nomor WA Anda</label>
-            <input type="tel" name="wa" placeholder="08xxxxxxx" required>
-        </div>
-
-        <button type="submit" id="btnSubmit">Simpan & Kirim Pesan</button>
-    </form>
-    <div id="status"></div>
-</div>
-
 <script>
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbyLqQKX1MG67SbUnPLSrAy1yma2cOWRo5WA1l-0blRpDmUUNiLj29mbCDNy9RIEcopj/exec';
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbzthUfoVELG3z_VTY1ClyxKnSV76BN9FtGha6sSyMOnKHQ93qPV0gFMhQ3Qtz_G0U2u/exec';
     const form = document.getElementById('mutasiForm');
 
     form.addEventListener('submit', e => {
@@ -67,29 +8,29 @@
         const status = document.getElementById('status');
         
         btn.disabled = true;
-        btn.innerText = 'Memproses...';
+        btn.innerText = 'Sedang Mengirim...';
 
-        // Mengambil data form
         const formData = new FormData(form);
-        const data = Object.fromEntries(formData.entries());
+        
+        // Mengubah data ke format URLSearchParams agar kompatibel penuh dengan Mobile
+        const params = new URLSearchParams();
+        formData.forEach((value, key) => {
+            params.append(key, value);
+        });
 
-        // Format pesan WA
-        const noTujuan = "6285899888006";
-        const pesan = `Assalamu 'alaykum Warahmatullah, Perkenalkan Saya ${data.nama} (${data.nip}), guru mata pelajaran ${data.mapel}, bermaksud mengajukan mutasi/relokasi ke SMAN 2 Cikarang Barat, saat ini Saya ${data.sertifikat.toLowerCase()} memiliki Sertifikat Guru Profesional.`;
-        const waLink = `https://wa.me/${noTujuan}?text=${encodeURIComponent(pesan)}`;
-
-        // Pengiriman menggunakan fetch dengan penanganan khusus Mobile
         fetch(scriptURL, {
             method: 'POST',
-            mode: 'no-cors', // Menghindari blokir CORS di browser HP
-            cache: 'no-cache',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
+            mode: 'no-cors', // Menghindari isu CORS di mobile
+            body: params // Mengirim format key=value&key=value
         })
         .then(() => {
-            // Karena 'no-cors', kita tidak bisa baca respon sukses dari server
-            // Maka kita langsung arahkan ke WA setelah jeda singkat
-            status.innerHTML = "✅ Data sedang diproses, membuka WhatsApp...";
+            // Logika WhatsApp
+            const data = Object.fromEntries(formData.entries());
+            const noTujuan = "6285899888006";
+            const pesan = `Assalamu 'alaykum Warahmatullah, Perkenalkan Saya ${data.nama} (${data.nip}), guru mata pelajaran ${data.mapel}, bermaksud mengajukan mutasi/relokasi ke SMAN 2 Cikarang Barat, saat ini Saya ${data.sertifikat.toLowerCase()} memiliki Sertifikat Guru Profesional.`;
+            const waLink = `https://wa.me/${noTujuan}?text=${encodeURIComponent(pesan)}`;
+
+            status.innerHTML = "✅ Data Berhasil Disimpan!";
             status.style.color = "green";
 
             setTimeout(() => {
@@ -97,14 +38,9 @@
             }, 1000);
         })
         .catch(error => {
-            console.error('Error!', error.message);
-            status.innerHTML = "❌ Gagal mengirim. Gunakan browser Google Chrome.";
+            status.innerHTML = "❌ Terjadi kesalahan. Coba lagi.";
             status.style.color = "red";
             btn.disabled = false;
-            btn.innerText = 'Kirim Ulang';
         });
     });
 </script>
-
-</body>
-</html>
