@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Pendataan Guru</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .container { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); width: 100%; max-width: 450px; }
+        h2 { text-align: center; color: #1a73e8; margin-bottom: 25px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: 600; color: #444; }
+        input, select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 14px; }
+        input:focus, select:focus { border-color: #1a73e8; outline: none; box-shadow: 0 0 5px rgba(26,115,232,0.3); }
+        button { width: 100%; padding: 12px; background-color: #1a73e8; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; transition: background 0.3s; margin-top: 10px; }
+        button:hover { background-color: #1557b0; }
+        button:disabled { background-color: #ccc; cursor: not-allowed; }
+        #status { text-align: center; margin-top: 15px; font-size: 14px; font-weight: bold; }
+        .success { color: #28a745; }
+        .error { color: #dc3545; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Data Profil Guru</h2>
+    <form id="teacherForm">
+        <div class="form-group">
+            <label for="nama">Nama Lengkap</label>
+            <input type="text" id="nama" name="nama" placeholder="Contoh: Budi Santoso, M.Pd" required>
+        </div>
+
+        <div class="form-group">
+            <label for="nip">NIP</label>
+            <input type="number" id="nip" name="nip" placeholder="Masukkan 18 digit NIP" required>
+        </div>
+
+        <div class="form-group">
+            <label for="mapel">Mata Pelajaran</label>
+            <select id="mapel" name="mapel" required>
+                <option value="" disabled selected>Pilih Mata Pelajaran</option>
+                <option value="Sejarah">Sejarah</option>
+                <option value="Matematika">Matematika</option>
+                <option value="Bahasa Sunda">Bahasa Sunda</option>
+                <option value="PJOK">PJOK</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="sertifikat">Sertifikat Guru Profesional?</label>
+            <select id="sertifikat" name="sertifikat" required>
+                <option value="" disabled selected>Pilih Status</option>
+                <option value="Sudah">Sudah</option>
+                <option value="Belum">Belum</option>
+            </select>
+        </div>
+
+        <button type="submit" id="submitBtn">Kirim Data</button>
+    </form>
+    <div id="status"></div>
+</div>
+
+<script>
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbyLqQKX1MG67SbUnPLSrAy1yma2cOWRo5WA1l-0blRpDmUUNiLj29mbCDNy9RIEcopj/exec';
+    const form = document.getElementById('teacherForm');
+    const btn = document.getElementById('submitBtn');
+    const statusMsg = document.getElementById('status');
+
+    form.addEventListener('submit', e => {
+        e.preventDefault();
+        btn.disabled = true;
+        btn.innerText = 'Sedang Mengirim...';
+        statusMsg.innerHTML = '';
+
+        // Mengambil data dari form
+        const formData = new FormData(form);
+        const data = {};
+        formData.forEach((value, key) => { data[key] = value });
+
+        // Mengirim data menggunakan Fetch API ke Google Script
+        fetch(scriptURL, { 
+            method: 'POST', 
+            mode: 'no-cors', // Penting jika tidak ingin berurusan dengan CORS
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data) 
+        })
+        .then(() => {
+            statusMsg.className = 'success';
+            statusMsg.innerHTML = '✔ Data Berhasil Terkirim!';
+            form.reset();
+            btn.disabled = false;
+            btn.innerText = 'Kirim Data';
+        })
+        .catch(error => {
+            statusMsg.className = 'error';
+            statusMsg.innerHTML = '❌ Gagal mengirim data. Coba lagi.';
+            btn.disabled = false;
+            btn.innerText = 'Kirim Data';
+            console.error('Error!', error.message);
+        });
+    });
+</script>
+
+</body>
+</html>
