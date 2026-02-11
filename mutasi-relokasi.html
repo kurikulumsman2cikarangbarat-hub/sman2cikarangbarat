@@ -69,35 +69,39 @@
         btn.disabled = true;
         btn.innerText = 'Memproses...';
 
+        // Mengambil data form
         const formData = new FormData(form);
         const data = Object.fromEntries(formData.entries());
 
-        // 1. Kirim ke Google Sheets
+        // Format pesan WA
+        const noTujuan = "6285899888006";
+        const pesan = `Assalamu 'alaykum Warahmatullah, Perkenalkan Saya ${data.nama} (${data.nip}), guru mata pelajaran ${data.mapel}, bermaksud mengajukan mutasi/relokasi ke SMAN 2 Cikarang Barat, saat ini Saya ${data.sertifikat.toLowerCase()} memiliki Sertifikat Guru Profesional.`;
+        const waLink = `https://wa.me/${noTujuan}?text=${encodeURIComponent(pesan)}`;
+
+        // Pengiriman menggunakan fetch dengan penanganan khusus Mobile
         fetch(scriptURL, {
             method: 'POST',
+            mode: 'no-cors', // Menghindari blokir CORS di browser HP
+            cache: 'no-cache',
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
         })
-        .then(response => {
-            // Generate pesan WA
-            const noTujuan = "6285899888006";
-            const teksSertifikat = data.sertifikat === "Sudah" ? "sudah" : "belum";
-            const pesan = `Assalamu 'alaykum Warahmatullah, Perkenalkan Saya ${data.nama} (${data.nip}), guru mata pelajaran ${data.mapel}, bermaksud mengajukan mutasi/relokasi ke SMAN 2 Cikarang Barat, saat ini Saya ${teksSertifikat} memiliki Sertifikat Guru Profesional.`;
-            
-            const waLink = `https://wa.me/${noTujuan}?text=${encodeURIComponent(pesan)}`;
-
-            status.innerHTML = "Data tersimpan! Mengalihkan ke WhatsApp...";
+        .then(() => {
+            // Karena 'no-cors', kita tidak bisa baca respon sukses dari server
+            // Maka kita langsung arahkan ke WA setelah jeda singkat
+            status.innerHTML = "✅ Data sedang diproses, membuka WhatsApp...";
             status.style.color = "green";
 
-            // 2. Redirect ke WhatsApp setelah 1.5 detik
             setTimeout(() => {
                 window.location.href = waLink;
-            }, 1500);
+            }, 1000);
         })
         .catch(error => {
-            status.innerHTML = "Gagal mengirim data. Periksa koneksi/script.";
+            console.error('Error!', error.message);
+            status.innerHTML = "❌ Gagal mengirim. Gunakan browser Google Chrome.";
             status.style.color = "red";
             btn.disabled = false;
-            btn.innerText = 'Kirim Data';
+            btn.innerText = 'Kirim Ulang';
         });
     });
 </script>
