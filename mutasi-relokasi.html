@@ -7,10 +7,11 @@
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f9; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 15px; }
         .container { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 450px; }
-        h2 { text-align: center; color: #1a73e8; margin-bottom: 20px; font-size: 22px; }
+        h2 { text-align: center; color: #1a73e8; margin-bottom: 5px; font-size: 22px; }
+        p.subtitle { text-align: center; color: #666; font-size: 13px; margin-bottom: 20px; }
         .form-group { margin-bottom: 15px; }
         label { display: block; margin-bottom: 5px; font-weight: 600; color: #333; }
-        input, select { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; font-size: 16px; /* Font size 16px mencegah auto-zoom di iPhone */ }
+        input, select { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
         button { width: 100%; padding: 14px; background-color: #1a73e8; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 10px; }
         button:hover { background-color: #1557b0; }
         button:disabled { background-color: #ccc; cursor: not-allowed; }
@@ -21,7 +22,12 @@
 
 <div class="container">
     <h2>Form Pendataan Guru</h2>
+    <p class="subtitle">Lokasi Anda akan dicatat untuk pertimbangan jarak rumah</p>
+    
     <form id="mutasiForm">
+        <input type="hidden" name="lat" id="lat">
+        <input type="hidden" name="lng" id="lng">
+
         <div class="form-group">
             <label>Nama Lengkap</label>
             <input type="text" name="nama" placeholder="Nama & Gelar" required>
@@ -29,7 +35,7 @@
 
         <div class="form-group">
             <label>NIP</label>
-            <input type="number" name="nip" placeholder="18 Digit NIP" required>
+            <input type="text" name="nip" pattern="\d{18}" title="NIP harus 18 digit angka" placeholder="18 Digit NIP" required>
         </div>
 
         <div class="form-group">
@@ -54,7 +60,7 @@
 
         <div class="form-group">
             <label>Nomor WhatsApp</label>
-            <input type="tel" name="wa" placeholder="Contoh: 08123456789" required>
+            <input type="tel" name="wa" pattern="^0[0-9]{9,13}$" placeholder="Contoh: 08123456789" required>
         </div>
 
         <button type="submit" id="btnSubmit">Simpan & Kirim Pesan</button>
@@ -63,8 +69,7 @@
 </div>
 
 <script>
-    // GANTI URL DI BAWAH INI DENGAN URL DEPLOYMENT ANDA
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbzbS-M-WrWX1UlNJApaJdPV3tqXK010WAMNTTPqfcKhgsMqN379BkZYCfFeQlFsispj/exec';
+    const scriptURL = 'URL_DEPLOY_ANDA_DI_SINI';
     const form = document.getElementById('mutasiForm');
     const btn = document.getElementById('btnSubmit');
     const status = document.getElementById('status');
@@ -72,46 +77,60 @@
     form.addEventListener('submit', e => {
         e.preventDefault();
         btn.disabled = true;
+        btn.innerText = 'Mencari Lokasi GPS...';
+
+        // Langkah 1: Ambil Lokasi
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    document.getElementById('lat').value = position.coords.latitude;
+                    document.getElementById('lng').value = position.coords.longitude;
+                    kirimData();
+                },
+                (error) => {
+                    alert("Gagal mengambil lokasi. Mohon izinkan akses GPS di browser Anda.");
+                    btn.disabled = false;
+                    btn.innerText = 'Simpan & Kirim Pesan';
+                }
+            );
+        } else {
+            alert("Browser tidak mendukung GPS. Koordinat akan dikosongkan.");
+            kirimData();
+        }
+    });
+
+    function kirimData() {
         btn.innerText = 'Memproses Data...';
         status.innerHTML = "Sedang menyimpan ke sistem...";
-        status.style.color = "#666";
-
-        const formData = new FormData(form);
         
-        // Gunakan URLSearchParams: Metode paling stabil untuk Mobile
+        const formData = new FormData(form);
         const params = new URLSearchParams();
-        formData.forEach((value, key) => {
-            params.append(key, value);
-        });
+        formData.forEach((value, key) => { params.append(key, value); });
 
         fetch(scriptURL, {
             method: 'POST',
-            mode: 'no-cors', // Menghindari isu CORS di browser HP
+            mode: 'no-cors',
             body: params
         })
         .then(() => {
-            // Persiapan Pesan WhatsApp
             const data = Object.fromEntries(formData.entries());
             const noTujuan = "6285899888006";
             const teksSerti = data.sertifikat.toLowerCase();
-            const pesanWA = `Assalamu 'alaykum Warahmatullah, Perkenalkan Saya ${data.nama} (${data.nip}), guru mata pelajaran ${data.mapel}, bermaksud mengajukan mutasi/relokasi ke SMAN 2 Cikarang Barat, saat ini Saya ${teksSerti} memiliki Sertifikat Guru Profesional.`;
+            const pesanWA = `Assalamu 'alaykum, Saya ${data.nama} (${data.nip}), guru ${data.mapel}, mengajukan mutasi ke SMAN 2 Cikarang Barat. Saya ${teksSerti} bersertifikat pendidik. Lokasi rumah saya: https://www.google.com/maps?q=${data.lat},${data.lng}`;
             
-            status.innerHTML = "✅ Data Berhasil Disimpan! Membuka WhatsApp...";
+            status.innerHTML = "✅ Berhasil! Membuka WhatsApp...";
             status.style.color = "green";
 
-            // Redirect ke WA setelah 1.5 detik
             setTimeout(() => {
                 window.location.href = `https://wa.me/${noTujuan}?text=${encodeURIComponent(pesanWA)}`;
             }, 1500);
         })
         .catch(error => {
-            status.innerHTML = "❌ Gagal Terhubung. Coba lagi.";
+            status.innerHTML = "❌ Gagal. Periksa Koneksi.";
             status.style.color = "red";
             btn.disabled = false;
-            btn.innerText = 'Kirim Ulang';
-            console.error('Error!', error.message);
         });
-    });
+    }
 </script>
 
 </body>
