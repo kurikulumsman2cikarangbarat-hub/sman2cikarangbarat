@@ -69,7 +69,7 @@
 </div>
 
 <script>
-    const scriptURL = 'URL_DEPLOY_ANDA_DI_SINI';
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbxYiJNP-o2gNx7E8OVYpCGfHwqqj38_EED0AfAU5gILr2ZFb6sKz1L2DEyZi2t1Bs3m/exec';
     const form = document.getElementById('mutasiForm');
     const btn = document.getElementById('btnSubmit');
     const status = document.getElementById('status');
@@ -116,7 +116,7 @@
             const data = Object.fromEntries(formData.entries());
             const noTujuan = "6285899888006";
             const teksSerti = data.sertifikat.toLowerCase();
-            const pesanWA = `Assalamu 'alaykum, Saya ${data.nama} (${data.nip}), guru ${data.mapel}, mengajukan mutasi ke SMAN 2 Cikarang Barat. Saya ${teksSerti} bersertifikat pendidik. Lokasi rumah saya: https://www.google.com/maps?q=${data.lat},${data.lng}`;
+            const pesanWA = `Assalamu 'alaykum, Saya ${data.nama} (${data.nip}), guru ${data.mapel}, mengajukan mutasi ke SMAN 2 Cikarang Barat. Saya ${teksSerti} bersertifikat pendidik.`;
             
             status.innerHTML = "✅ Berhasil! Membuka WhatsApp...";
             status.style.color = "green";
