@@ -67,7 +67,7 @@
     let synthesis = window.speechSynthesis;
     let voices = [];
     let selectedVoice = null;
-    let lastPlayed = "";
+    let lastPlayedMinute = "";
 
     // ==================== DATA JADWAL GURU (KERANGKA LENGKAP) ====================
     const dataJadwalGuru = {
@@ -81,22 +81,106 @@
             { "jam": "17:05", "kegiatan": "Pulang Siang", "detail": [{ "guru": "-", "mapel": "Selesai", "kelas": "-" }] }
         ],
         "Selasa": [
-            { "jam": "06:30", "kegiatan": "Literasi", "detail": [{ "guru": "Wali Kelas", "mapel": "Literasi", "kelas": "Kelas" }] },
-            { "jam": "07:20", "kegiatan": "KBM 1", "detail": [{ "guru": "Guru E", "mapel": "Mapel E", "kelas": "X-1" }] },
-            { "jam": "09:00", "kegiatan": "Istirahat", "detail": [{ "guru": "-", "mapel": "Istirahat", "kelas": "-" }] },
-            { "jam": "17:05", "kegiatan": "Pulang", "detail": [{ "guru": "-", "mapel": "Selesai", "kelas": "-" }] }
+            { "jam": "06:30", "kegiatan": "Literasi dan PBM 1", "detail": [{ "guru": "Wali Kelas", "mapel": "Literasi", "kelas": "Kelas" }] },
+            { "jam": "07:20", "kegiatan": "PBM 2", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
+            { "jam": "07:45", "kegiatan": "PBM 3", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
+            { "jam": "08:10", "kegiatan": "PBM 4", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
+            { "jam": "08:35", "kegiatan": "PBM 5", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
+            { "jam": "09:00", "kegiatan": "Istirahat", "detail": [{ "guru": "Semua Guru", "mapel": "Selesai", "kelas": "Semua Kelas" }] },
+            { "jam": "09:30", "kegiatan": "Selesai Istirahat", "detail": [{ "guru": "Semua Guru", "mapel": "Selesai", "kelas": "Semua Kelas" }] },
+            { "jam": "09:30", "kegiatan": "PBM 6", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
+            { "jam": "09:55", "kegiatan": "PBM 7", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
+            { "jam": "10:20", "kegiatan": "PBM 8", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
+            { "jam": "10:55", "kegiatan": "PBM 9", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
+            { "jam": "11:10", "kegiatan": "PBM 10", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
+            { "jam": "11:35", "kegiatan": "Pulang", "detail": [{ "guru": "-", "mapel": "Pagi Selesai", "kelas": "Semua Kelas Pagi" }] },
+            { "jam": "12:30", "kegiatan": "Literasi/ Numerasi & PBM 1", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
+            { "jam": "13:15", "kegiatan": "PBM 2", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
+            { "jam": "14:05", "kegiatan": "PBM 4", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
+            { "jam": "14:30", "kegiatan": "PBM 5", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
+            { "jam": "14:55", "kegiatan": "PBM 6", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
+            { "jam": "15:20", "kegiatan": "Istirahat", "detail": [{ "guru": "Semua Guru", "mapel": "Selesai", "kelas": "Semua Kelas" }] },
+            { "jam": "15:50", "kegiatan": "Selesai Istirahat", "detail": [{ "guru": "Semua Guru", "mapel": "Selesai", "kelas": "Semua Kelas" }] },
+            { "jam": "15:50", "kegiatan": "PBM 7", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
+            { "jam": "16:15", "kegiatan": "PBM 8", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
+            { "jam": "16:40", "kegiatan": "PBM 9", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
+            { "jam": "17:05", "kegiatan": "PBM 10", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
+            { "jam": "17:05", "kegiatan": "Pulang", "detail": [{ "guru": "Semua Guru", "mapel": "Selesai", "kelas": "Semua Kelas" }] }
         ],
         "Rabu": [
-            { "jam": "06:30", "kegiatan": "Literasi", "detail": [{ "guru": "Wali Kelas", "mapel": "Literasi", "kelas": "Kelas" }] },
-            { "jam": "17:05", "kegiatan": "Pulang", "detail": [{ "guru": "-", "mapel": "Selesai", "kelas": "-" }] }
+            { "jam": "06:30", "kegiatan": "Literasi dan PBM 1", "detail": [{ "guru": "Wali Kelas", "mapel": "Literasi", "kelas": "Kelas" }] },
+            { "jam": "07:20", "kegiatan": "PBM 2", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
+            { "jam": "07:45", "kegiatan": "PBM 3", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
+            { "jam": "08:10", "kegiatan": "PBM 4", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
+            { "jam": "08:35", "kegiatan": "PBM 5", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
+            { "jam": "09:00", "kegiatan": "Istirahat", "detail": [{ "guru": "Semua Guru", "mapel": "Selesai", "kelas": "Semua Kelas" }] },
+            { "jam": "09:30", "kegiatan": "Selesai Istirahat", "detail": [{ "guru": "Semua Guru", "mapel": "Selesai", "kelas": "Semua Kelas" }] },
+            { "jam": "09:30", "kegiatan": "PBM 6", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
+            { "jam": "09:55", "kegiatan": "PBM 7", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
+            { "jam": "10:20", "kegiatan": "PBM 8", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
+            { "jam": "10:55", "kegiatan": "PBM 9", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
+            { "jam": "11:10", "kegiatan": "PBM 10", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
+            { "jam": "11:35", "kegiatan": "Pulang", "detail": [{ "guru": "-", "mapel": "Pagi Selesai", "kelas": "Semua Kelas Pagi" }] },
+            { "jam": "12:30", "kegiatan": "Literasi/ Numerasi & PBM 1", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
+            { "jam": "13:15", "kegiatan": "PBM 2", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
+            { "jam": "14:05", "kegiatan": "PBM 4", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
+            { "jam": "14:30", "kegiatan": "PBM 5", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
+            { "jam": "14:55", "kegiatan": "PBM 6", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
+            { "jam": "15:20", "kegiatan": "Istirahat", "detail": [{ "guru": "Semua Guru", "mapel": "Selesai", "kelas": "Semua Kelas" }] },
+            { "jam": "15:50", "kegiatan": "Selesai Istirahat", "detail": [{ "guru": "Semua Guru", "mapel": "Selesai", "kelas": "Semua Kelas" }] },
+            { "jam": "15:50", "kegiatan": "PBM 7", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
+            { "jam": "16:15", "kegiatan": "PBM 8", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
+            { "jam": "16:40", "kegiatan": "PBM 9", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
+            { "jam": "17:05", "kegiatan": "PBM 10", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
+            { "jam": "17:05", "kegiatan": "Pulang", "detail": [{ "guru": "Semua Guru", "mapel": "Selesai", "kelas": "Semua Kelas" }] }
         ],
         "Kamis": [
-            { "jam": "06:30", "kegiatan": "Literasi", "detail": [{ "guru": "Wali Kelas", "mapel": "Literasi", "kelas": "Kelas" }] },
-            { "jam": "17:05", "kegiatan": "Pulang", "detail": [{ "guru": "-", "mapel": "Selesai", "kelas": "-" }] }
+            { "jam": "06:30", "kegiatan": "Literasi dan PBM 1", "detail": [{ "guru": "Wali Kelas", "mapel": "Literasi", "kelas": "Kelas" }] },
+            { "jam": "07:20", "kegiatan": "PBM 2", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
+            { "jam": "07:45", "kegiatan": "PBM 3", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
+            { "jam": "08:10", "kegiatan": "PBM 4", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
+            { "jam": "08:35", "kegiatan": "PBM 5", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
+            { "jam": "09:00", "kegiatan": "Istirahat", "detail": [{ "guru": "Semua Guru", "mapel": "Selesai", "kelas": "Semua Kelas" }] },
+            { "jam": "09:30", "kegiatan": "Selesai Istirahat", "detail": [{ "guru": "Semua Guru", "mapel": "Selesai", "kelas": "Semua Kelas" }] },
+            { "jam": "09:30", "kegiatan": "PBM 6", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
+            { "jam": "09:55", "kegiatan": "PBM 7", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
+            { "jam": "10:20", "kegiatan": "PBM 8", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
+            { "jam": "10:55", "kegiatan": "PBM 9", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
+            { "jam": "11:10", "kegiatan": "PBM 10", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
+            { "jam": "11:35", "kegiatan": "Pulang", "detail": [{ "guru": "-", "mapel": "Pagi Selesai", "kelas": "Semua Kelas Pagi" }] },
+            { "jam": "12:30", "kegiatan": "Literasi/ Numerasi & PBM 1", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
+            { "jam": "13:15", "kegiatan": "PBM 2", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
+            { "jam": "14:05", "kegiatan": "PBM 4", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
+            { "jam": "14:30", "kegiatan": "PBM 5", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
+            { "jam": "14:55", "kegiatan": "PBM 6", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
+            { "jam": "15:20", "kegiatan": "Istirahat", "detail": [{ "guru": "Semua Guru", "mapel": "Selesai", "kelas": "Semua Kelas" }] },
+            { "jam": "15:50", "kegiatan": "Selesai Istirahat", "detail": [{ "guru": "Semua Guru", "mapel": "Selesai", "kelas": "Semua Kelas" }] },
+            { "jam": "15:50", "kegiatan": "PBM 7", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
+            { "jam": "16:15", "kegiatan": "PBM 8", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
+            { "jam": "16:40", "kegiatan": "PBM 9", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
+            { "jam": "17:05", "kegiatan": "PBM 10", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
+            { "jam": "17:05", "kegiatan": "Pulang", "detail": [{ "guru": "Semua Guru", "mapel": "Selesai", "kelas": "Semua Kelas" }] }
         ],
         "Jumat": [
-            { "jam": "06:30", "kegiatan": "Pancawaluya", "detail": [{ "guru": "Seluruh Guru", "mapel": "Kegiatan", "kelas": "Lapangan" }] },
-            { "jam": "11:10", "kegiatan": "Pulang", "detail": [{ "guru": "-", "mapel": "Selesai", "kelas": "-" }] }
+            { "jam": "06:30", "kegiatan": "Pancawaluya", "detail": [{ "guru": "Wali Kelas", "mapel": "Pacawaluya", "kelas": "Semua Kelas" }] },
+            { "jam": "08:10", "kegiatan": "PBM 4", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
+            { "jam": "08:35", "kegiatan": "PBM 5", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
+            { "jam": "09:00", "kegiatan": "Istirahat", "detail": [{ "guru": "Semua Guru", "mapel": "Selesai", "kelas": "Semua Kelas" }] },
+            { "jam": "09:30", "kegiatan": "Selesai Istirahat", "detail": [{ "guru": "Semua Guru", "mapel": "Selesai", "kelas": "Semua Kelas" }] },
+            { "jam": "09:30", "kegiatan": "PBM 6", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
+            { "jam": "09:55", "kegiatan": "PBM 7", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
+            { "jam": "10:20", "kegiatan": "PBM 8", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
+            { "jam": "10:55", "kegiatan": "PBM 9", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
+            { "jam": "11:10", "kegiatan": "Pulang", "detail": [{ "guru": "-", "mapel": "Pagi Selesai", "kelas": "Semua Kelas Pagi" }] },
+            { "jam": "13:15", "kegiatan": "PBM 1", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
+            { "jam": "14:05", "kegiatan": "PBM 2", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
+            { "jam": "14:30", "kegiatan": "PBM 3", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
+            { "jam": "14:55", "kegiatan": "PBM 4", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
+            { "jam": "15:20", "kegiatan": "Istirahat", "detail": [{ "guru": "Semua Guru", "mapel": "Selesai", "kelas": "Semua Kelas" }] },
+            { "jam": "15:50", "kegiatan": "Selesai Istirahat", "detail": [{ "guru": "Semua Guru", "mapel": "Selesai", "kelas": "Semua Kelas" }] },
+            { "jam": "15:50", "kegiatan": "PBM 5", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
+            { "jam": "16:15", "kegiatan": "Upacara Bendera", "detail": [{ "guru": "Walikelas Guru", "mapel": "Selesai", "kelas": "Semua Kelas Siang" }] },
+            { "jam": "17:05", "kegiatan": "Pulang", "detail": [{ "guru": "Semua Guru", "mapel": "Selesai", "kelas": "Semua Kelas" }] }
         ]
     };
 
@@ -206,88 +290,155 @@
     function tambahLog(psn) {
         const log = document.getElementById('logSection');
         const t = new Date().toLocaleTimeString('id-ID');
+        // Hanya tampilkan 10 baris log terakhir
+        const lines = log.innerHTML.split('<div>');
+        if (lines.length > 10) {
+            log.innerHTML = lines.slice(lines.length - 10).join('<div>');
+        }
         log.innerHTML += `<div>[${t}] > ${psn}</div>`;
         log.scrollTop = log.scrollHeight;
     }
+
     function updateWaktu() {
         const skr = new Date();
         const hariArr = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
         document.getElementById('currentDay').innerText = hariArr[skr.getDay()];
         document.getElementById('currentTime').innerText = skr.toLocaleTimeString('id-ID', { hour12: false });
     }
+
     function renderTabelSplit() {
         const skr = new Date();
         const hariSkr = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'][skr.getDay()];
         const menitSkr = (skr.getHours() * 60) + skr.getMinutes();
         const dataHariIni = dataJadwalGuru[hariSkr] || [];
+
+        // Tentukan index jadwal yang sedang berlangsung
         let indexNow = -1;
-        for(let i = 0; i < dataHariIni.length; i++) {
+        for (let i = 0; i < dataHariIni.length; i++) {
             const [h, m] = dataHariIni[i].jam.split(':').map(Number);
             if (menitSkr >= (h * 60 + m)) indexNow = i;
         }
+
+        // Render panel "SEDANG BERLANGSUNG"
         const tbodyNow = document.getElementById('tbodyNow');
         const labelNow = document.getElementById('labelNow');
         tbodyNow.innerHTML = '';
-        if (indexNow !== -1) {
+
+        if (indexNow !== -1 && dataHariIni.length > 0) {
             const currentSlot = dataHariIni[indexNow];
             labelNow.innerText = `BERLANGSUNG (${currentSlot.jam} - ${currentSlot.kegiatan})`;
-            currentSlot.detail.forEach(det => { tbodyNow.innerHTML += `<tr><td>${det.kelas}</td><td>${det.guru}</td><td>${det.mapel}</td></tr>`; });
+            currentSlot.detail.forEach(det => {
+                tbodyNow.innerHTML += `<tr><td>${det.kelas}</td><td>${det.guru}</td><td>${det.mapel}</td></tr>`;
+            });
             document.getElementById('emptyNow').style.display = 'none';
             document.getElementById('tableNow').style.display = 'table';
         } else {
             labelNow.innerText = "SEDANG BERLANGSUNG";
             document.getElementById('emptyNow').style.display = 'block';
             document.getElementById('tableNow').style.display = 'none';
+            // Jika hari libur, tampilkan pesan
+            if (['Minggu', 'Sabtu'].includes(hariSkr)) {
+                document.getElementById('emptyNow').innerText = 'Hari Libur - Tidak ada kegiatan';
+            } else {
+                document.getElementById('emptyNow').innerText = 'Tidak ada kegiatan berlangsung';
+            }
         }
+
+        // Render panel "KEGIATAN BERIKUTNYA"
         const tbodyNext = document.getElementById('tbodyNext');
         const labelNext = document.getElementById('labelNext');
         tbodyNext.innerHTML = '';
+
         const nextSlot = dataHariIni[indexNow + 1];
         if (nextSlot) {
             labelNext.innerText = `BERIKUTNYA (Mulai ${nextSlot.jam})`;
-            nextSlot.detail.forEach(det => { tbodyNext.innerHTML += `<tr><td>${det.kelas}</td><td>${det.guru}</td><td>${det.mapel}</td></tr>`; });
+            nextSlot.detail.forEach(det => {
+                tbodyNext.innerHTML += `<tr><td>${det.kelas}</td><td>${det.guru}</td><td>${det.mapel}</td></tr>`;
+            });
             document.getElementById('emptyNext').style.display = 'none';
             document.getElementById('tableNext').style.display = 'table';
         } else {
             labelNext.innerText = "KEGIATAN BERIKUTNYA";
             document.getElementById('emptyNext').style.display = 'block';
             document.getElementById('tableNext').style.display = 'none';
+            if (['Minggu', 'Sabtu'].includes(hariSkr)) {
+                document.getElementById('emptyNext').innerText = 'Hari Libur - Tidak ada kegiatan';
+            } else {
+                document.getElementById('emptyNext').innerText = 'Tidak ada jadwal berikutnya';
+            }
         }
     }
+
     function cekNotifikasi() {
         const skr = new Date();
         const hariSkr = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'][skr.getDay()];
         const jamSkr = skr.getHours().toString().padStart(2,'0') + ":" + skr.getMinutes().toString().padStart(2,'0');
-        if (lastPlayed === jamSkr) return;
+        const menitSkr = jamSkr; // format HH:MM
+
+        // Cegah notifikasi berulang dalam satu menit yang sama
+        if (lastPlayedMinute === menitSkr) return;
+
         const match = notifikasiTerjadwal.find(n => n.hari === hariSkr && n.jam === jamSkr);
-        if (match) { lastPlayed = jamSkr; bicara(match.pesan); }
+        if (match) {
+            lastPlayedMinute = menitSkr;
+            bicara(match.pesan);
+        }
     }
+
     function bicara(teks) {
         synthesis.cancel();
         const utt = new SpeechSynthesisUtterance(teks);
         utt.voice = selectedVoice;
         utt.lang = 'id-ID';
+        utt.rate = 0.9; // Sedikit lebih lambat agar jelas
         synthesis.speak(utt);
         tambahLog("🔊 Pengumuman: " + teks.substring(0, 30) + "...");
     }
+
     function muatSuara() {
         voices = synthesis.getVoices();
         const select = document.getElementById('voiceSelect');
         select.innerHTML = '';
-        const indo = voices.filter(v => v.lang.includes('id'));
-        (indo.length > 0 ? indo : voices).forEach(v => {
+
+        // Filter suara bahasa Indonesia
+        const indoVoices = voices.filter(v => v.lang.includes('id'));
+        const voicesToShow = indoVoices.length > 0 ? indoVoices : voices;
+
+        voicesToShow.forEach(v => {
             const opt = document.createElement('option');
-            opt.value = v.name; opt.textContent = v.name; select.appendChild(opt);
+            opt.value = v.name;
+            opt.textContent = `${v.name} (${v.lang})`;
+            select.appendChild(opt);
         });
-        selectedVoice = (indo.length > 0 ? indo[0] : voices[0]);
+
+        // Pilih suara Indonesia pertama jika ada
+        selectedVoice = indoVoices.length > 0 ? indoVoices[0] : (voices[0] || null);
+        if (selectedVoice) {
+            select.value = selectedVoice.name;
+        }
     }
-    function testSuara() { bicara("Uji coba sistem monitor jadwal."); }
-    function stopSuara() { synthesis.cancel(); }
+
+    function testSuara() {
+        bicara("Uji coba sistem monitor jadwal. Seluruh sistem berfungsi dengan baik.");
+    }
+
+    function stopSuara() {
+        synthesis.cancel();
+        tambahLog("⏹ Pengumuman dihentikan.");
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
         muatSuara();
-        if (synthesis.onvoiceschanged !== undefined) synthesis.onvoiceschanged = muatSuara;
+        if (synthesis.onvoiceschanged !== undefined) {
+            synthesis.onvoiceschanged = muatSuara;
+        }
+
         renderTabelSplit();
-        setInterval(() => { updateWaktu(); cekNotifikasi(); renderTabelSplit(); }, 1000);
+        setInterval(() => {
+            updateWaktu();
+            cekNotifikasi();
+            renderTabelSplit();
+        }, 1000);
     });
 </script>
 </body>
