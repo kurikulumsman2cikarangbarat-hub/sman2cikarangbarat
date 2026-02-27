@@ -31,7 +31,7 @@
 <body>
 
 <div class="container">
-    <h1>🏫 JADWAL SMAN 2 CIKARANG BARAT</h1>
+    <h1>📢 JADWAL SMAN 2 CIKARANG BARAT</h1>
     <div class="status-bar">
         <div class="current-day" id="currentDay">---</div>
         <div class="current-time" id="currentTime">00:00:00</div>
@@ -59,7 +59,7 @@
         <span style="font-weight:bold">Pengaturan Suara:</span>
         <select id="voiceSelect"></select>
         <button onclick="testSuara()">🔊 Tes Suara</button>
-        <button onclick="stopSuara()">⏹ Berhenti</button>
+        <button onclick="stopSuara()">🛑 Berhenti</button>
     </div>
 </div>
 
@@ -67,9 +67,8 @@
     let synthesis = window.speechSynthesis;
     let voices = [];
     let selectedVoice = null;
-    let lastPlayedMinute = "";
+    let lastPlayed = "";
 
-    // ==================== DATA JADWAL GURU (KERANGKA LENGKAP) ====================
     const dataJadwalGuru = {
         "Senin": [
             { "jam": "06:30", "kegiatan": "Upacara", "detail": [{ "guru": "Seluruh Guru", "mapel": "Upacara Bendera", "kelas": "Lapangan" }] },
@@ -82,306 +81,103 @@
         ],
         "Selasa": [
             { "jam": "06:30", "kegiatan": "Literasi dan PBM 1", "detail": [{ "guru": "Wali Kelas", "mapel": "Literasi", "kelas": "Kelas" }] },
-            { "jam": "07:20", "kegiatan": "PBM 2", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
-            { "jam": "07:45", "kegiatan": "PBM 3", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
-            { "jam": "08:10", "kegiatan": "PBM 4", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
-            { "jam": "08:35", "kegiatan": "PBM 5", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
+            { "jam": "07:20", "kegiatan": "PBM 2", "detail": [{ "guru": "Guru 1", "mapel": "Mapel 1", "kelas": "X-A" }, { "guru": "Guru 2", "mapel": "Mapel 2", "kelas": "X-B" }, { "guru": "Guru 3", "mapel": "Mapel 3", "kelas": "X-C" }, { "guru": "Guru 4", "mapel": "Mapel 4", "kelas": "XII-A" }, { "guru": "Guru 5", "mapel": "Mapel 5", "kelas": "XII-B" }, { "guru": "Guru 6", "mapel": "Mapel 6", "kelas": "XII-C" }, { "guru": "Guru 7", "mapel": "Mapel 7", "kelas": "XII-D" }, { "guru": "Guru 8", "mapel": "Mapel 8", "kelas": "XII-E" }, { "guru": "Guru 9", "mapel": "Mapel 9", "kelas": "XII-F" }, { "guru": "Guru 10", "mapel": "Mapel 10", "kelas": "XII-G" }] },
+            { "jam": "07:45", "kegiatan": "PBM 3", "detail": [{ "guru": "Guru 1", "mapel": "Mapel 1", "kelas": "X-A" }, { "guru": "Guru 2", "mapel": "Mapel 2", "kelas": "X-B" }, { "guru": "Guru 3", "mapel": "Mapel 3", "kelas": "X-C" }, { "guru": "Guru 4", "mapel": "Mapel 4", "kelas": "XII-A" }, { "guru": "Guru 5", "mapel": "Mapel 5", "kelas": "XII-B" }, { "guru": "Guru 6", "mapel": "Mapel 6", "kelas": "XII-C" }, { "guru": "Guru 7", "mapel": "Mapel 7", "kelas": "XII-D" }, { "guru": "Guru 8", "mapel": "Mapel 8", "kelas": "XII-E" }, { "guru": "Guru 9", "mapel": "Mapel 9", "kelas": "XII-F" }, { "guru": "Guru 10", "mapel": "Mapel 10", "kelas": "XII-G" }] },
+            { "jam": "08:10", "kegiatan": "PBM 4", "detail": [{ "guru": "Guru 1", "mapel": "Mapel 1", "kelas": "X-A" }, { "guru": "Guru 2", "mapel": "Mapel 2", "kelas": "X-B" }, { "guru": "Guru 3", "mapel": "Mapel 3", "kelas": "X-C" }, { "guru": "Guru 4", "mapel": "Mapel 4", "kelas": "XII-A" }, { "guru": "Guru 5", "mapel": "Mapel 5", "kelas": "XII-B" }, { "guru": "Guru 6", "mapel": "Mapel 6", "kelas": "XII-C" }, { "guru": "Guru 7", "mapel": "Mapel 7", "kelas": "XII-D" }, { "guru": "Guru 8", "mapel": "Mapel 8", "kelas": "XII-E" }, { "guru": "Guru 9", "mapel": "Mapel 9", "kelas": "XII-F" }, { "guru": "Guru 10", "mapel": "Mapel 10", "kelas": "XII-G" }] },
+            { "jam": "08:35", "kegiatan": "PBM 5", "detail": [{ "guru": "Guru 1", "mapel": "Mapel 1", "kelas": "X-A" }, { "guru": "Guru 2", "mapel": "Mapel 2", "kelas": "X-B" }, { "guru": "Guru 3", "mapel": "Mapel 3", "kelas": "X-C" }, { "guru": "Guru 4", "mapel": "Mapel 4", "kelas": "XII-A" }, { "guru": "Guru 5", "mapel": "Mapel 5", "kelas": "XII-B" }, { "guru": "Guru 6", "mapel": "Mapel 6", "kelas": "XII-C" }, { "guru": "Guru 7", "mapel": "Mapel 7", "kelas": "XII-D" }, { "guru": "Guru 8", "mapel": "Mapel 8", "kelas": "XII-E" }, { "guru": "Guru 9", "mapel": "Mapel 9", "kelas": "XII-F" }, { "guru": "Guru 10", "mapel": "Mapel 10", "kelas": "XII-G" }] },
             { "jam": "09:00", "kegiatan": "Istirahat", "detail": [{ "guru": "Semua Guru", "mapel": "Selesai", "kelas": "Semua Kelas" }] },
-            { "jam": "09:30", "kegiatan": "Selesai Istirahat", "detail": [{ "guru": "Semua Guru", "mapel": "Selesai", "kelas": "Semua Kelas" }] },
-            { "jam": "09:30", "kegiatan": "PBM 6", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
-            { "jam": "09:55", "kegiatan": "PBM 7", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
-            { "jam": "10:20", "kegiatan": "PBM 8", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
-            { "jam": "10:55", "kegiatan": "PBM 9", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
-            { "jam": "11:10", "kegiatan": "PBM 10", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
+            { "jam": "09:30", "kegiatan": "PBM 6", "detail": [{ "guru": "Guru 1", "mapel": "Mapel 1", "kelas": "X-A" }, { "guru": "Guru 2", "mapel": "Mapel 2", "kelas": "X-B" }, { "guru": "Guru 3", "mapel": "Mapel 3", "kelas": "X-C" }, { "guru": "Guru 4", "mapel": "Mapel 4", "kelas": "XII-A" }, { "guru": "Guru 5", "mapel": "Mapel 5", "kelas": "XII-B" }, { "guru": "Guru 6", "mapel": "Mapel 6", "kelas": "XII-C" }, { "guru": "Guru 7", "mapel": "Mapel 7", "kelas": "XII-D" }, { "guru": "Guru 8", "mapel": "Mapel 8", "kelas": "XII-E" }, { "guru": "Guru 9", "mapel": "Mapel 9", "kelas": "XII-F" }, { "guru": "Guru 10", "mapel": "Mapel 10", "kelas": "XII-G" }] },
+            { "jam": "09:55", "kegiatan": "PBM 7", "detail": [{ "guru": "Guru 1", "mapel": "Mapel 1", "kelas": "X-A" }, { "guru": "Guru 2", "mapel": "Mapel 2", "kelas": "X-B" }, { "guru": "Guru 3", "mapel": "Mapel 3", "kelas": "X-C" }, { "guru": "Guru 4", "mapel": "Mapel 4", "kelas": "XII-A" }, { "guru": "Guru 5", "mapel": "Mapel 5", "kelas": "XII-B" }, { "guru": "Guru 6", "mapel": "Mapel 6", "kelas": "XII-C" }, { "guru": "Guru 7", "mapel": "Mapel 7", "kelas": "XII-D" }, { "guru": "Guru 8", "mapel": "Mapel 8", "kelas": "XII-E" }, { "guru": "Guru 9", "mapel": "Mapel 9", "kelas": "XII-F" }, { "guru": "Guru 10", "mapel": "Mapel 10", "kelas": "XII-G" }] },
+            { "jam": "10:20", "kegiatan": "PBM 8", "detail": [{ "guru": "Guru 1", "mapel": "Mapel 1", "kelas": "X-A" }, { "guru": "Guru 2", "mapel": "Mapel 2", "kelas": "X-B" }, { "guru": "Guru 3", "mapel": "Mapel 3", "kelas": "X-C" }, { "guru": "Guru 4", "mapel": "Mapel 4", "kelas": "XII-A" }, { "guru": "Guru 5", "mapel": "Mapel 5", "kelas": "XII-B" }, { "guru": "Guru 6", "mapel": "Mapel 6", "kelas": "XII-C" }, { "guru": "Guru 7", "mapel": "Mapel 7", "kelas": "XII-D" }, { "guru": "Guru 8", "mapel": "Mapel 8", "kelas": "XII-E" }, { "guru": "Guru 9", "mapel": "Mapel 9", "kelas": "XII-F" }, { "guru": "Guru 10", "mapel": "Mapel 10", "kelas": "XII-G" }] },
+            { "jam": "10:55", "kegiatan": "PBM 9", "detail": [{ "guru": "Guru 1", "mapel": "Mapel 1", "kelas": "X-A" }, { "guru": "Guru 2", "mapel": "Mapel 2", "kelas": "X-B" }, { "guru": "Guru 3", "mapel": "Mapel 3", "kelas": "X-C" }, { "guru": "Guru 4", "mapel": "Mapel 4", "kelas": "XII-A" }, { "guru": "Guru 5", "mapel": "Mapel 5", "kelas": "XII-B" }, { "guru": "Guru 6", "mapel": "Mapel 6", "kelas": "XII-C" }, { "guru": "Guru 7", "mapel": "Mapel 7", "kelas": "XII-D" }, { "guru": "Guru 8", "mapel": "Mapel 8", "kelas": "XII-E" }, { "guru": "Guru 9", "mapel": "Mapel 9", "kelas": "XII-F" }, { "guru": "Guru 10", "mapel": "Mapel 10", "kelas": "XII-G" }] },
+            { "jam": "11:10", "kegiatan": "PBM 10", "detail": [{ "guru": "Guru 1", "mapel": "Mapel 1", "kelas": "X-A" }, { "guru": "Guru 2", "mapel": "Mapel 2", "kelas": "X-B" }, { "guru": "Guru 3", "mapel": "Mapel 3", "kelas": "X-C" }, { "guru": "Guru 4", "mapel": "Mapel 4", "kelas": "XII-A" }, { "guru": "Guru 5", "mapel": "Mapel 5", "kelas": "XII-B" }, { "guru": "Guru 6", "mapel": "Mapel 6", "kelas": "XII-C" }, { "guru": "Guru 7", "mapel": "Mapel 7", "kelas": "XII-D" }, { "guru": "Guru 8", "mapel": "Mapel 8", "kelas": "XII-E" }, { "guru": "Guru 9", "mapel": "Mapel 9", "kelas": "XII-F" }, { "guru": "Guru 10", "mapel": "Mapel 10", "kelas": "XII-G" }] },
             { "jam": "11:35", "kegiatan": "Pulang", "detail": [{ "guru": "-", "mapel": "Pagi Selesai", "kelas": "Semua Kelas Pagi" }] },
-            { "jam": "12:30", "kegiatan": "Literasi/ Numerasi & PBM 1", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
-            { "jam": "13:15", "kegiatan": "PBM 2", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
-            { "jam": "14:05", "kegiatan": "PBM 4", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
-            { "jam": "14:30", "kegiatan": "PBM 5", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
-            { "jam": "14:55", "kegiatan": "PBM 6", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
+            { "jam": "12:30", "kegiatan": "Literasi/ Numerasi & PBM 1", "detail": [{ "guru": "Guru 1", "mapel": "Mapel 1", "kelas": "X-A" }, { "guru": "Guru 2", "mapel": "Mapel 2", "kelas": "X-B" }, { "guru": "Guru 3", "mapel": "Mapel 3", "kelas": "X-C" }, { "guru": "Guru 4", "mapel": "Mapel 4", "kelas": "XII-A" }, { "guru": "Guru 5", "mapel": "Mapel 5", "kelas": "XII-B" }, { "guru": "Guru 6", "mapel": "Mapel 6", "kelas": "XII-C" }, { "guru": "Guru 7", "mapel": "Mapel 7", "kelas": "XII-D" }, { "guru": "Guru 8", "mapel": "Mapel 8", "kelas": "XII-E" }, { "guru": "Guru 9", "mapel": "Mapel 9", "kelas": "XII-F" }, { "guru": "Guru 10", "mapel": "Mapel 10", "kelas": "XII-G" }] },
+            { "jam": "13:15", "kegiatan": "PBM 2", "detail": [{ "guru": "Guru 1", "mapel": "Mapel 1", "kelas": "X-A" }, { "guru": "Guru 2", "mapel": "Mapel 2", "kelas": "X-B" }, { "guru": "Guru 3", "mapel": "Mapel 3", "kelas": "X-C" }, { "guru": "Guru 4", "mapel": "Mapel 4", "kelas": "XII-A" }, { "guru": "Guru 5", "mapel": "Mapel 5", "kelas": "XII-B" }, { "guru": "Guru 6", "mapel": "Mapel 6", "kelas": "XII-C" }, { "guru": "Guru 7", "mapel": "Mapel 7", "kelas": "XII-D" }, { "guru": "Guru 8", "mapel": "Mapel 8", "kelas": "XII-E" }, { "guru": "Guru 9", "mapel": "Mapel 9", "kelas": "XII-F" }, { "guru": "Guru 10", "mapel": "Mapel 10", "kelas": "XII-G" }] },
+            { "jam": "14:05", "kegiatan": "PBM 4", "detail": [{ "guru": "Guru 1", "mapel": "Mapel 1", "kelas": "X-A" }, { "guru": "Guru 2", "mapel": "Mapel 2", "kelas": "X-B" }, { "guru": "Guru 3", "mapel": "Mapel 3", "kelas": "X-C" }, { "guru": "Guru 4", "mapel": "Mapel 4", "kelas": "XII-A" }, { "guru": "Guru 5", "mapel": "Mapel 5", "kelas": "XII-B" }, { "guru": "Guru 6", "mapel": "Mapel 6", "kelas": "XII-C" }, { "guru": "Guru 7", "mapel": "Mapel 7", "kelas": "XII-D" }, { "guru": "Guru 8", "mapel": "Mapel 8", "kelas": "XII-E" }, { "guru": "Guru 9", "mapel": "Mapel 9", "kelas": "XII-F" }, { "guru": "Guru 10", "mapel": "Mapel 10", "kelas": "XII-G" }] },
+            { "jam": "14:30", "kegiatan": "PBM 5", "detail": [{ "guru": "Guru 1", "mapel": "Mapel 1", "kelas": "X-A" }, { "guru": "Guru 2", "mapel": "Mapel 2", "kelas": "X-B" }, { "guru": "Guru 3", "mapel": "Mapel 3", "kelas": "X-C" }, { "guru": "Guru 4", "mapel": "Mapel 4", "kelas": "XII-A" }, { "guru": "Guru 5", "mapel": "Mapel 5", "kelas": "XII-B" }, { "guru": "Guru 6", "mapel": "Mapel 6", "kelas": "XII-C" }, { "guru": "Guru 7", "mapel": "Mapel 7", "kelas": "XII-D" }, { "guru": "Guru 8", "mapel": "Mapel 8", "kelas": "XII-E" }, { "guru": "Guru 9", "mapel": "Mapel 9", "kelas": "XII-F" }, { "guru": "Guru 10", "mapel": "Mapel 10", "kelas": "XII-G" }] },
+            { "jam": "14:55", "kegiatan": "PBM 6", "detail": [{ "guru": "Guru 1", "mapel": "Mapel 1", "kelas": "X-A" }, { "guru": "Guru 2", "mapel": "Mapel 2", "kelas": "X-B" }, { "guru": "Guru 3", "mapel": "Mapel 3", "kelas": "X-C" }, { "guru": "Guru 4", "mapel": "Mapel 4", "kelas": "XII-A" }, { "guru": "Guru 5", "mapel": "Mapel 5", "kelas": "XII-B" }, { "guru": "Guru 6", "mapel": "Mapel 6", "kelas": "XII-C" }, { "guru": "Guru 7", "mapel": "Mapel 7", "kelas": "XII-D" }, { "guru": "Guru 8", "mapel": "Mapel 8", "kelas": "XII-E" }, { "guru": "Guru 9", "mapel": "Mapel 9", "kelas": "XII-F" }, { "guru": "Guru 10", "mapel": "Mapel 10", "kelas": "XII-G" }] },
             { "jam": "15:20", "kegiatan": "Istirahat", "detail": [{ "guru": "Semua Guru", "mapel": "Selesai", "kelas": "Semua Kelas" }] },
-            { "jam": "15:50", "kegiatan": "Selesai Istirahat", "detail": [{ "guru": "Semua Guru", "mapel": "Selesai", "kelas": "Semua Kelas" }] },
-            { "jam": "15:50", "kegiatan": "PBM 7", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
-            { "jam": "16:15", "kegiatan": "PBM 8", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
-            { "jam": "16:40", "kegiatan": "PBM 9", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
-            { "jam": "17:05", "kegiatan": "PBM 10", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
+            { "jam": "15:50", "kegiatan": "PBM 7", "detail": [{ "guru": "Guru 1", "mapel": "Mapel 1", "kelas": "X-A" }, { "guru": "Guru 2", "mapel": "Mapel 2", "kelas": "X-B" }, { "guru": "Guru 3", "mapel": "Mapel 3", "kelas": "X-C" }, { "guru": "Guru 4", "mapel": "Mapel 4", "kelas": "XII-A" }, { "guru": "Guru 5", "mapel": "Mapel 5", "kelas": "XII-B" }, { "guru": "Guru 6", "mapel": "Mapel 6", "kelas": "XII-C" }, { "guru": "Guru 7", "mapel": "Mapel 7", "kelas": "XII-D" }, { "guru": "Guru 8", "mapel": "Mapel 8", "kelas": "XII-E" }, { "guru": "Guru 9", "mapel": "Mapel 9", "kelas": "XII-F" }, { "guru": "Guru 10", "mapel": "Mapel 10", "kelas": "XII-G" }] },
+            { "jam": "16:15", "kegiatan": "PBM 8", "detail": [{ "guru": "Guru 1", "mapel": "Mapel 1", "kelas": "X-A" }, { "guru": "Guru 2", "mapel": "Mapel 2", "kelas": "X-B" }, { "guru": "Guru 3", "mapel": "Mapel 3", "kelas": "X-C" }, { "guru": "Guru 4", "mapel": "Mapel 4", "kelas": "XII-A" }, { "guru": "Guru 5", "mapel": "Mapel 5", "kelas": "XII-B" }, { "guru": "Guru 6", "mapel": "Mapel 6", "kelas": "XII-C" }, { "guru": "Guru 7", "mapel": "Mapel 7", "kelas": "XII-D" }, { "guru": "Guru 8", "mapel": "Mapel 8", "kelas": "XII-E" }, { "guru": "Guru 9", "mapel": "Mapel 9", "kelas": "XII-F" }, { "guru": "Guru 10", "mapel": "Mapel 10", "kelas": "XII-G" }] },
+            { "jam": "16:40", "kegiatan": "PBM 9", "detail": [{ "guru": "Guru 1", "mapel": "Mapel 1", "kelas": "X-A" }, { "guru": "Guru 2", "mapel": "Mapel 2", "kelas": "X-B" }, { "guru": "Guru 3", "mapel": "Mapel 3", "kelas": "X-C" }, { "guru": "Guru 4", "mapel": "Mapel 4", "kelas": "XII-A" }, { "guru": "Guru 5", "mapel": "Mapel 5", "kelas": "XII-B" }, { "guru": "Guru 6", "mapel": "Mapel 6", "kelas": "XII-C" }, { "guru": "Guru 7", "mapel": "Mapel 7", "kelas": "XII-D" }, { "guru": "Guru 8", "mapel": "Mapel 8", "kelas": "XII-E" }, { "guru": "Guru 9", "mapel": "Mapel 9", "kelas": "XII-F" }, { "guru": "Guru 10", "mapel": "Mapel 10", "kelas": "XII-G" }] },
+            { "jam": "17:05", "kegiatan": "PBM 10", "detail": [{ "guru": "Guru 1", "mapel": "Mapel 1", "kelas": "X-A" }, { "guru": "Guru 2", "mapel": "Mapel 2", "kelas": "X-B" }, { "guru": "Guru 3", "mapel": "Mapel 3", "kelas": "X-C" }, { "guru": "Guru 4", "mapel": "Mapel 4", "kelas": "XII-A" }, { "guru": "Guru 5", "mapel": "Mapel 5", "kelas": "XII-B" }, { "guru": "Guru 6", "mapel": "Mapel 6", "kelas": "XII-C" }, { "guru": "Guru 7", "mapel": "Mapel 7", "kelas": "XII-D" }, { "guru": "Guru 8", "mapel": "Mapel 8", "kelas": "XII-E" }, { "guru": "Guru 9", "mapel": "Mapel 9", "kelas": "XII-F" }, { "guru": "Guru 10", "mapel": "Mapel 10", "kelas": "XII-G" }] },
             { "jam": "17:05", "kegiatan": "Pulang", "detail": [{ "guru": "Semua Guru", "mapel": "Selesai", "kelas": "Semua Kelas" }] }
         ],
         "Rabu": [
             { "jam": "06:30", "kegiatan": "Literasi dan PBM 1", "detail": [{ "guru": "Wali Kelas", "mapel": "Literasi", "kelas": "Kelas" }] },
-            { "jam": "07:20", "kegiatan": "PBM 2", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
-            { "jam": "07:45", "kegiatan": "PBM 3", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
-            { "jam": "08:10", "kegiatan": "PBM 4", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
-            { "jam": "08:35", "kegiatan": "PBM 5", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
+            { "jam": "07:20", "kegiatan": "PBM 2", "detail": [{ "guru": "Guru 1", "mapel": "Mapel 1", "kelas": "X-A" }, { "guru": "Guru 2", "mapel": "Mapel 2", "kelas": "X-B" }, { "guru": "Guru 3", "mapel": "Mapel 3", "kelas": "X-C" }, { "guru": "Guru 4", "mapel": "Mapel 4", "kelas": "XII-A" }, { "guru": "Guru 5", "mapel": "Mapel 5", "kelas": "XII-B" }, { "guru": "Guru 6", "mapel": "Mapel 6", "kelas": "XII-C" }, { "guru": "Guru 7", "mapel": "Mapel 7", "kelas": "XII-D" }, { "guru": "Guru 8", "mapel": "Mapel 8", "kelas": "XII-E" }, { "guru": "Guru 9", "mapel": "Mapel 9", "kelas": "XII-F" }, { "guru": "Guru 10", "mapel": "Mapel 10", "kelas": "XII-G" }] },
+            { "jam": "07:45", "kegiatan": "PBM 3", "detail": [{ "guru": "Guru 1", "mapel": "Mapel 1", "kelas": "X-A" }, { "guru": "Guru 2", "mapel": "Mapel 2", "kelas": "X-B" }, { "guru": "Guru 3", "mapel": "Mapel 3", "kelas": "X-C" }, { "guru": "Guru 4", "mapel": "Mapel 4", "kelas": "XII-A" }, { "guru": "Guru 5", "mapel": "Mapel 5", "kelas": "XII-B" }, { "guru": "Guru 6", "mapel": "Mapel 6", "kelas": "XII-C" }, { "guru": "Guru 7", "mapel": "Mapel 7", "kelas": "XII-D" }, { "guru": "Guru 8", "mapel": "Mapel 8", "kelas": "XII-E" }, { "guru": "Guru 9", "mapel": "Mapel 9", "kelas": "XII-F" }, { "guru": "Guru 10", "mapel": "Mapel 10", "kelas": "XII-G" }] },
+            { "jam": "08:10", "kegiatan": "PBM 4", "detail": [{ "guru": "Guru 1", "mapel": "Mapel 1", "kelas": "X-A" }, { "guru": "Guru 2", "mapel": "Mapel 2", "kelas": "X-B" }, { "guru": "Guru 3", "mapel": "Mapel 3", "kelas": "X-C" }, { "guru": "Guru 4", "mapel": "Mapel 4", "kelas": "XII-A" }, { "guru": "Guru 5", "mapel": "Mapel 5", "kelas": "XII-B" }, { "guru": "Guru 6", "mapel": "Mapel 6", "kelas": "XII-C" }, { "guru": "Guru 7", "mapel": "Mapel 7", "kelas": "XII-D" }, { "guru": "Guru 8", "mapel": "Mapel 8", "kelas": "XII-E" }, { "guru": "Guru 9", "mapel": "Mapel 9", "kelas": "XII-F" }, { "guru": "Guru 10", "mapel": "Mapel 10", "kelas": "XII-G" }] },
+            { "jam": "08:35", "kegiatan": "PBM 5", "detail": [{ "guru": "Guru 1", "mapel": "Mapel 1", "kelas": "X-A" }, { "guru": "Guru 2", "mapel": "Mapel 2", "kelas": "X-B" }, { "guru": "Guru 3", "mapel": "Mapel 3", "kelas": "X-C" }, { "guru": "Guru 4", "mapel": "Mapel 4", "kelas": "XII-A" }, { "guru": "Guru 5", "mapel": "Mapel 5", "kelas": "XII-B" }, { "guru": "Guru 6", "mapel": "Mapel 6", "XII-C": "X-C", "mapel": "Mapel 6", "kelas": "XII-C" }, { "guru": "Guru 7", "mapel": "Mapel 7", "kelas": "XII-D" }, { "guru": "Guru 8", "mapel": "Mapel 8", "kelas": "XII-E" }, { "guru": "Guru 9", "mapel": "Mapel 9", "kelas": "XII-F" }, { "guru": "Guru 10", "mapel": "Mapel 10", "kelas": "XII-G" }] },
             { "jam": "09:00", "kegiatan": "Istirahat", "detail": [{ "guru": "Semua Guru", "mapel": "Selesai", "kelas": "Semua Kelas" }] },
-            { "jam": "09:30", "kegiatan": "Selesai Istirahat", "detail": [{ "guru": "Semua Guru", "mapel": "Selesai", "kelas": "Semua Kelas" }] },
-            { "jam": "09:30", "kegiatan": "PBM 6", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
-            { "jam": "09:55", "kegiatan": "PBM 7", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
-            { "jam": "10:20", "kegiatan": "PBM 8", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
-            { "jam": "10:55", "kegiatan": "PBM 9", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
-            { "jam": "11:10", "kegiatan": "PBM 10", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
+            { "jam": "09:30", "kegiatan": "PBM 6", "detail": [{ "guru": "Guru 1", "mapel": "Mapel 1", "kelas": "X-A" }, { "guru": "Guru 2", "mapel": "Mapel 2", "kelas": "X-B" }, { "guru": "Guru 3", "mapel": "Mapel 3", "kelas": "X-C" }, { "guru": "Guru 4", "mapel": "Mapel 4", "kelas": "XII-A" }, { "guru": "Guru 5", "mapel": "Mapel 5", "kelas": "XII-B" }, { "guru": "Guru 6", "mapel": "Mapel 6", "kelas": "XII-C" }, { "guru": "Guru 7", "mapel": "Mapel 7", "kelas": "XII-D" }, { "guru": "Guru 8", "mapel": "Mapel 8", "kelas": "XII-E" }, { "guru": "Guru 9", "mapel": "Mapel 9", "kelas": "XII-F" }, { "guru": "Guru 10", "mapel": "Mapel 10", "kelas": "XII-G" }] },
+            { "jam": "09:55", "kegiatan": "PBM 7", "detail": [{ "guru": "Guru 1", "mapel": "Mapel 1", "kelas": "X-A" }, { "guru": "Guru 2", "mapel": "Mapel 2", "kelas": "X-B" }, { "guru": "Guru 3", "mapel": "Mapel 3", "kelas": "X-C" }, { "guru": "Guru 4", "mapel": "Mapel 4", "kelas": "XII-A" }, { "guru": "Guru 5", "mapel": "Mapel 5", "kelas": "XII-B" }, { "guru": "Guru 6", "mapel": "Mapel 6", "kelas": "XII-C" }, { "guru": "Guru 7", "mapel": "Mapel 7", "kelas": "XII-D" }, { "guru": "Guru 8", "mapel": "Mapel 8", "kelas": "XII-E" }, { "guru": "Guru 9", "mapel": "Mapel 9", "kelas": "XII-F" }, { "guru": "Guru 10", "mapel": "Mapel 10", "kelas": "XII-G" }] },
+            { "jam": "10:20", "kegiatan": "PBM 8", "detail": [{ "guru": "Guru 1", "mapel": "Mapel 1", "kelas": "X-A" }, { "guru": "Guru 2", "mapel": "Mapel 2", "kelas": "X-B" }, { "guru": "Guru 3", "mapel": "Mapel 3", "kelas": "X-C" }, { "guru": "Guru 4", "mapel": "Mapel 4", "kelas": "XII-A" }, { "guru": "Guru 5", "mapel": "Mapel 5", "kelas": "XII-B" }, { "guru": "Guru 6", "mapel": "Mapel 6", "kelas": "XII-C" }, { "guru": "Guru 7", "mapel": "Mapel 7", "kelas": "XII-D" }, { "guru": "Guru 8", "mapel": "Mapel 8", "kelas": "XII-E" }, { "guru": "Guru 9", "mapel": "Mapel 9", "kelas": "XII-F" }, { "guru": "Guru 10", "mapel": "Mapel 10", "kelas": "XII-G" }] },
+            { "jam": "10:55", "kegiatan": "PBM 9", "detail": [{ "guru": "Guru 1", "mapel": "Mapel 1", "kelas": "X-A" }, { "guru": "Guru 2", "mapel": "Mapel 2", "kelas": "X-B" }, { "guru": "Guru 3", "mapel": "Mapel 3", "kelas": "X-C" }, { "guru": "Guru 4", "mapel": "Mapel 4", "kelas": "XII-A" }, { "guru": "Guru 5", "mapel": "Mapel 5", "kelas": "XII-B" }, { "guru": "Guru 6", "mapel": "Mapel 6", "kelas": "XII-C" }, { "guru": "Guru 7", "mapel": "Mapel 7", "kelas": "XII-D" }, { "guru": "Guru 8", "mapel": "Mapel 8", "kelas": "XII-E" }, { "guru": "Guru 9", "mapel": "Mapel 9", "kelas": "XII-F" }, { "guru": "Guru 10", "mapel": "Mapel 10", "kelas": "XII-G" }] },
+            { "jam": "11:10", "kegiatan": "PBM 10", "detail": [{ "guru": "Guru 1", "mapel": "Mapel 1", "kelas": "X-A" }, { "guru": "Guru 2", "mapel": "Mapel 2", "kelas": "X-B" }, { "guru": "Guru 3", "mapel": "Mapel 3", "kelas": "X-C" }, { "guru": "Guru 4", "mapel": "Mapel 4", "kelas": "XII-A" }, { "guru": "Guru 5", "mapel": "Mapel 5", "kelas": "XII-B" }, { "guru": "Guru 6", "mapel": "Mapel 6", "kelas": "XII-C" }, { "guru": "Guru 7", "mapel": "Mapel 7", "kelas": "XII-D" }, { "guru": "Guru 8", "mapel": "Mapel 8", "kelas": "XII-E" }, { "guru": "Guru 9", "mapel": "Mapel 9", "kelas": "XII-F" }, { "guru": "Guru 10", "mapel": "Mapel 10", "kelas": "XII-G" }] },
             { "jam": "11:35", "kegiatan": "Pulang", "detail": [{ "guru": "-", "mapel": "Pagi Selesai", "kelas": "Semua Kelas Pagi" }] },
-            { "jam": "12:30", "kegiatan": "Literasi/ Numerasi & PBM 1", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
-            { "jam": "13:15", "kegiatan": "PBM 2", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
-            { "jam": "14:05", "kegiatan": "PBM 4", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
-            { "jam": "14:30", "kegiatan": "PBM 5", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
-            { "jam": "14:55", "kegiatan": "PBM 6", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
+            { "jam": "12:30", "kegiatan": "Literasi/ Numerasi & PBM 1", "detail": [{ "guru": "Guru 1", "mapel": "Mapel 1", "kelas": "X-A" }, { "guru": "Guru 2", "mapel": "Mapel 2", "kelas": "X-B" }, { "guru": "Guru 3", "mapel": "Mapel 3", "kelas": "X-C" }, { "guru": "Guru 4", "mapel": "Mapel 4", "kelas": "XII-A" }, { "guru": "Guru 5", "mapel": "Mapel 5", "kelas": "XII-B" }, { "guru": "Guru 6", "mapel": "Mapel 6", "kelas": "XII-C" }, { "guru": "Guru 7", "mapel": "Mapel 7", "kelas": "XII-D" }, { "guru": "Guru 8", "mapel": "Mapel 8", "kelas": "XII-E" }, { "guru": "Guru 9", "mapel": "Mapel 9", "kelas": "XII-F" }, { "guru": "Guru 10", "mapel": "Mapel 10", "kelas": "XII-G" }] },
+            { "jam": "13:15", "kegiatan": "PBM 2", "detail": [{ "guru": "Guru 1", "mapel": "Mapel 1", "kelas": "X-A" }, { "guru": "Guru 2", "mapel": "Mapel 2", "kelas": "X-B" }, { "guru": "Guru 3", "mapel": "Mapel 3", "kelas": "X-C" }, { "guru": "Guru 4", "mapel": "Mapel 4", "kelas": "XII-A" }, { "guru": "Guru 5", "mapel": "Mapel 5", "kelas": "XII-B" }, { "guru": "Guru 6", "mapel": "Mapel 6", "kelas": "XII-C" }, { "guru": "Guru 7", "mapel": "Mapel 7", "kelas": "XII-D" }, { "guru": "Guru 8", "mapel": "Mapel 8", "kelas": "XII-E" }, { "guru": "Guru 9", "mapel": "Mapel 9", "kelas": "XII-F" }, { "guru": "Guru 10", "mapel": "Mapel 10", "kelas": "XII-G" }] },
+            { "jam": "14:05", "kegiatan": "PBM 4", "detail": [{ "guru": "Guru 1", "mapel": "Mapel 1", "kelas": "X-A" }, { "guru": "Guru 2", "mapel": "Mapel 2", "kelas": "X-B" }, { "guru": "Guru 3", "mapel": "Mapel 3", "kelas": "X-C" }, { "guru": "Guru 4", "mapel": "Mapel 4", "kelas": "XII-A" }, { "guru": "Guru 5", "mapel": "Mapel 5", "kelas": "XII-B" }, { "guru": "Guru 6", "mapel": "Mapel 6", "kelas": "XII-C" }, { "guru": "Guru 7", "mapel": "Mapel 7", "kelas": "XII-D" }, { "guru": "Guru 8", "mapel": "Mapel 8", "kelas": "XII-E" }, { "guru": "Guru 9", "mapel": "Mapel 9", "kelas": "XII-F" }, { "guru": "Guru 10", "mapel": "Mapel 10", "kelas": "XII-G" }] },
+            { "jam": "14:30", "kegiatan": "PBM 5", "detail": [{ "guru": "Guru 1", "mapel": "Mapel 1", "kelas": "X-A" }, { "guru": "Guru 2", "mapel": "Mapel 2", "kelas": "X-B" }, { "guru": "Guru 3", "mapel": "Mapel 3", "kelas": "X-C" }, { "guru": "Guru 4", "mapel": "Mapel 4", "kelas": "XII-A" }, { "guru": "Guru 5", "mapel": "Mapel 5", "kelas": "XII-B" }, { "guru": "Guru 6", "mapel": "Mapel 6", "kelas": "XII-C" }, { "guru": "Guru 7", "mapel": "Mapel 7", "kelas": "XII-D" }, { "guru": "Guru 8", "mapel": "Mapel 8", "kelas": "XII-E" }, { "guru": "Guru 9", "mapel": "Mapel 9", "kelas": "XII-F" }, { "guru": "Guru 10", "mapel": "Mapel 10", "kelas": "XII-G" }] },
+            { "jam": "14:55", "kegiatan": "PBM 6", "detail": [{ "guru": "Guru 1", "mapel": "Mapel 1", "kelas": "X-A" }, { "guru": "Guru 2", "mapel": "Mapel 2", "kelas": "X-B" }, { "guru": "Guru 3", "mapel": "Mapel 3", "kelas": "X-C" }, { "guru": "Guru 4", "mapel": "Mapel 4", "kelas": "XII-A" }, { "guru": "Guru 5", "mapel": "Mapel 5", "kelas": "XII-B" }, { "guru": "Guru 6", "mapel": "Mapel 6", "kelas": "XII-C" }, { "guru": "Guru 7", "mapel": "Mapel 7", "kelas": "XII-D" }, { "guru": "Guru 8", "mapel": "Mapel 8", "kelas": "XII-E" }, { "guru": "Guru 9", "mapel": "Mapel 9", "kelas": "XII-F" }, { "guru": "Guru 10", "mapel": "Mapel 10", "kelas": "XII-G" }] },
             { "jam": "15:20", "kegiatan": "Istirahat", "detail": [{ "guru": "Semua Guru", "mapel": "Selesai", "kelas": "Semua Kelas" }] },
-            { "jam": "15:50", "kegiatan": "Selesai Istirahat", "detail": [{ "guru": "Semua Guru", "mapel": "Selesai", "kelas": "Semua Kelas" }] },
-            { "jam": "15:50", "kegiatan": "PBM 7", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
-            { "jam": "16:15", "kegiatan": "PBM 8", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
-            { "jam": "16:40", "kegiatan": "PBM 9", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
-            { "jam": "17:05", "kegiatan": "PBM 10", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
+            { "jam": "15:50", "kegiatan": "PBM 7", "detail": [{ "guru": "Guru 1", "mapel": "Mapel 1", "kelas": "X-A" }, { "guru": "Guru 2", "mapel": "Mapel 2", "kelas": "X-B" }, { "guru": "Guru 3", "mapel": "Mapel 3", "kelas": "X-C" }, { "guru": "Guru 4", "mapel": "Mapel 4", "kelas": "XII-A" }, { "guru": "Guru 5", "mapel": "Mapel 5", "kelas": "XII-B" }, { "guru": "Guru 6", "mapel": "Mapel 6", "kelas": "XII-C" }, { "guru": "Guru 7", "mapel": "Mapel 7", "kelas": "XII-D" }, { "guru": "Guru 8", "mapel": "Mapel 8", "kelas": "XII-E" }, { "guru": "Guru 9", "mapel": "Mapel 9", "kelas": "XII-F" }, { "guru": "Guru 10", "mapel": "Mapel 10", "kelas": "XII-G" }] },
+            { "jam": "16:15", "kegiatan": "PBM 8", "detail": [{ "guru": "Guru 1", "mapel": "Mapel 1", "kelas": "X-A" }, { "guru": "Guru 2", "mapel": "Mapel 2", "kelas": "X-B" }, { "guru": "Guru 3", "mapel": "Mapel 3", "kelas": "X-C" }, { "guru": "Guru 4", "mapel": "Mapel 4", "kelas": "XII-A" }, { "guru": "Guru 5", "mapel": "Mapel 5", "kelas": "XII-B" }, { "guru": "Guru 6", "mapel": "Mapel 6", "kelas": "XII-C" }, { "guru": "Guru 7", "mapel": "Mapel 7", "kelas": "XII-D" }, { "guru": "Guru 8", "mapel": "Mapel 8", "kelas": "XII-E" }, { "guru": "Guru 9", "mapel": "Mapel 9", "kelas": "XII-F" }, { "guru": "Guru 10", "mapel": "Mapel 10", "kelas": "XII-G" }] },
+            { "jam": "16:40", "kegiatan": "PBM 9", "detail": [{ "guru": "Guru 1", "mapel": "Mapel 1", "kelas": "X-A" }, { "guru": "Guru 2", "mapel": "Mapel 2", "kelas": "X-B" }, { "guru": "Guru 3", "mapel": "Mapel 3", "kelas": "X-C" }, { "guru": "Guru 4", "mapel": "Mapel 4", "kelas": "XII-A" }, { "guru": "Guru 5", "mapel": "Mapel 5", "kelas": "XII-B" }, { "guru": "Guru 6", "mapel": "Mapel 6", "kelas": "XII-C" }, { "guru": "Guru 7", "mapel": "Mapel 7", "kelas": "XII-D" }, { "guru": "Guru 8", "mapel": "Mapel 8", "kelas": "XII-E" }, { "guru": "Guru 9", "mapel": "Mapel 9", "kelas": "XII-F" }, { "guru": "Guru 10", "mapel": "Mapel 10", "kelas": "XII-G" }] },
+            { "jam": "17:05", "kegiatan": "PBM 10", "detail": [{ "guru": "Guru 1", "mapel": "Mapel 1", "kelas": "X-A" }, { "guru": "Guru 2", "mapel": "Mapel 2", "kelas": "X-B" }, { "guru": "Guru 3", "mapel": "Mapel 3", "kelas": "X-C" }, { "guru": "Guru 4", "mapel": "Mapel 4", "kelas": "XII-A" }, { "guru": "Guru 5", "mapel": "Mapel 5", "kelas": "XII-B" }, { "guru": "Guru 6", "mapel": "Mapel 6", "kelas": "XII-C" }, { "guru": "Guru 7", "mapel": "Mapel 7", "kelas": "XII-D" }, { "guru": "Guru 8", "mapel": "Mapel 8", "kelas": "XII-E" }, { "guru": "Guru 9", "mapel": "Mapel 9", "kelas": "XII-F" }, { "guru": "Guru 10", "mapel": "Mapel 10", "kelas": "XII-G" }] },
             { "jam": "17:05", "kegiatan": "Pulang", "detail": [{ "guru": "Semua Guru", "mapel": "Selesai", "kelas": "Semua Kelas" }] }
         ],
-        "Kamis": [
-            { "jam": "06:30", "kegiatan": "Literasi dan PBM 1", "detail": [{ "guru": "Wali Kelas", "mapel": "Literasi", "kelas": "Kelas" }] },
-            { "jam": "07:20", "kegiatan": "PBM 2", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
-            { "jam": "07:45", "kegiatan": "PBM 3", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
-            { "jam": "08:10", "kegiatan": "PBM 4", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
-            { "jam": "08:35", "kegiatan": "PBM 5", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
-            { "jam": "09:00", "kegiatan": "Istirahat", "detail": [{ "guru": "Semua Guru", "mapel": "Selesai", "kelas": "Semua Kelas" }] },
-            { "jam": "09:30", "kegiatan": "Selesai Istirahat", "detail": [{ "guru": "Semua Guru", "mapel": "Selesai", "kelas": "Semua Kelas" }] },
-            { "jam": "09:30", "kegiatan": "PBM 6", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
-            { "jam": "09:55", "kegiatan": "PBM 7", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
-            { "jam": "10:20", "kegiatan": "PBM 8", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
-            { "jam": "10:55", "kegiatan": "PBM 9", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
-            { "jam": "11:10", "kegiatan": "PBM 10", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
-            { "jam": "11:35", "kegiatan": "Pulang", "detail": [{ "guru": "-", "mapel": "Pagi Selesai", "kelas": "Semua Kelas Pagi" }] },
-            { "jam": "12:30", "kegiatan": "Literasi/ Numerasi & PBM 1", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
-            { "jam": "13:15", "kegiatan": "PBM 2", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
-            { "jam": "14:05", "kegiatan": "PBM 4", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
-            { "jam": "14:30", "kegiatan": "PBM 5", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
-            { "jam": "14:55", "kegiatan": "PBM 6", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
-            { "jam": "15:20", "kegiatan": "Istirahat", "detail": [{ "guru": "Semua Guru", "mapel": "Selesai", "kelas": "Semua Kelas" }] },
-            { "jam": "15:50", "kegiatan": "Selesai Istirahat", "detail": [{ "guru": "Semua Guru", "mapel": "Selesai", "kelas": "Semua Kelas" }] },
-            { "jam": "15:50", "kegiatan": "PBM 7", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
-            { "jam": "16:15", "kegiatan": "PBM 8", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
-            { "jam": "16:40", "kegiatan": "PBM 9", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
-            { "jam": "17:05", "kegiatan": "PBM 10", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
-            { "jam": "17:05", "kegiatan": "Pulang", "detail": [{ "guru": "Semua Guru", "mapel": "Selesai", "kelas": "Semua Kelas" }] }
-        ],
-        "Jumat": [
-            { "jam": "06:30", "kegiatan": "Pancawaluya", "detail": [{ "guru": "Wali Kelas", "mapel": "Pacawaluya", "kelas": "Semua Kelas" }] },
-            { "jam": "08:10", "kegiatan": "PBM 4", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
-            { "jam": "08:35", "kegiatan": "PBM 5", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
-            { "jam": "09:00", "kegiatan": "Istirahat", "detail": [{ "guru": "Semua Guru", "mapel": "Selesai", "kelas": "Semua Kelas" }] },
-            { "jam": "09:30", "kegiatan": "Selesai Istirahat", "detail": [{ "guru": "Semua Guru", "mapel": "Selesai", "kelas": "Semua Kelas" }] },
-            { "jam": "09:30", "kegiatan": "PBM 6", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
-            { "jam": "09:55", "kegiatan": "PBM 7", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
-            { "jam": "10:20", "kegiatan": "PBM 8", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
-            { "jam": "10:55", "kegiatan": "PBM 9", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
-            { "jam": "11:10", "kegiatan": "Pulang", "detail": [{ "guru": "-", "mapel": "Pagi Selesai", "kelas": "Semua Kelas Pagi" }] },
-            { "jam": "13:15", "kegiatan": "PBM 1", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
-            { "jam": "14:05", "kegiatan": "PBM 2", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
-            { "jam": "14:30", "kegiatan": "PBM 3", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
-            { "jam": "14:55", "kegiatan": "PBM 4", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
-            { "jam": "15:20", "kegiatan": "Istirahat", "detail": [{ "guru": "Semua Guru", "mapel": "Selesai", "kelas": "Semua Kelas" }] },
-            { "jam": "15:50", "kegiatan": "Selesai Istirahat", "detail": [{ "guru": "Semua Guru", "mapel": "Selesai", "kelas": "Semua Kelas" }] },
-            { "jam": "15:50", "kegiatan": "PBM 5", "detail": Array.from({ length: 10 }, (_, i) => ({ "guru": `Guru ${i+1}`, "mapel": `Mapel ${i+1}`, "kelas": `XII-${String.fromCharCode(65 + i)}` })) },
-            { "jam": "16:15", "kegiatan": "Upacara Bendera", "detail": [{ "guru": "Walikelas Guru", "mapel": "Selesai", "kelas": "Semua Kelas Siang" }] },
-            { "jam": "17:05", "kegiatan": "Pulang", "detail": [{ "guru": "Semua Guru", "mapel": "Selesai", "kelas": "Semua Kelas" }] }
-        ]
+        "Kamis": [], 
+        "Jumat": [], 
+        "Sabtu": [], 
+        "Minggu": []
     };
 
-    // ==================== DATA NOTIFIKASI VERSI FORMAL (LENGKAP) ====================
-    const notifikasiTerjadwal = [
-        { hari: 'Senin', jam: '06:30', pesan: 'Mohon perhatian, upacara pengibaran bendera merah putih akan segera dimulai. Seluruh siswa dan dewan guru dimohon menuju lapangan.' },
-        { hari: 'Selasa', jam: '06:30', pesan: 'Mohon perhatian, saatnya kegiatan literasi dan numerasi dimulai. Seluruh siswa diharapkan berada di kelas masing-masing.' },
-        { hari: 'Rabu', jam: '06:30', pesan: 'Mohon perhatian, saatnya kegiatan literasi dan numerasi dimulai. Seluruh siswa diharapkan berada di kelas masing-masing.' },
-        { hari: 'Kamis', jam: '06:30', pesan: 'Mohon perhatian, saatnya kegiatan literasi dan numerasi dimulai. Seluruh siswa diharapkan berada di kelas masing-masing.' },
-        { hari: 'Senin', jam: '12:30', pesan: 'Mohon perhatian, kegiatan literasi dan numerasi sesi siang dimulai. Harap segera memasuki ruang kelas.' },
-        { hari: 'Selasa', jam: '12:30', pesan: 'Mohon perhatian, kegiatan literasi dan numerasi sesi siang dimulai. Harap segera memasuki ruang kelas.' },
-        { hari: 'Rabu', jam: '12:30', pesan: 'Mohon perhatian, kegiatan literasi dan numerasi sesi siang dimulai. Harap segera memasuki ruang kelas.' },
-        { hari: 'Kamis', jam: '12:30', pesan: 'Mohon perhatian, kegiatan literasi dan numerasi sesi siang dimulai. Harap segera memasuki ruang kelas.' },
-        { hari: 'Jumat', jam: '06:30', pesan: 'Mohon perhatian, kegiatan Pancawaluya akan segera dilaksanakan. Seluruh civitas akademika dimohon menuju lapangan.' },
-        { hari: 'Jumat', jam: '16:15', pesan: 'Mohon perhatian, upacara penurunan bendera akan segera dimulai. Seluruh peserta upacara dimohon menuju lapangan.' },
-        { hari: 'Senin', jam: '07:20', pesan: 'Waktunya pergantian jam pelajaran. Mohon tetap tenang di dalam ruang kelas masing-masing.' },
-        { hari: 'Senin', jam: '07:45', pesan: 'Waktunya pergantian jam pelajaran. Mohon tetap tenang di dalam ruang kelas masing-masing.' },
-        { hari: 'Senin', jam: '08:10', pesan: 'Waktunya pergantian jam pelajaran. Mohon tetap tenang di dalam ruang kelas masing-masing.' },
-        { hari: 'Senin', jam: '08:35', pesan: 'Waktunya pergantian jam pelajaran. Mohon tetap tenang di dalam ruang kelas masing-masing.' },
-        { hari: 'Senin', jam: '09:56', pesan: 'Waktunya pergantian jam pelajaran. Mohon tetap tenang di dalam ruang kelas masing-masing.' },
-        { hari: 'Senin', jam: '10:20', pesan: 'Waktunya pergantian jam pelajaran. Mohon tetap tenang di dalam ruang kelas masing-masing.' },
-        { hari: 'Senin', jam: '10:45', pesan: 'Waktunya pergantian jam pelajaran. Mohon tetap tenang di dalam ruang kelas masing-masing.' },
-        { hari: 'Senin', jam: '11:10', pesan: 'Waktunya pergantian jam pelajaran. Mohon tetap tenang di dalam ruang kelas masing-masing.' },
-        { hari: 'Senin', jam: '13:40', pesan: 'Waktunya pergantian jam pelajaran. Mohon tetap tenang di dalam ruang kelas masing-masing.' },
-        { hari: 'Senin', jam: '14:05', pesan: 'Waktunya pergantian jam pelajaran. Mohon tetap tenang di dalam ruang kelas masing-masing.' },
-        { hari: 'Senin', jam: '14:30', pesan: 'Waktunya pergantian jam pelajaran. Mohon tetap tenang di dalam ruang kelas masing-masing.' },
-        { hari: 'Senin', jam: '14:55', pesan: 'Waktunya pergantian jam pelajaran. Mohon tetap tenang di dalam ruang kelas masing-masing.' },
-        { hari: 'Senin', jam: '16:15', pesan: 'Waktunya pergantian jam pelajaran. Mohon tetap tenang di dalam ruang kelas masing-masing.' },
-        { hari: 'Senin', jam: '16:40', pesan: 'Waktunya pergantian jam pelajaran. Mohon tetap tenang di dalam ruang kelas masing-masing.' },
-        { hari: 'Senin', jam: '17:05', pesan: 'Waktunya pergantian jam pelajaran. Mohon tetap tenang di dalam ruang kelas masing-masing.' },
-        { hari: 'Selasa', jam: '07:20', pesan: 'Waktunya pergantian jam pelajaran. Mohon tetap tenang di dalam ruang kelas masing-masing.' },
-        { hari: 'Selasa', jam: '07:45', pesan: 'Waktunya pergantian jam pelajaran. Mohon tetap tenang di dalam ruang kelas masing-masing.' },
-        { hari: 'Selasa', jam: '08:10', pesan: 'Waktunya pergantian jam pelajaran. Mohon tetap tenang di dalam ruang kelas masing-masing.' },
-        { hari: 'Selasa', jam: '08:35', pesan: 'Waktunya pergantian jam pelajaran. Mohon tetap tenang di dalam ruang kelas masing-masing.' },
-        { hari: 'Selasa', jam: '09:56', pesan: 'Waktunya pergantian jam pelajaran. Mohon tetap tenang di dalam ruang kelas masing-masing.' },
-        { hari: 'Selasa', jam: '10:20', pesan: 'Waktunya pergantian jam pelajaran. Mohon tetap tenang di dalam ruang kelas masing-masing.' },
-        { hari: 'Selasa', jam: '10:45', pesan: 'Waktunya pergantian jam pelajaran. Mohon tetap tenang di dalam ruang kelas masing-masing.' },
-        { hari: 'Selasa', jam: '11:10', pesan: 'Waktunya pergantian jam pelajaran. Mohon tetap tenang di dalam ruang kelas masing-masing.' },
-        { hari: 'Selasa', jam: '13:40', pesan: 'Waktunya pergantian jam pelajaran. Mohon tetap tenang di dalam ruang kelas masing-masing.' },
-        { hari: 'Selasa', jam: '14:05', pesan: 'Waktunya pergantian jam pelajaran. Mohon tetap tenang di dalam ruang kelas masing-masing.' },
-        { hari: 'Selasa', jam: '14:30', pesan: 'Waktunya pergantian jam pelajaran. Mohon tetap tenang di dalam ruang kelas masing-masing.' },
-        { hari: 'Selasa', jam: '14:55', pesan: 'Waktunya pergantian jam pelajaran. Mohon tetap tenang di dalam ruang kelas masing-masing.' },
-        { hari: 'Selasa', jam: '16:15', pesan: 'Waktunya pergantian jam pelajaran. Mohon tetap tenang di dalam ruang kelas masing-masing.' },
-        { hari: 'Selasa', jam: '16:40', pesan: 'Waktunya pergantian jam pelajaran. Mohon tetap tenang di dalam ruang kelas masing-masing.' },
-        { hari: 'Selasa', jam: '17:05', pesan: 'Waktunya pergantian jam pelajaran. Mohon tetap tenang di dalam ruang kelas masing-masing.' },
-        { hari: 'Rabu', jam: '07:20', pesan: 'Waktunya pergantian jam pelajaran. Mohon tetap tenang di dalam ruang kelas masing-masing.' },
-        { hari: 'Rabu', jam: '07:45', pesan: 'Waktunya pergantian jam pelajaran. Mohon tetap tenang di dalam ruang kelas masing-masing.' },
-        { hari: 'Rabu', jam: '08:10', pesan: 'Waktunya pergantian jam pelajaran. Mohon tetap tenang di dalam ruang kelas masing-masing.' },
-        { hari: 'Rabu', jam: '08:35', pesan: 'Waktunya pergantian jam pelajaran. Mohon tetap tenang di dalam ruang kelas masing-masing.' },
-        { hari: 'Rabu', jam: '09:56', pesan: 'Waktunya pergantian jam pelajaran. Mohon tetap tenang di dalam ruang kelas masing-masing.' },
-        { hari: 'Rabu', jam: '10:20', pesan: 'Waktunya pergantian jam pelajaran. Mohon tetap tenang di dalam ruang kelas masing-masing.' },
-        { hari: 'Rabu', jam: '10:45', pesan: 'Waktunya pergantian jam pelajaran. Mohon tetap tenang di dalam ruang kelas masing-masing.' },
-        { hari: 'Rabu', jam: '11:10', pesan: 'Waktunya pergantian jam pelajaran. Mohon tetap tenang di dalam ruang kelas masing-masing.' },
-        { hari: 'Rabu', jam: '13:40', pesan: 'Waktunya pergantian jam pelajaran. Mohon tetap tenang di dalam ruang kelas masing-masing.' },
-        { hari: 'Rabu', jam: '14:05', pesan: 'Waktunya pergantian jam pelajaran. Mohon tetap tenang di dalam ruang kelas masing-masing.' },
-        { hari: 'Rabu', jam: '14:30', pesan: 'Waktunya pergantian jam pelajaran. Mohon tetap tenang di dalam ruang kelas masing-masing.' },
-        { hari: 'Rabu', jam: '14:55', pesan: 'Waktunya pergantian jam pelajaran. Mohon tetap tenang di dalam ruang kelas masing-masing.' },
-        { hari: 'Rabu', jam: '16:15', pesan: 'Waktunya pergantian jam pelajaran. Mohon tetap tenang di dalam ruang kelas masing-masing.' },
-        { hari: 'Rabu', jam: '16:40', pesan: 'Waktunya pergantian jam pelajaran. Mohon tetap tenang di dalam ruang kelas masing-masing.' },
-        { hari: 'Rabu', jam: '17:05', pesan: 'Waktunya pergantian jam pelajaran. Mohon tetap tenang di dalam ruang kelas masing-masing.' },
-        { hari: 'Kamis', jam: '07:20', pesan: 'Waktunya pergantian jam pelajaran. Mohon tetap tenang di dalam ruang kelas masing-masing.' },
-        { hari: 'Kamis', jam: '07:45', pesan: 'Waktunya pergantian jam pelajaran. Mohon tetap tenang di dalam ruang kelas masing-masing.' },
-        { hari: 'Kamis', jam: '08:10', pesan: 'Waktunya pergantian jam pelajaran. Mohon tetap tenang di dalam ruang kelas masing-masing.' },
-        { hari: 'Kamis', jam: '08:35', pesan: 'Waktunya pergantian jam pelajaran. Mohon tetap tenang di dalam ruang kelas masing-masing.' },
-        { hari: 'Kamis', jam: '09:56', pesan: 'Waktunya pergantian jam pelajaran. Mohon tetap tenang di dalam ruang kelas masing-masing.' },
-        { hari: 'Kamis', jam: '10:20', pesan: 'Waktunya pergantian jam pelajaran. Mohon tetap tenang di dalam ruang kelas masing-masing.' },
-        { hari: 'Kamis', jam: '10:45', pesan: 'Waktunya pergantian jam pelajaran. Mohon tetap tenang di dalam ruang kelas masing-masing.' },
-        { hari: 'Kamis', jam: '11:10', pesan: 'Waktunya pergantian jam pelajaran. Mohon tetap tenang di dalam ruang kelas masing-masing.' },
-        { hari: 'Kamis', jam: '13:40', pesan: 'Waktunya pergantian jam pelajaran. Mohon tetap tenang di dalam ruang kelas masing-masing.' },
-        { hari: 'Kamis', jam: '14:05', pesan: 'Waktunya pergantian jam pelajaran. Mohon tetap tenang di dalam ruang kelas masing-masing.' },
-        { hari: 'Kamis', jam: '14:30', pesan: 'Waktunya pergantian jam pelajaran. Mohon tetap tenang di dalam ruang kelas masing-masing.' },
-        { hari: 'Kamis', jam: '14:55', pesan: 'Waktunya pergantian jam pelajaran. Mohon tetap tenang di dalam ruang kelas masing-masing.' },
-        { hari: 'Kamis', jam: '16:15', pesan: 'Waktunya pergantian jam pelajaran. Mohon tetap tenang di dalam ruang kelas masing-masing.' },
-        { hari: 'Kamis', jam: '16:40', pesan: 'Waktunya pergantian jam pelajaran. Mohon tetap tenang di dalam ruang kelas masing-masing.' },
-        { hari: 'Jumat', jam: '11:10', pesan: 'Waktunya pergantian jam pelajaran. Mohon tetap tenang di dalam ruang kelas masing-masing.' },
-        { hari: 'Senin', jam: '09:00', pesan: 'Mohon perhatian, saatnya jam istirahat dimulai.' },
-        { hari: 'Senin', jam: '15:20', pesan: 'Mohon perhatian, saatnya jam istirahat dimulai.' },
-        { hari: 'Selasa', jam: '09:00', pesan: 'Mohon perhatian, saatnya jam istirahat dimulai.' },
-        { hari: 'Selasa', jam: '15:20', pesan: 'Mohon perhatian, saatnya jam istirahat dimulai.' },
-        { hari: 'Rabu', jam: '09:00', pesan: 'Mohon perhatian, saatnya jam istirahat dimulai.' },
-        { hari: 'Rabu', jam: '15:20', pesan: 'Mohon perhatian, saatnya jam istirahat dimulai.' },
-        { hari: 'Kamis', jam: '09:00', pesan: 'Mohon perhatian, saatnya jam istirahat dimulai.' },
-        { hari: 'Kamis', jam: '15:20', pesan: 'Mohon perhatian, saatnya jam istirahat dimulai.' },
-        { hari: 'Jumat', jam: '09:00', pesan: 'Mohon perhatian, saatnya jam istirahat dimulai.' },
-        { hari: 'Jumat', jam: '15:20', pesan: 'Mohon perhatian, saatnya jam istirahat dimulai.' },
-        { hari: 'Senin', jam: '09:30', pesan: 'Mohon perhatian, waktu istirahat telah berakhir. Harap kembali ke ruang kelas.' },
-        { hari: 'Senin', jam: '15:50', pesan: 'Mohon perhatian, waktu istirahat telah berakhir. Harap kembali ke ruang kelas.' },
-        { hari: 'Selasa', jam: '09:30', pesan: 'Mohon perhatian, waktu istirahat telah berakhir. Harap kembali ke ruang kelas.' },
-        { hari: 'Selasa', jam: '15:50', pesan: 'Mohon perhatian, waktu istirahat telah berakhir. Harap kembali ke ruang kelas.' },
-        { hari: 'Rabu', jam: '09:30', pesan: 'Mohon perhatian, waktu istirahat telah berakhir. Harap kembali ke ruang kelas.' },
-        { hari: 'Rabu', jam: '15:50', pesan: 'Mohon perhatian, waktu istirahat telah berakhir. Harap kembali ke ruang kelas.' },
-        { hari: 'Kamis', jam: '09:30', pesan: 'Mohon perhatian, waktu istirahat telah berakhir. Harap kembali ke ruang kelas.' },
-        { hari: 'Kamis', jam: '15:50', pesan: 'Mohon perhatian, waktu istirahat telah berakhir. Harap kembali ke ruang kelas.' },
-        { hari: 'Jumat', jam: '09:30', pesan: 'Mohon perhatian, waktu istirahat telah berakhir. Harap kembali ke ruang kelas.' },
-        { hari: 'Jumat', jam: '15:50', pesan: 'Mohon perhatian, waktu istirahat telah berakhir. Harap kembali ke ruang kelas.' },
-        { hari: 'Senin', jam: '11:35', pesan: 'Mohon perhatian, kegiatan belajar mengajar untuk sesi pagi telah berakhir. Harap pulang dengan tertib.' },
-        { hari: 'Selasa', jam: '11:35', pesan: 'Mohon perhatian, kegiatan belajar mengajar untuk sesi pagi telah berakhir. Harap pulang dengan tertib.' },
-        { hari: 'Kamis', jam: '11:35', pesan: 'Mohon perhatian, kegiatan belajar mengajar untuk sesi pagi telah berakhir. Harap pulang dengan tertib.' },
-        { hari: 'Jumat', jam: '11:10', pesan: 'Mohon perhatian, kegiatan belajar mengajar untuk sesi pagi telah berakhir. Harap pulang dengan tertib.' },
-        { hari: 'Senin', jam: '17:05', pesan: 'Mohon perhatian, jam pelajaran hari ini telah berakhir. Terima kasih atas dedikasi Anda, selamat pulang ke rumah masing-masing.' },
-        { hari: 'Selasa', jam: '17:05', pesan: 'Mohon perhatian, jam pelajaran hari ini telah berakhir. Terima kasih atas dedikasi Anda, selamat pulang ke rumah masing-masing.' },
-        { hari: 'Kamis', jam: '17:05', pesan: 'Mohon perhatian, jam pelajaran hari ini telah berakhir. Terima kasih atas dedikasi Anda, selamat pulang ke rumah masing-masing.' },
-        { hari: 'Jumat', jam: '17:05', pesan: 'Mohon perhatian, jam pelajaran hari ini telah berakhir. Terima kasih atas dedikasi Anda, selamat pulang ke rumah masing-masing.' }
-    ];
+    function updateClock() {
+        const now = new Date();
+        const hariIndo = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+        const hariSkr = hariIndo[now.getDay()];
+        const jam = String(now.getHours()).padStart(2, '0');
+        const mnt = String(now.getMinutes()).padStart(2, '0');
+        const dtk = String(now.getSeconds()).padStart(2, '0');
+        const jamMenitSkr = `${jam}:${mnt}`;
+        
+        document.getElementById('currentDay').textContent = hariSkr;
+        document.getElementById('currentTime').textContent = `${jam}:${mnt}:${dtk}`;
 
-    // ==================== LOGIKA UTAMA ====================
-    function tambahLog(psn) {
-        const log = document.getElementById('logSection');
-        const t = new Date().toLocaleTimeString('id-ID');
-        // Hanya tampilkan 10 baris log terakhir
-        const lines = log.innerHTML.split('<div>');
-        if (lines.length > 10) {
-            log.innerHTML = lines.slice(lines.length - 10).join('<div>');
-        }
-        log.innerHTML += `<div>[${t}] > ${psn}</div>`;
-        log.scrollTop = log.scrollHeight;
-    }
+        const jadwalHari = dataJadwalGuru[hariSkr] || [];
+        let skrg = null;
+        let bsk = null;
 
-    function updateWaktu() {
-        const skr = new Date();
-        const hariArr = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
-        document.getElementById('currentDay').innerText = hariArr[skr.getDay()];
-        document.getElementById('currentTime').innerText = skr.toLocaleTimeString('id-ID', { hour12: false });
-    }
-
-    function renderTabelSplit() {
-        const skr = new Date();
-        const hariSkr = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'][skr.getDay()];
-        const menitSkr = (skr.getHours() * 60) + skr.getMinutes();
-        const dataHariIni = dataJadwalGuru[hariSkr] || [];
-
-        // Tentukan index jadwal yang sedang berlangsung
-        let indexNow = -1;
-        for (let i = 0; i < dataHariIni.length; i++) {
-            const [h, m] = dataHariIni[i].jam.split(':').map(Number);
-            if (menitSkr >= (h * 60 + m)) indexNow = i;
-        }
-
-        // Render panel "SEDANG BERLANGSUNG"
-        const tbodyNow = document.getElementById('tbodyNow');
-        const labelNow = document.getElementById('labelNow');
-        tbodyNow.innerHTML = '';
-
-        if (indexNow !== -1 && dataHariIni.length > 0) {
-            const currentSlot = dataHariIni[indexNow];
-            labelNow.innerText = `BERLANGSUNG (${currentSlot.jam} - ${currentSlot.kegiatan})`;
-            currentSlot.detail.forEach(det => {
-                tbodyNow.innerHTML += `<tr><td>${det.kelas}</td><td>${det.guru}</td><td>${det.mapel}</td></tr>`;
-            });
-            document.getElementById('emptyNow').style.display = 'none';
-            document.getElementById('tableNow').style.display = 'table';
-        } else {
-            labelNow.innerText = "SEDANG BERLANGSUNG";
-            document.getElementById('emptyNow').style.display = 'block';
-            document.getElementById('tableNow').style.display = 'none';
-            // Jika hari libur, tampilkan pesan
-            if (['Minggu', 'Sabtu'].includes(hariSkr)) {
-                document.getElementById('emptyNow').innerText = 'Hari Libur - Tidak ada kegiatan';
-            } else {
-                document.getElementById('emptyNow').innerText = 'Tidak ada kegiatan berlangsung';
+        for (let i = 0; i < jadwalHari.length; i++) {
+            if (jadwalHari[i].jam <= jamMenitSkr) {
+                skrg = jadwalHari[i];
+                bsk = jadwalHari[i + 1] || null;
             }
         }
 
-        // Render panel "KEGIATAN BERIKUTNYA"
-        const tbodyNext = document.getElementById('tbodyNext');
-        const labelNext = document.getElementById('labelNext');
-        tbodyNext.innerHTML = '';
+        renderUI("tbodyNow", "emptyNow", skrg);
+        renderUI("tbodyNext", "emptyNext", bsk);
 
-        const nextSlot = dataHariIni[indexNow + 1];
-        if (nextSlot) {
-            labelNext.innerText = `BERIKUTNYA (Mulai ${nextSlot.jam})`;
-            nextSlot.detail.forEach(det => {
-                tbodyNext.innerHTML += `<tr><td>${det.kelas}</td><td>${det.guru}</td><td>${det.mapel}</td></tr>`;
-            });
-            document.getElementById('emptyNext').style.display = 'none';
-            document.getElementById('tableNext').style.display = 'table';
-        } else {
-            labelNext.innerText = "KEGIATAN BERIKUTNYA";
-            document.getElementById('emptyNext').style.display = 'block';
-            document.getElementById('tableNext').style.display = 'none';
-            if (['Minggu', 'Sabtu'].includes(hariSkr)) {
-                document.getElementById('emptyNext').innerText = 'Hari Libur - Tidak ada kegiatan';
-            } else {
-                document.getElementById('emptyNext').innerText = 'Tidak ada jadwal berikutnya';
-            }
+        if (skrg && lastPlayed !== skrg.jam) {
+            lastPlayed = skrg.jam;
+            bicara(`Saat ini adalah waktu untuk ${skrg.kegiatan}`);
         }
     }
 
-    function cekNotifikasi() {
-        const skr = new Date();
-        const hariSkr = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'][skr.getDay()];
-        const jamSkr = skr.getHours().toString().padStart(2,'0') + ":" + skr.getMinutes().toString().padStart(2,'0');
-        const menitSkr = jamSkr; // format HH:MM
-
-        // Cegah notifikasi berulang dalam satu menit yang sama
-        if (lastPlayedMinute === menitSkr) return;
-
-        const match = notifikasiTerjadwal.find(n => n.hari === hariSkr && n.jam === jamSkr);
-        if (match) {
-            lastPlayedMinute = menitSkr;
-            bicara(match.pesan);
+    function renderUI(tbodyId, emptyId, data) {
+        const tbody = document.getElementById(tbodyId);
+        const empty = document.getElementById(emptyId);
+        tbody.innerHTML = "";
+        if (data && data.detail && data.detail.length > 0) {
+            empty.style.display = "none";
+            data.detail.forEach(d => {
+                tbody.innerHTML += `<tr><td>${d.kelas}</td><td>${d.guru}</td><td>${d.mapel}</td></tr>`;
+            });
+        } else {
+            empty.style.display = "block";
         }
     }
 
@@ -390,56 +186,38 @@
         const utt = new SpeechSynthesisUtterance(teks);
         utt.voice = selectedVoice;
         utt.lang = 'id-ID';
-        utt.rate = 0.9; // Sedikit lebih lambat agar jelas
         synthesis.speak(utt);
-        tambahLog("🔊 Pengumuman: " + teks.substring(0, 30) + "...");
+        tambahLog("Pengumuman: " + teks);
+    }
+
+    function tambahLog(pesan) {
+        const log = document.getElementById('logSection');
+        const div = document.createElement('div');
+        div.textContent = `> [${new Date().toLocaleTimeString()}] ${pesan}`;
+        log.prepend(div);
     }
 
     function muatSuara() {
         voices = synthesis.getVoices();
         const select = document.getElementById('voiceSelect');
         select.innerHTML = '';
-
-        // Filter suara bahasa Indonesia
-        const indoVoices = voices.filter(v => v.lang.includes('id'));
-        const voicesToShow = indoVoices.length > 0 ? indoVoices : voices;
-
-        voicesToShow.forEach(v => {
+        const indo = voices.filter(v => v.lang.includes('id'));
+        (indo.length > 0 ? indo : voices).forEach(v => {
             const opt = document.createElement('option');
-            opt.value = v.name;
-            opt.textContent = `${v.name} (${v.lang})`;
-            select.appendChild(opt);
+            opt.value = v.name; opt.textContent = v.name; select.appendChild(opt);
         });
-
-        // Pilih suara Indonesia pertama jika ada
-        selectedVoice = indoVoices.length > 0 ? indoVoices[0] : (voices[0] || null);
-        if (selectedVoice) {
-            select.value = selectedVoice.name;
-        }
+        selectedVoice = (indo.length > 0 ? indo[0] : voices[0]);
     }
 
-    function testSuara() {
-        bicara("Uji coba sistem monitor jadwal. Seluruh sistem berfungsi dengan baik.");
-    }
+    function testSuara() { bicara("Uji coba sistem monitor jadwal."); }
+    function stopSuara() { synthesis.cancel(); }
 
-    function stopSuara() {
-        synthesis.cancel();
-        tambahLog("⏹ Pengumuman dihentikan.");
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
+    window.onload = () => {
         muatSuara();
-        if (synthesis.onvoiceschanged !== undefined) {
-            synthesis.onvoiceschanged = muatSuara;
-        }
-
-        renderTabelSplit();
-        setInterval(() => {
-            updateWaktu();
-            cekNotifikasi();
-            renderTabelSplit();
-        }, 1000);
-    });
+        if (synthesis.onvoiceschanged !== undefined) synthesis.onvoiceschanged = muatSuara;
+        setInterval(updateClock, 1000);
+        updateClock();
+    };
 </script>
 </body>
 </html>
