@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cetak Nomor Antrian PDF</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background: #e6f0fa;
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .card {
+            background: white;
+            max-width: 720px;
+            width: 100%;
+            padding: 30px 28px;
+            border-radius: 28px;
+            box-shadow: 0 20px 40px -12px rgba(0,20,40,0.35);
+        }
+        h1 {
+            font-weight: 600;
+            font-size: 26px;
+            color: #0b2b44;
+            margin-top: 0;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        h1 small {
+            font-size: 15px;
+            font-weight: 400;
+            color: #3b5f7a;
+            margin-left: auto;
+        }
+        hr {
+            border: none;
+            border-top: 2px dashed #cbdae8;
+            margin: 20px 0 22px 0;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            font-weight: 600;
+            font-size: 14px;
+            color: #1f3b54;
+            margin-bottom: 5px;
+        }
+        label span {
+            font-weight: 400;
+            color: #5d7b97;
+            font-size: 13px;
+        }
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1.5px solid #d7e1ed;
+            border-radius: 14px;
+            font-size: 15px;
+            background: #fbfdff;
+            transition: 0.2s;
+            color: #0a1e2f;
+        }
+        input:focus {
+            border-color: #2b6c9e;
+            outline: none;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(43,108,158,0.12);
+        }
+        .row-duo {
+            display: flex;
+            gap: 18px;
+            flex-wrap: wrap;
+        }
+        .row-duo .form-group {
+            flex: 1 1 180px;
+        }
+        .range-hint {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: #3d637f;
+            margin-top: 6px;
+            padding: 0 4px;
+        }
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            margin-top: 28px;
+        }
+        .btn {
+            flex: 1 1 auto;
+            background: white;
+            border: 1.5px solid #b6cedf;
+            padding: 14px 18px;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 16px;
+            color: #1c3d59;
+            cursor: pointer;
+            transition: 0.15s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: #f2f8ff;
+        }
+        .btn-primary {
+            background: #1d4e77;
+            border: 1.5px solid #1d4e77;
+            color: white;
+            box-shadow: 0 6px 12px -6px rgba(20,70,120,0.3);
+        }
+        .btn-primary:hover {
+            background: #0f3b5c;
+            border-color: #0f3b5c;
+            transform: scale(1.01);
+        }
+        .btn-primary:active {
+            transform: scale(0.97);
+        }
+        .btn-outline {
+            background: transparent;
+            border: 1.5px solid #b0c8dd;
+        }
+        .btn-outline:hover {
+            background: #e3eefa;
+            border-color: #7f9fbe;
+        }
+        .footer-note {
+            margin-top: 25px;
+            font-size: 13px;
+            color: #5f7c96;
+            text-align: center;
+            border-top: 1px solid #dfeaf5;
+            padding-top: 18px;
+        }
+        .inline-icon {
+            font-size: 20px;
+            line-height: 1;
+        }
+        .preview-box {
+            background: #f0f6fe;
+            border-radius: 12px;
+            padding: 10px 16px;
+            margin-top: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .preview-box span {
+            font-size: 14px;
+            color: #1f3b54;
+        }
+        .badge {
+            background: #1d4e77;
+            color: white;
+            padding: 4px 14px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        .layout-info {
+            font-size: 12px;
+            color: #5d7b97;
+            background: #e8eef7;
+            padding: 2px 12px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+        .hari-display {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1d4e77;
+            background: #e3edf9;
+            padding: 2px 14px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 4px;
+        }
+        .stampel-status {
+            font-size: 12px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 4px;
+        }
+        .stampel-found {
+            background: #d4edda;
+            color: #155724;
+        }
+        .stampel-notfound {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .stampel-loading {
+            background: #fff3cd;
+            color: #856404;
+        }
+        .file-input-wrapper {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .file-input-wrapper input[type="file"] {
+            flex: 1;
+            padding: 8px;
+            font-size: 13px;
+        }
+        .file-input-wrapper .btn-small {
+            padding: 8px 16px;
+            border-radius: 30px;
+            border: 1.5px solid #b6cedf;
+            background: #f2f8ff;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            color: #1c3d59;
+            transition: 0.15s;
+        }
+        .file-input-wrapper .btn-small:hover {
+            background: #e3eefa;
+        }
+        .stampel-preview {
+            margin-top: 8px;
+            max-width: 100px;
+            max-height: 100px;
+            border: 1px solid #d7e1ed;
+            border-radius: 8px;
+            padding: 4px;
+            display: none;
+        }
+        .stampel-preview img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h1>
+        🎫 Cetak Antrian PDF
+        <small>16 per halaman A4</small>
+    </h1>
+
+    <hr>
+
+    <div class="form-group">
+        <label>🏛️ Nama Institusi</label>
+        <input type="text" id="institusi" value="SMAN 2 Cikarang Barat">
+    </div>
+
+    <div class="row-duo">
+        <div class="form-group">
+            <label>📋 Nama Kegiatan</label>
+            <input type="text" id="kegiatan" value="Sistem Penerimaan Murid Baru">
+        </div>
+        <div class="form-group">
+            <label>📅 Tanggal</label>
+            <input type="date" id="tanggal" value="2026-06-17">
+            <div id="hariDisplay" class="hari-display">📆 Rabu, 17 Juni 2026</div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>🖼️ Gambar Latar (Stampel) - Opacity 80%</label>
+        <div class="file-input-wrapper">
+            <input type="file" id="stampelInput" accept="image/png,image/jpeg,image/gif,image/webp">
+            <button class="btn-small" id="loadStampelBtn">Muat Stampel</button>
+        </div>
+        <div id="stampelStatus" class="stampel-status stampel-loading">⏳ Mencari Stampel.PNG...</div>
+        <div id="stampelPreview" class="stampel-preview">
+            <img id="stampelPreviewImg" src="" alt="Preview Stampel">
+        </div>
+        <div style="font-size: 11px; color: #5d7b97; margin-top: 4px;">
+            Letakkan file Stampel.PNG di folder yang sama dengan file HTML ini, atau upload manual di atas.
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>🔢 Rentang Nomor Antrian <span>(awal - akhir)</span></label>
+        <div class="row-duo">
+            <input type="number" id="dari" value="1" min="1">
+            <input type="number" id="sampai" value="40" min="1">
+        </div>
+        <div class="range-hint">
+            <span>Minimal 1</span>
+            <span>Maksimal 400 (25 halaman)</span>
+        </div>
+    </div>
+
+    <div class="preview-box">
+        <span id="infoPreview">📄 40 nomor → 3 halaman</span>
+        <span class="badge" id="totalBadge">40 antrian</span>
+        <span class="layout-info">4×4 = 16 per halaman</span>
+    </div>
+
+    <div class="btn-group">
+        <button class="btn btn-primary" id="cetakBtn">
+            <span class="inline-icon">⬇️</span> Cetak PDF
+        </button>
+        <button class="btn btn-outline" id="resetBtn">
+            <span class="inline-icon">↺</span> Reset Default
+        </button>
+    </div>
+
+    <div class="footer-note">
+        Setiap halaman A4 memuat 16 nomor antrian (4 kolom × 4 baris) dengan nomor besar
+    </div>
+</div>
+
+<!-- jsPDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<script>
+    (function() {
+        const institusiInput = document.getElementById('institusi');
+        const kegiatanInput = document.getElementById('kegiatan');
+        const tanggalInput = document.getElementById('tanggal');
+        const hariDisplay = document.getElementById('hariDisplay');
+        const dariInput = document.getElementById('dari');
+        const sampaiInput = document.getElementById('sampai');
+        const cetakBtn = document.getElementById('cetakBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const infoPreview = document.getElementById('infoPreview');
+        const totalBadge = document.getElementById('totalBadge');
+        const stampelInput = document.getElementById('stampelInput');
+        const loadStampelBtn = document.getElementById('loadStampelBtn');
+        const stampelStatus = document.getElementById('stampelStatus');
+        const stampelPreview = document.getElementById('stampelPreview');
+        const stampelPreviewImg = document.getElementById('stampelPreviewImg');
+
+        const PER_HALAMAN = 16;
+        const MAKSIMAL = 400;
+
+        // Variabel untuk menyimpan gambar stampel
+        let stampelImageData = null;
+        let stampelFileName = null;
+        let stampelLoaded = false;
+
+        const DEFAULTS = {
+            institusi: 'SMAN 2 Cikarang Barat',
+            kegiatan: 'Sistem Penerimaan Murid Baru',
+            tanggal: '2026-06-17',
+            dari: 1,
+            sampai: 40
+        };
+
+        const NAMA_HARI = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+        const NAMA_BULAN = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+
+        function getHariDanTanggal(tanggal) {
+            try {
+                const d = new Date(tanggal + 'T00:00:00');
+                if (!isNaN(d.getTime())) {
+                    const hari = NAMA_HARI[d.getDay()];
+                    const tgl = d.getDate();
+                    const bulan = NAMA_BULAN[d.getMonth()];
+                    const tahun = d.getFullYear();
+                    return {
+                        hari: hari,
+                        tanggalFormatted: `${hari}, ${tgl} ${bulan} ${tahun}`,
+                        tanggalDisplay: `${tgl} ${bulan} ${tahun}`
+                    };
+                }
+            } catch (_) {}
+            return {
+                hari: '',
+                tanggalFormatted: tanggal,
+                tanggalDisplay: tanggal
+            };
+        }
+
+        function updateHari() {
+            const tanggal = tanggalInput.value;
+            if (tanggal) {
+                const result = getHariDanTanggal(tanggal);
+                hariDisplay.textContent = `📆 ${result.tanggalFormatted}`;
+            } else {
+                hariDisplay.textContent = '📆 Pilih tanggal';
+            }
+        }
+
+        function updatePreview() {
+            const dari = parseInt(dariInput.value) || 1;
+            const sampai = parseInt(sampaiInput.value) || 1;
+            const count = Math.max(0, sampai - dari + 1);
+            const halaman = Math.ceil(count / PER_HALAMAN);
+            if (count <= 0) {
+                infoPreview.textContent = '⚠️ Rentang tidak valid';
+                totalBadge.textContent = '0 antrian';
+                return;
+            }
+            if (count > MAKSIMAL) {
+                infoPreview.textContent = `⚠️ Terlalu banyak (${count} nomor, maks ${MAKSIMAL})`;
+                totalBadge.textContent = `${count} antrian`;
+                return;
+            }
+            infoPreview.textContent = `📄 ${count} nomor → ${halaman} halaman (${PER_HALAMAN}/halaman)`;
+            totalBadge.textContent = `${count} antrian`;
+        }
+
+        function resetToDefault() {
+            institusiInput.value = DEFAULTS.institusi;
+            kegiatanInput.value = DEFAULTS.kegiatan;
+            tanggalInput.value = DEFAULTS.tanggal;
+            dariInput.value = DEFAULTS.dari;
+            sampaiInput.value = DEFAULTS.sampai;
+            updateHari();
+            updatePreview();
+        }
+
+        function loadStampelFromFile(file) {
+            if (!file) {
+                updateStampelStatus(false, 'Tidak ada file dipilih');
+                return;
+            }
+
+            if (!file.type.startsWith('image/')) {
+                updateStampelStatus(false, 'File bukan gambar. Pilih file PNG, JPG, GIF, atau WEBP.');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    stampelImageData = e.target.result;
+                    stampelFileName = file.name;
+                    stampelLoaded = true;
+                    
+                    stampelPreviewImg.src = stampelImageData;
+                    stampelPreview.style.display = 'block';
+                    
+                    updateStampelStatus(true, `Berhasil memuat: ${file.name}`);
+                } catch (err) {
+                    updateStampelStatus(false, 'Gagal memuat gambar: ' + err.message);
+                }
+            };
+            reader.onerror = function() {
+                updateStampelStatus(false, 'Gagal membaca file');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function tryLoadStampelFromDirectory() {
+            updateStampelStatus('loading', '⏳ Mencari Stampel.PNG...');
+            
+            fetch('Stampel.PNG')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('File Stampel.PNG tidak ditemukan');
+                    }
+                    return response.blob();
+                })
+                .then(blob => {
+                    const file = new File([blob], 'Stampel.PNG', { type: 'image/png' });
+                    loadStampelFromFile(file);
+                })
+                .catch(() => {
+                    const extensions = ['.png', '.jpg', '.jpeg', '.gif', '.webp'];
+                    let found = false;
+                    let attempts = 0;
+
+                    extensions.forEach(ext => {
+                        if (found) return;
+                        attempts++;
+                        fetch(`Stampel${ext}`)
+                            .then(response => {
+                                if (!response.ok) throw new Error();
+                                return response.blob();
+                            })
+                            .then(blob => {
+                                const file = new File([blob], `Stampel${ext}`, { type: `image/${ext.substring(1)}` });
+                                loadStampelFromFile(file);
+                                found = true;
+                            })
+                            .catch(() => {
+                                if (attempts === extensions.length && !found) {
+                                    updateStampelStatus(false, '⚠️ Stampel tidak ditemukan. Upload manual atau letakkan di folder yang sama.');
+                                }
+                            });
+                    });
+                });
+        }
+
+        function updateStampelStatus(status, message) {
+            if (status === true) {
+                stampelStatus.className = 'stampel-status stampel-found';
+                stampelStatus.textContent = `✅ ${message}`;
+            } else if (status === false) {
+                stampelStatus.className = 'stampel-status stampel-notfound';
+                stampelStatus.textContent = `❌ ${message}`;
+            } else if (status === 'loading') {
+                stampelStatus.className = 'stampel-status stampel-loading';
+                stampelStatus.textContent = message || '⏳ Mencari Stampel.PNG...';
+            }
+        }
+
+        // Fungsi untuk menambahkan stampel ke kartu dengan opacity 80%
+        function addStampelToCard(pdf, x, y, w, h) {
+            if (!stampelLoaded || !stampelImageData) {
+                return false;
+            }
+
+            try {
+                // Ukuran stampel 85% dari kartu
+                const stampelSize = Math.min(w, h) * 0.85;
+                const stampelX = x + (w - stampelSize) / 2;
+                const stampelY = y + (h - stampelSize) / 2;
+                
+                // Opacity 80%
+                pdf.setGState(new pdf.GState({ opacity: 0.8 }));
+                
+                pdf.addImage(
+                    stampelImageData, 
+                    'PNG', 
+                    stampelX, 
+                    stampelY, 
+                    stampelSize, 
+                    stampelSize
+                );
+                
+                pdf.setGState(new pdf.GState({ opacity: 1.0 }));
+                
+                return true;
+            } catch (err) {
+                console.warn('Gagal menambahkan stampel ke kartu:', err);
+                return false;
+            }
+        }
+
+        function truncateText(text, maxLength) {
+            if (text.length > maxLength) {
+                return text.substring(0, maxLength - 3) + '...';
+            }
+            return text;
+        }
+
+        function splitKegiatan(text, maxLength) {
+            if (text.length <= maxLength) {
+                return { line1: text, line2: '' };
+            }
+            
+            // Coba potong di spasi terakhir sebelum maxLength
+            let splitIndex = text.lastIndexOf(' ', maxLength);
+            if (splitIndex === -1 || splitIndex < 5) {
+                splitIndex = maxLength;
+            }
+            
+            const line1 = text.substring(0, splitIndex);
+            const line2 = text.substring(splitIndex + 1);
+            
+            // Jika line2 masih terlalu panjang, potong lagi
+            if (line2.length > maxLength) {
+                const splitIndex2 = line2.lastIndexOf(' ', maxLength);
+                if (splitIndex2 !== -1 && splitIndex2 > 5) {
+                    return { 
+                        line1: line1 + ' ' + line2.substring(0, splitIndex2), 
+                        line2: line2.substring(splitIndex2 + 1) 
+                    };
+                }
+            }
+            
+            return { line1, line2 };
+        }
+
+        function cetakPDF() {
+            const institusi = institusiInput.value.trim() || 'SMAN 2 Cikarang Barat';
+            const kegiatan = kegiatanInput.value.trim() || 'Sistem Penerimaan Murid Baru';
+            const tanggal = tanggalInput.value || '2026-06-17';
+            const tanggalInfo = getHariDanTanggal(tanggal);
+            const tanggalDisplay = tanggalInfo.tanggalDisplay;
+            const hariDisplayText = tanggalInfo.hari;
+
+            let dari = parseInt(dariInput.value) || 1;
+            let sampai = parseInt(sampaiInput.value) || 1;
+            if (dari < 1) dari = 1;
+            if (sampai < 1) sampai = 1;
+            if (dari > sampai) {
+                alert('⚠️ "Dari" harus lebih kecil atau sama dengan "Sampai"');
+                return;
+            }
+            const total = sampai - dari + 1;
+            if (total > MAKSIMAL) {
+                alert(`⚠️ Maksimal ${MAKSIMAL} nomor antrian (saat ini ${total}).`);
+                return;
+            }
+
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            const pageWidth = 210;
+            const pageHeight = 297;
+            const margin = 8;
+            const usableWidth = pageWidth - 2 * margin;
+            const usableHeight = pageHeight - 2 * margin;
+
+            const cols = 4;
+            const rows = 4;
+            const gapX = 3;
+            const gapY = 3;
+            const cardWidth = (usableWidth - (cols - 1) * gapX) / cols;
+            const cardHeight = (usableHeight - (rows - 1) * gapY) / rows;
+
+            function drawCard(pdf, x, y, w, h, number, kegiatan, tanggal, hari, institusi) {
+                // Background kartu - putih dengan border tipis
+                pdf.setFillColor(255, 255, 255);
+                pdf.setDrawColor(190, 205, 225);
+                pdf.setLineWidth(0.4);
+                pdf.roundedRect(x, y, w, h, 2.5, 2.5, 'FD');
+
+                // Tambahkan stampel - opacity 80%
+                addStampelToCard(pdf, x, y, w, h);
+
+                // Split kegiatan menjadi 2 baris jika perlu - MAX LENGTH 20
+                const kegiatanParts = splitKegiatan(kegiatan, 20);
+                
+                // Nama kegiatan baris 1 - ukuran font 12, posisi y + 7.5
+                pdf.setFontSize(12);
+                pdf.setFont('helvetica', 'bold');
+                pdf.setTextColor(30, 60, 100);
+                pdf.text(kegiatanParts.line1, x + w/2, y + 7.5, { align: 'center' });
+
+                // Nama kegiatan baris 2 - jika ada, ukuran font 12, posisi y + 11.5
+                if (kegiatanParts.line2) {
+                    pdf.setFontSize(12);
+                    pdf.setFont('helvetica', 'bold');
+                    pdf.setTextColor(30, 60, 100);
+                    pdf.text(kegiatanParts.line2, x + w/2, y + 11.5, { align: 'center' });
+                }
+
+                // Tanggal dengan hari - ukuran font 8, posisi y + 14.5
+                pdf.setFontSize(8);
+                pdf.setFont('helvetica', 'normal');
+                pdf.setTextColor(70, 100, 140);
+                const tanggalWithHari = hari ? `${hari}, ${tanggal}` : tanggal;
+                const tanggalText = tanggalWithHari.length > 22 ? tanggalWithHari.substring(0, 20) + '...' : tanggalWithHari;
+                pdf.text(tanggalText, x + w/2, y + 14.5, { align: 'center' });
+
+                // Nomor antrian - ukuran font 46
+                pdf.setFontSize(46);
+                pdf.setFont('helvetica', 'bold');
+                pdf.setTextColor(10, 40, 70);
+                pdf.text(String(number), x + w/2, y + h/2 + 8, { align: 'center' });
+
+                // Nama institusi - ukuran font 10
+                pdf.setFontSize(10);
+                pdf.setFont('helvetica', 'bold');
+                pdf.setTextColor(60, 90, 130);
+                
+                const instText = truncateText(institusi, 28);
+                pdf.text(instText, x + w/2, y + h - 6, { align: 'center' });
+
+                // Garis pemisah di atas institusi - di y + h - 12, ditebalkan
+                pdf.setDrawColor(180, 195, 215);
+                pdf.setLineWidth(0.8);
+                pdf.line(x + 3, y + h - 12, x + w - 3, y + h - 12);
+            }
+
+            const semuaNomor = [];
+            for (let i = dari; i <= sampai; i++) {
+                semuaNomor.push(i);
+            }
+
+            let nomorIndex = 0;
+
+            for (let idx = 0; idx < semuaNomor.length; idx++) {
+                const row = Math.floor(nomorIndex / cols);
+                const col = nomorIndex % cols;
+                const x = margin + col * (cardWidth + gapX);
+                const y = margin + row * (cardHeight + gapY);
+
+                drawCard(pdf, x, y, cardWidth, cardHeight, semuaNomor[idx], kegiatan, tanggalDisplay, hariDisplayText, institusi);
+
+                nomorIndex++;
+
+                if (nomorIndex === PER_HALAMAN || idx === semuaNomor.length - 1) {
+                    if (idx < semuaNomor.length - 1) {
+                        pdf.addPage();
+                    }
+                    nomorIndex = 0;
+                }
+            }
+
+            const fileName = `Antrian_${institusi.replace(/\s+/g, '_')}.pdf`;
+            pdf.save(fileName);
+        }
+
+        // Event listeners
+        tanggalInput.addEventListener('change', updateHari);
+        tanggalInput.addEventListener('input', updateHari);
+
+        loadStampelBtn.addEventListener('click', function() {
+            const file = stampelInput.files[0];
+            if (file) {
+                loadStampelFromFile(file);
+            } else {
+                tryLoadStampelFromDirectory();
+            }
+        });
+
+        stampelInput.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                loadStampelFromFile(file);
+            }
+        });
+
+        cetakBtn.addEventListener('click', cetakPDF);
+        resetBtn.addEventListener('click', resetToDefault);
+
+        [dariInput, sampaiInput].forEach(el => {
+            el.addEventListener('input', updatePreview);
+        });
+
+        resetToDefault();
+        
+        setTimeout(() => {
+            tryLoadStampelFromDirectory();
+        }, 500);
+    })();
+</script>
+
+</body>
+</html>
