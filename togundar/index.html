@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#667eea">
+<title>Login Tryout - Nilai Siswa</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<main class="app-wrapper">
+
+  <!-- ============ HALAMAN LOGIN ============ -->
+  <section class="card" id="loginPage">
+    <div class="card-header">
+      <h1>Login Tryout</h1>
+      <p class="subtitle">Masukkan NISN dan tanggal lahir Anda</p>
+    </div>
+
+    <form id="loginForm" autocomplete="off" novalidate>
+      <div class="form-group">
+        <label for="nisn">NISN</label>
+        <input
+          type="text"
+          id="nisn"
+          name="nisn"
+          placeholder="Contoh: 3093008215"
+          maxlength="10"
+          inputmode="numeric"
+          autocomplete="off"
+          autocorrect="off"
+          autocapitalize="off"
+          spellcheck="false"
+          enterkeyhint="next"
+          required>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password (Tanggal Lahir)</label>
+        <input
+          type="text"
+          id="password"
+          name="password"
+          placeholder="Contoh: 20090429"
+          maxlength="8"
+          inputmode="numeric"
+          autocomplete="off"
+          autocorrect="off"
+          autocapitalize="off"
+          spellcheck="false"
+          enterkeyhint="go"
+          required>
+        <p class="hint">Format: <strong>yyyymmdd</strong> &mdash; contoh: 29 April 2009 &rarr; 20090429</p>
+      </div>
+
+      <button type="submit" class="btn-primary" id="btnLogin">Masuk</button>
+
+      <p class="message" id="errorMsg" role="alert" aria-live="polite"></p>
+    </form>
+  </section>
+
+  <!-- ============ HALAMAN HASIL ============ -->
+  <section class="card" id="resultPage" hidden>
+    <div class="card-header">
+      <span class="badge" id="badgeJurusan">-</span>
+      <h1>Hasil Tryout</h1>
+      <p class="welcome" id="welcomeText">-</p>
+    </div>
+
+    <div class="nilai-box">
+      <div class="nilai-row">
+        <span class="mapel">Matematika</span>
+        <span class="skor" id="nilaiMatematika">-</span>
+      </div>
+      <div class="nilai-row">
+        <span class="mapel">Bahasa Indonesia</span>
+        <span class="skor" id="nilaiIndonesia">-</span>
+      </div>
+      <div class="nilai-row">
+        <span class="mapel">Bahasa Inggris</span>
+        <span class="skor" id="nilaiInggris">-</span>
+      </div>
+    </div>
+
+    <button type="button" class="btn-secondary" id="btnLogout">Logout</button>
+  </section>
+
+</main>
+
+<script src="data-siswa.js"></script>
+<script src="app.js"></script>
+
+</body>
+</html>
