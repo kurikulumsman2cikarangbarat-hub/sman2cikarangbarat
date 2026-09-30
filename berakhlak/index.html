@@ -821,7 +821,7 @@ function login() {
 
   const pegawai = databasePegawai[nip];
   if (!pegawai) {
-    errorMsg.textContent = "❌ NIP tidak ditemukan. Periksa kembali NIP Anda.";
+    errorMsg.textContent = "❌ ID tidak ditemukan. Periksa kembali ID yang akan dimasukkan.";
     errorMsg.classList.add("show");
     nipInput.classList.add("error");
     return;
