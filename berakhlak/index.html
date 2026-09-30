@@ -685,11 +685,11 @@
 
     <div class="demo-hint">
       <strong>💡 Masukkan ID :</strong>
-      <code>Ahli / Expert</code> — Merancang program tingkat organisasi<br>
-      <code>Mahir / Mastery</code> — Mengedukasi & mempengaruhi orang lain<br>
-      <code>Terampil / Skillful</code> — Menerapkan secara konsisten & mandiri<br>
-      <code>Praktik Dasar / Basic</code> — Mempraktikkan dengan arahan<br>
-      <code>Paham / Awareness</code> — Memahami konsep dasar
+      <code>Ahli</code> — Mampu merancang program<br>
+      <code>Mahir</code> — Mengedukasi orang lain<br>
+      <code>Terampil</code> — Konsisten & mandiri<br>
+      <code>Praktik</code> — Perlu arahan<br>
+      <code>Paham</code> — Paham konsep dasar
     </div>
 
     <div class="login-footer">
@@ -806,14 +806,14 @@ function login() {
   nipInput.classList.remove("error");
 
   if (!nip) {
-    errorMsg.textContent = "⚠️ NIP tidak boleh kosong.";
+    errorMsg.textContent = "⚠️ ID tidak boleh kosong.";
     errorMsg.classList.add("show");
     nipInput.classList.add("error");
     return;
   }
 
   if (nip.length !== 18 || !/^\d+$/.test(nip)) {
-    errorMsg.textContent = "⚠️ NIP harus terdiri dari 18 digit angka.";
+    errorMsg.textContent = "⚠️ ID harus terdiri dari 18 digit angka.";
     errorMsg.classList.add("show");
     nipInput.classList.add("error");
     return;
