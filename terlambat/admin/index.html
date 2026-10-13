@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Dashboard Admin - Rekap Kedisiplinan Siswa</title>
+    
+    <style>
+        /* CSS RESET & STYLE */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; -webkit-tap-highlight-color: transparent; }
+
+        body { 
+            background: linear-gradient(160deg, #1e3c72 0%, #2a5298 100%); 
+            color: #333; 
+            min-height: 100vh; 
+            display: flex; align-items: center; justify-content: center; padding: 20px;
+            -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; 
+        }
+
+        input, select { user-select: text; }
+
+        .container { 
+            width: 100%; max-width: 600px; 
+            background: #ffffff; border-radius: 24px; padding: 30px 25px; 
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3); 
+            position: relative; overflow: hidden; 
+            display: flex; flex-direction: column; justify-content: center; 
+            margin: auto;
+        }
+
+        header { margin-bottom: 20px; text-align: center; }
+        h1 { color: #1e3c72; font-size: 1.6rem; font-weight: 800; margin-bottom: 5px; }
+        .subtitle { color: #7f8c8d; font-size: 0.9rem; font-weight: 500; }
+
+        .page { display: none; animation: fadeIn 0.5s; width: 100%; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        label { display: block; margin-bottom: 8px; font-weight: 600; color: #333; font-size: 0.95rem; }
+        input, select { width: 100%; padding: 14px; border: 2px solid #e0e0e0; border-radius: 12px; font-size: 1rem; margin-bottom: 15px; background: #fafafa; transition: 0.3s; }
+        select { appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%231e3c72%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E"); background-repeat: no-repeat; background-position: right 15px top 50%; background-size: 12px auto; }
+        input:focus, select:focus { border-color: #1e3c72; background-color: #fff; outline: none; }
+
+        button { width: 100%; padding: 16px; background: #1e3c72; color: white; border: none; border-radius: 12px; font-size: 1.05rem; font-weight: 700; cursor: pointer; margin-top: 5px; transition: 0.2s; }
+        button:active { transform: scale(0.98); }
+        button:disabled { background: #bdc3c7; cursor: not-allowed; }
+
+        .error-msg { background: #fee; color: #c0392b; padding: 10px; border-radius: 8px; margin-bottom: 15px; display: none; text-align: center; border: 1px solid #ffcccc; font-weight: 600; font-size: 0.9rem; }
+
+        /* Tabel Rekap */
+        .table-responsive { width: 100%; overflow-x: auto; margin-top: 15px; max-height: 350px; overflow-y: auto; border: 1px solid #e0e0e0; border-radius: 10px; }
+        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.95rem; }
+        th, td { padding: 12px 15px; border-bottom: 1px solid #eee; }
+        th { background: #1e3c72; color: white; position: sticky; top: 0; z-index: 1; }
+        tr:nth-child(even) { background: #f8fbff; }
+        .center { text-align: center; }
+        
+        .badge-poin { background: #e74c3c; color: white; padding: 4px 10px; border-radius: 20px; font-weight: bold; font-size: 0.85rem; display: inline-block; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>DASHBOARD ADMIN</h1>
+        <div class="subtitle">Rekapitulasi Kedisiplinan Siswa</div>
+    </header>
+
+    <!-- HALAMAN LOGIN ADMIN -->
+    <div id="page-login" class="page" style="display: block;">
+        <label>Username:</label>
+        <input type="text" id="txt-user" placeholder="Masukkan Username Admin">
+
+        <label>Password:</label>
+        <input type="password" id="txt-pass" placeholder="Masukkan Password">
+
+        <div id="err-login" class="error-msg">⚠️ Username atau Password salah!</div>
+        <button onclick="processLogin()">LOGIN</button>
+    </div>
+
+    <!-- HALAMAN PILIH KELAS & TABEL -->
+    <div id="page-dashboard" class="page">
+        <label>Jenjang Kelas:</label>
+        <select id="sel-jenjang" onchange="updateKelasOptions()">
+            <option value="" disabled selected>-- Pilih Jenjang --</option>
+            <option value="X">Kelas X</option>
+            <option value="XI">Kelas XI</option>
+            <option value="XII">Kelas XII</option>
+        </select>
+
+        <label>Kelas:</label>
+        <select id="sel-kelas" disabled>
+            <option value="" disabled selected>-- Pilih Kelas Dulu --</option>
+        </select>
+        
+        <div id="err-filter" class="error-msg">⚠️ Mohon pilih jenjang dan kelas terlebih dahulu.</div>
+        <button id="btn-tampilkan" onclick="fetchRekapData()" disabled>TAMPILKAN</button>
+
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th width="10%" class="center">No</th>
+                        <th width="70%">Nama Siswa</th>
+                        <th width="20%" class="center">Akumulasi Poin</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body">
+                    <tr>
+                        <td colspan="3" class="center" style="color: #7f8c8d; padding: 20px;">Silakan pilih kelas dan klik Tampilkan.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <button style="background: #c0392b; margin-top: 20px;" onclick="location.reload()">LOGOUT</button>
+    </div>
+</div>
+
+<script>
+    // URL Cloudflare Worker Anda
+    const API_URL = "https://disiplin-siswa.hp085219988800.workers.dev/";
+
+    // Data Referensi Kelas
+    const dataKelas = {
+        "X": ["X - A", "X - B", "X - C", "X - D", "X - E", "X - F", "X - G", "X - H"],
+        "XI": ["XI - A", "XI - B", "XI - C", "XI - D", "XI - E"],
+        "XII": ["XII - A", "XII - B", "XII - C", "XII - D", "XII - E", "XII - F", "XII - G"] 
+    };
+
+    function updateKelasOptions() {
+        const jenjang = document.getElementById("sel-jenjang").value;
+        const selKelas = document.getElementById("sel-kelas");
+        const btnTampilkan = document.getElementById("btn-tampilkan");
+        
+        selKelas.innerHTML = '<option value="" disabled selected>-- Pilih Kelas --</option>';
+        selKelas.disabled = false;
+        btnTampilkan.disabled = false;
+
+        if (dataKelas[jenjang]) {
+            dataKelas[jenjang].forEach(kelas => {
+                let opt = document.createElement("option");
+                opt.value = kelas;
+                opt.textContent = kelas;
+                selKelas.appendChild(opt);
+            });
+        }
+    }
+
+    function processLogin() {
+        const user = document.getElementById("txt-user").value.trim();
+        const pass = document.getElementById("txt-pass").value.trim();
+        const errLogin = document.getElementById("err-login");
+
+        if (user === "Admin" && pass === "69964653") {
+            errLogin.style.display = "none";
+            document.getElementById("page-login").style.display = "none";
+            document.getElementById("page-dashboard").style.display = "block";
+        } else {
+            errLogin.style.display = "block";
+        }
+    }
+
+    function fetchRekapData() {
+        const kelasDipilih = document.getElementById("sel-kelas").value;
+        const errFilter = document.getElementById("err-filter");
+        const tbody = document.getElementById("table-body");
+        const btn = document.getElementById("btn-tampilkan");
+
+        if (!kelasDipilih) {
+            errFilter.style.display = "block";
+            return;
+        }
+        errFilter.style.display = "none";
+
+        btn.disabled = true;
+        btn.innerText = "Memuat Data...";
+        tbody.innerHTML = `<tr><td colspan="3" class="center" style="padding: 20px;">🔄 Mengambil data dari server...</td></tr>`;
+
+        // Request ke Cloudflare Worker
+        fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: "getRekap", kelas: kelasDipilih })
+        })
+        .then(res => res.json())
+        .then(data => {
+            btn.disabled = false;
+            btn.innerText = "TAMPILKAN";
+
+            if (data.result === "success" && data.siswa.length > 0) {
+                let html = "";
+                data.siswa.forEach((item, index) => {
+                    html += `
+                        <tr>
+                            <td class="center">${index + 1}</td>
+                            <td>${item.nama}</td>
+                            <td class="center"><span class="badge-poin">${item.poin}</span></td>
+                        </tr>
+                    `;
+                });
+                tbody.innerHTML = html;
+            } else {
+                tbody.innerHTML = `<tr><td colspan="3" class="center" style="color: #c0392b; padding: 20px;">❌ Tidak ada data siswa untuk kelas ini.</td></tr>`;
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            btn.disabled = false;
+            btn.innerText = "TAMPILKAN";
+            tbody.innerHTML = `<tr><td colspan="3" class="center" style="color: #c0392b; padding: 20px;">❌ Gagal terhubung ke server/network error.</td></tr>`;
+        });
+    }
+
+    // ==========================================
+    // PROTEKSI HALAMAN (BLOKIR KLIK KANAN & INSPEK)
+    // ==========================================
+    document.addEventListener('contextmenu', event => event.preventDefault());
+
+    document.onkeydown = function(e) {
+        if (e.keyCode == 123) { return false; } // F12
+        if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) { return false; }
+        if (e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) { return false; }
+        if (e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) { return false; }
+        if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) { return false; }
+        if (e.ctrlKey && e.keyCode == 'P'.charCodeAt(0)) { return false; }
+        if (e.ctrlKey && e.keyCode == 'S'.charCodeAt(0)) { return false; }
+    };
+
+    document.addEventListener("cut", (e) => { e.preventDefault(); });
+    document.addEventListener("copy", (e) => { e.preventDefault(); });
+    document.addEventListener("paste", (e) => { e.preventDefault(); });
+</script>
+</body>
+</html>
