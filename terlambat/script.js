@@ -13,8 +13,8 @@ let totalAttempts = 0;
 // DATA LOKAL & LOGIKA DROPDOWN
 // ==========================================
 const dataKelas = {
-    "X": ["X - A", "X - B", "X - C", "X - D", "X - E", "X - F"],
-    "XI": ["XI - A", "XI - B", "XI - C", "XI - D", "XI - E", "XI - F", "XI - G"],
+    "X": ["X - A", "X - B", "X - C", "X - D", "X - E", "X - F", "X - G", "X - H"],
+    "XI": ["XI - A", "XI - B", "XI - C", "XI - D", "XI - E"],
     "XII": ["XII - A", "XII - B", "XII - C", "XII - D", "XII - E", "XII - F", "XII - G"] 
 };
 
