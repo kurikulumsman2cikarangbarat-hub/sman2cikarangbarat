@@ -2,7 +2,7 @@
 // KONFIGURASI DAN VARIABEL GLOBAL
 // ==========================================
 // URL Cloudflare Worker (Pengganti Google Apps Script)
-const API_URL = "https://disiplin-siswa.kurikulum-sman2cikarangbarat.workers.dev/"; 
+const API_URL = "https://disiplin-siswa.hp085219988800.workers.dev/"; 
 
 let currentCorrectAnswer = "";
 let timerInt, isTestActive = false, cheatCount = 0;
