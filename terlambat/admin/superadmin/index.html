@@ -19,7 +19,7 @@
         input, select { user-select: text; }
 
         .container { 
-            width: 100%; max-width: 700px; 
+            width: 100%; max-width: 750px; 
             background: #ffffff; border-radius: 24px; padding: 30px 25px; 
             box-shadow: 0 20px 60px rgba(0,0,0,0.3); 
             position: relative; overflow: hidden; 
@@ -89,7 +89,7 @@
 
         <label>Kelas:</label>
         <select id="sel-kelas" disabled onchange="enableTampilkanBtn()">
-            <option value="" disabled selected>-- Pilih Kelas Dulu --</option>
+            <option value="" disabled selected>-- Pilih Jenjang Dulu --</option>
         </select>
         
         <div id="err-filter" class="error-msg">⚠️ Mohon pilih jenjang dan kelas terlebih dahulu.</div>
@@ -129,14 +129,26 @@
     function updateKelasOptions() {
         const jenjang = document.getElementById("sel-jenjang").value;
         const selKelas = document.getElementById("sel-kelas");
+        const btnTampilkan = document.getElementById("btn-tampilkan");
         
+        // Reset dropdown kelas & aktifkan kembali
         selKelas.innerHTML = '<option value="" disabled selected>-- Pilih Kelas --</option>';
         selKelas.disabled = false;
-        document.getElementById("btn-tampilkan").disabled = true;
+        btnTampilkan.disabled = true;
+
+        if (dataKelas[jenjang]) {
+            dataKelas[jenjang].forEach(kelas => {
+                let opt = document.createElement("option");
+                opt.value = kelas;
+                opt.textContent = kelas;
+                selKelas.appendChild(opt);
+            });
+        }
     }
 
     function enableTampilkanBtn() {
-        document.getElementById("btn-tampilkan").disabled = false;
+        const kelasDipilih = document.getElementById("sel-kelas").value;
+        document.getElementById("btn-tampilkan").disabled = !kelasDipilih;
     }
 
     function processLogin() {
@@ -235,30 +247,11 @@
             alert("❌ Terjadi kesalahan jaringan.");
         });
     }
-function updateKelasOptions() {
-        const jenjang = document.getElementById("sel-jenjang").value;
-        const selKelas = document.getElementById("sel-kelas");
-        const btnTampilkan = document.getElementById("btn-tampilkan");
-        
-        // Reset dropdown kelas
-        selKelas.innerHTML = '<option value="" disabled selected>-- Pilih Kelas --</option>';
-        selKelas.disabled = false;
-        btnTampilkan.disabled = true;
 
-        // Masukkan pilihan kelas sesuai jenjang yang dipilih
-        if (dataKelas[jenjang]) {
-            dataKelas[jenjang].forEach(kelas => {
-                let opt = document.createElement("option");
-                opt.value = kelas;
-                opt.textContent = kelas;
-                selKelas.appendChild(opt);
-            });
-        }
-    }
-    // Proteksi Halaman
+    // Proteksi Halaman (Blokir Klik Kanan, Inspek, & Shortcut)
     document.addEventListener('contextmenu', event => event.preventDefault());
     document.onkeydown = function(e) {
-        if (e.keyCode == 123) { return false; }
+        if (e.keyCode == 123) { return false; } // F12
         if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) { return false; }
         if (e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) { return false; }
         if (e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) { return false; }
