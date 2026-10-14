@@ -235,7 +235,26 @@
             alert("❌ Terjadi kesalahan jaringan.");
         });
     }
+function updateKelasOptions() {
+        const jenjang = document.getElementById("sel-jenjang").value;
+        const selKelas = document.getElementById("sel-kelas");
+        const btnTampilkan = document.getElementById("btn-tampilkan");
+        
+        // Reset dropdown kelas
+        selKelas.innerHTML = '<option value="" disabled selected>-- Pilih Kelas --</option>';
+        selKelas.disabled = false;
+        btnTampilkan.disabled = true;
 
+        // Masukkan pilihan kelas sesuai jenjang yang dipilih
+        if (dataKelas[jenjang]) {
+            dataKelas[jenjang].forEach(kelas => {
+                let opt = document.createElement("option");
+                opt.value = kelas;
+                opt.textContent = kelas;
+                selKelas.appendChild(opt);
+            });
+        }
+    }
     // Proteksi Halaman
     document.addEventListener('contextmenu', event => event.preventDefault());
     document.onkeydown = function(e) {
